@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>加减分原因记录</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+        th { background-color: #eef; }
+    </style>
+</head>
+<body>
+    <h1>班级积分加减分记录</h1>
+    <table id="reasonTable">
+        <thead><tr><th>时间</th><th>学号</th><th>姓名</th><th>分数变化</th><th>原因</th></tr></thead>
+        <tbody></tbody>
+    </table>
+    <script>
+        const REPO_OWNER = "你的用户名";
+        const REPO_NAME = "你的仓库名";
+        const REASONS_FILE = "reasons.json";
+        const URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${REASONS_FILE}`;
+        const TOKEN = "你的GitHub Token";
+
+        async function loadReasons() {
+            try {
+                const resp = await fetch(URL, { headers: { Authorization: `token ${TOKEN}` } });
+                if (!resp.ok) throw new Error("加载失败");
+                const data = await resp.json();
+                const reasons = JSON.parse(atob(data.content));
+                const tbody = document.querySelector("#reasonTable tbody");
+                tbody.innerHTML = "";
+                reasons.forEach(r => {
+                    const row = tbody.insertRow();
+                    row.insertCell(0).innerText = r.timestamp;
+                    row.insertCell(1).innerText = r.studentId;
+                    row.insertCell(2).innerText = r.studentName;
+                    row.insertCell(3).innerText = (r.delta > 0 ? "+" : "") + r.delta;
+                    row.insertCell(4).innerText = r.reason;
+                });
+            } catch(err) {
+                document.body.innerHTML += `<p style="color:red">错误：${err.message}</p>`;
+            }
+        }
+        loadReasons();
+    </script>
+</body>
+</html>
