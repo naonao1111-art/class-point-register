@@ -50,7 +50,15 @@
                 <button id="resetAdminBtn">显示全部</button>
             </div>
             <table id="stuTable">
-                <thead><tr><th>选择</th><th>学号</th><th>姓名</th><th>积分</th></tr></thead>
+                <thead>
+                    <tr>
+                        <th>选择</th>
+                        <th>单选</th>
+                        <th>学号</th>
+                        <th>姓名</th>
+                        <th>积分</th>
+                    </tr>
+                </thead>
                 <tbody></tbody>
             </table>
         </div>
@@ -63,9 +71,33 @@
         </div>
 
         <div class="section">
+            <h3>批量修改积分（多选或全选）</h3>
+            <div>
+                <button id="selectAllBtn">全选</button>
+                <button id="deselectAllBtn">取消全选</button>
+            </div>
+            <div>
+                <label>分数变化: </label>
+                <input type="number" id="batchDelta" placeholder="例如 +5 或 -2">
+                <label>原因: </label>
+                <input type="text" id="batchReason" placeholder="流动红旗全班+5" style="width: 200px;">
+                <button id="batchUpdateBtn">批量修改</button>
+            </div>
+        </div>
+
+        <div class="section">
             <h3>加减分原因记录（仅可编辑原因文本）</h3>
             <table id="reasonsTable">
-                <thead><tr><th>时间</th><th>学号</th><th>姓名</th><th>分数变化</th><th>原因（可编辑）</th><th>操作</th></tr></thead>
+                <thead>
+                    <tr>
+                        <th>时间</th>
+                        <th>学号</th>
+                        <th>姓名</th>
+                        <th>分数变化</th>
+                        <th>原因（可编辑）</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
                 <tbody></tbody>
             </table>
         </div>
@@ -74,14 +106,14 @@
     </div>
 
     <script>
-        // 配置仓库信息（根据你的实际修改）
+        // ========== 配置（请修改为你的实际信息）==========
         const REPO_OWNER = "naonao1111-art";
         const REPO_NAME = "class-point-register";
         const DATA_FILE = "data.json";
         const REASONS_FILE = "reasons.json";
         const DATA_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_FILE}`;
         const REASONS_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${REASONS_FILE}`;
-        const ADMIN_PASSWORD = "123456";  // 请修改为你自己的后台密码
+        const ADMIN_PASSWORD = "yjsawnnslbtn0211";  // 请修改为你自己的后台密码
 
         let currentToken = "";
         let currentStudents = [];
@@ -90,18 +122,40 @@
         let reasonsSha = "";
         let selectedStudentId = null;
 
-        // 辅助函数
+        // ========== 正确的 Base64 编解码（支持 UTF-8 中文） ==========
+        function base64DecodeToUtf8(base64Str) {
+            const binaryStr = atob(base64Str);
+            const bytes = new Uint8Array(binaryStr.length);
+            for (let i = 0; i < binaryStr.length; i++) {
+                bytes[i] = binaryStr.charCodeAt(i);
+            }
+            return new TextDecoder('utf-8').decode(bytes);
+        }
+
+        function utf8ToBase64(str) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(str);
+            let binary = '';
+            for (let i = 0; i < data.length; i++) {
+                binary += String.fromCharCode(data[i]);
+            }
+            return btoa(binary);
+        }
+
+        // ========== GitHub API 操作 ==========
         async function fetchJSON(url, token) {
             const headers = token ? { Authorization: `token ${token}` } : {};
             const resp = await fetch(url, { headers });
             if (resp.status === 404) return { content: null, sha: null };
             if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
             const data = await resp.json();
-            return { content: JSON.parse(atob(data.content)), sha: data.sha };
+            const content = JSON.parse(base64DecodeToUtf8(data.content));
+            return { content, sha: data.sha };
         }
 
         async function saveJSON(url, content, sha, token, message) {
-            const newContent = btoa(JSON.stringify(content, null, 2));
+            const jsonStr = JSON.stringify(content, null, 2);
+            const newContent = utf8ToBase64(jsonStr);
             const payload = { message, content: newContent, sha };
             const resp = await fetch(url, {
                 method: "PUT",
@@ -141,20 +195,31 @@
             reasonsSha = await saveJSON(REASONS_URL, currentReasons, reasonsSha, currentToken, "更新原因记录");
         }
 
+        // ========== 渲染表格 ==========
         function renderStudentsTable() {
             const tbody = document.querySelector("#stuTable tbody");
             tbody.innerHTML = "";
             currentStudents.forEach(s => {
                 const row = tbody.insertRow();
+                // 复选框（多选）
+                const chkCell = row.insertCell(0);
+                const chk = document.createElement("input");
+                chk.type = "checkbox";
+                chk.className = "student-checkbox";
+                chk.value = s.id;
+                chkCell.appendChild(chk);
+                // 单选按钮（用于单个修改）
+                const radioCell = row.insertCell(1);
                 const radio = document.createElement("input");
                 radio.type = "radio";
                 radio.name = "selectedStu";
                 radio.value = s.id;
                 radio.onclick = () => { selectedStudentId = s.id; };
-                row.insertCell(0).appendChild(radio);
-                row.insertCell(1).innerText = s.id;
-                row.insertCell(2).innerText = s.name;
-                row.insertCell(3).innerText = s.score;
+                radioCell.appendChild(radio);
+                // 学号、姓名、积分
+                row.insertCell(2).innerText = s.id;
+                row.insertCell(3).innerText = s.name;
+                row.insertCell(4).innerText = s.score;
             });
         }
 
@@ -166,7 +231,7 @@
                 row.insertCell(0).innerText = r.timestamp;
                 row.insertCell(1).innerText = r.studentId;
                 row.insertCell(2).innerText = r.studentName;
-                row.insertCell(3).innerText = r.delta;
+                row.insertCell(3).innerText = (r.delta > 0 ? "+" : "") + r.delta;
                 const reasonCell = row.insertCell(4);
                 const inputReason = document.createElement("input");
                 inputReason.type = "text";
@@ -186,6 +251,78 @@
             });
         }
 
+        // ========== 批量修改功能 ==========
+        async function batchUpdate() {
+            // 验证管理员密码
+            const pwd = prompt("请输入管理员密码进行批量修改:");
+            if (pwd !== ADMIN_PASSWORD) {
+                alert("密码错误，操作取消");
+                return;
+            }
+
+            const checkboxes = document.querySelectorAll(".student-checkbox:checked");
+            if (checkboxes.length === 0) {
+                alert("请至少选择一个学生");
+                return;
+            }
+            const delta = parseInt(document.getElementById("batchDelta").value);
+            if (isNaN(delta)) {
+                alert("请输入有效的分数变化");
+                return;
+            }
+            const reason = document.getElementById("batchReason").value.trim();
+            if (!reason) {
+                alert("请输入修改原因");
+                return;
+            }
+
+            // 收集需要修改的学生
+            const updates = [];
+            for (let chk of checkboxes) {
+                const sid = chk.value;
+                const student = currentStudents.find(s => s.id === sid);
+                if (student) {
+                    let newScore = student.score + delta;
+                    newScore = Math.min(200, Math.max(0, newScore));
+                    if (newScore !== student.score) {
+                        updates.push({ student, oldScore: student.score, newScore });
+                    }
+                }
+            }
+            if (updates.length === 0) {
+                alert("所选学生积分均无变化（已达上限或下限）");
+                return;
+            }
+
+            if (!confirm(`即将修改 ${updates.length} 名学生，积分变化 ${delta>0?"+":""}${delta}，原因：“${reason}”。确认吗？`)) {
+                return;
+            }
+
+            // 修改内存中学生积分
+            for (let u of updates) {
+                u.student.score = u.newScore;
+            }
+            await saveStudents();
+
+            // 追加原因记录
+            const now = new Date().toISOString().slice(0,19).replace('T',' ');
+            const newRecords = updates.map(u => ({
+                timestamp: now,
+                studentId: u.student.id,
+                studentName: u.student.name,
+                delta: delta,
+                reason: reason
+            }));
+            currentReasons.push(...newRecords);
+            await saveReasons();
+
+            // 刷新界面
+            renderStudentsTable();
+            renderReasonsTable();
+            document.getElementById("adminMsg").innerText = `批量修改成功，共 ${updates.length} 名学生`;
+        }
+
+        // ========== 增删改查操作 ==========
         async function addStudent() {
             const id = document.getElementById("stuId").value.trim();
             const name = document.getElementById("stuName").value.trim();
@@ -255,20 +392,27 @@
                 tbody.innerHTML = "";
                 filtered.forEach(s => {
                     const row = tbody.insertRow();
+                    const chkCell = row.insertCell(0);
+                    const chk = document.createElement("input");
+                    chk.type = "checkbox";
+                    chk.className = "student-checkbox";
+                    chk.value = s.id;
+                    chkCell.appendChild(chk);
+                    const radioCell = row.insertCell(1);
                     const radio = document.createElement("input");
                     radio.type = "radio";
                     radio.name = "selectedStu";
                     radio.value = s.id;
                     radio.onclick = () => { selectedStudentId = s.id; };
-                    row.insertCell(0).appendChild(radio);
-                    row.insertCell(1).innerText = s.id;
-                    row.insertCell(2).innerText = s.name;
-                    row.insertCell(3).innerText = s.score;
+                    radioCell.appendChild(radio);
+                    row.insertCell(2).innerText = s.id;
+                    row.insertCell(3).innerText = s.name;
+                    row.insertCell(4).innerText = s.score;
                 });
             }
         }
 
-        // 登录逻辑
+        // ========== 登录逻辑 ==========
         document.getElementById("saveTokenBtn").onclick = () => {
             const token = document.getElementById("githubToken").value.trim();
             if (token) {
@@ -287,7 +431,6 @@
                 document.getElementById("loginMsg").innerText = "密码错误";
                 return;
             }
-            // 尝试从 sessionStorage 读取 Token
             let token = sessionStorage.getItem("github_token");
             if (!token) {
                 token = document.getElementById("githubToken").value.trim();
@@ -314,12 +457,20 @@
                     document.getElementById("searchIdAdmin").value = "";
                     renderStudentsTable();
                 };
+                // 批量修改事件
+                document.getElementById("selectAllBtn").onclick = () => {
+                    document.querySelectorAll(".student-checkbox").forEach(cb => cb.checked = true);
+                };
+                document.getElementById("deselectAllBtn").onclick = () => {
+                    document.querySelectorAll(".student-checkbox").forEach(cb => cb.checked = false);
+                };
+                document.getElementById("batchUpdateBtn").onclick = batchUpdate;
             } catch (err) {
                 document.getElementById("loginMsg").innerText = "加载数据失败：" + err.message;
             }
         };
 
-        // 如果已经保存了 Token，可以预填输入框（但不自动登录）
+        // 预填已保存的 Token
         const savedToken = sessionStorage.getItem("github_token");
         if (savedToken) {
             document.getElementById("githubToken").value = savedToken;

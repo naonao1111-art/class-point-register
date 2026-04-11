@@ -18,17 +18,30 @@
         </thead>
         <tbody></tbody>
     </table>
+
     <script>
+        // ========== 配置（请修改为你的实际信息）==========
         const REPO_OWNER = "naonao1111-art";      // 替换为你的用户名
         const REPO_NAME = "class-point-register"; // 替换为你的仓库名
         const REASONS_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/reasons.json`;
+
+        // 正确的 base64 解码函数（支持 UTF-8 中文）
+        function base64DecodeToUtf8(base64Str) {
+            const binaryStr = atob(base64Str);
+            const bytes = new Uint8Array(binaryStr.length);
+            for (let i = 0; i < binaryStr.length; i++) {
+                bytes[i] = binaryStr.charCodeAt(i);
+            }
+            return new TextDecoder('utf-8').decode(bytes);
+        }
 
         async function loadReasons() {
             try {
                 const resp = await fetch(REASONS_URL);
                 if (!resp.ok) throw new Error("加载失败");
                 const data = await resp.json();
-                const reasons = JSON.parse(atob(data.content));
+                const content = base64DecodeToUtf8(data.content);
+                const reasons = JSON.parse(content);
                 const tbody = document.querySelector("#reasonTable tbody");
                 tbody.innerHTML = "";
                 reasons.forEach(r => {
