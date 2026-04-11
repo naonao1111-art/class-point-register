@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>班级积分公示板</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
+        th { background-color: #f2f2f2; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <h1>班级积分公示板（只读）</h1>
+    <div>
+        <input type="text" id="searchId" placeholder="按学号查询">
+        <button id="searchBtn">查询</button>
+        <button id="resetBtn">显示全部</button>
+    </div>
+    <table id="scoreTable">
+        <thead><tr><th>学号</th><th>姓名</th><th>积分</th></tr></thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        // GitHub 配置（请修改为你的信息）
+        const REPO_OWNER = "你的用户名";
+        const REPO_NAME = "你的仓库名";
+        const FILE_PATH = "data.json";
+        const API_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
+        const TOKEN = "你的GitHub Token";   // 直接填写，或通过localStorage获取
+
+        let currentData = { students: [] };
+
+        async function loadData() {
+            try {
+                const resp = await fetch(API_URL, {
+                    headers: { Authorization: `token ${TOKEN}` }
+                });
+                if (!resp.ok) throw new Error("加载失败");
+                const data = await resp.json();
+                const content = atob(data.content);
+                currentData = JSON.parse(content);
+                renderTable(currentData.students);
+            } catch (err) {
+                document.body.innerHTML += `<p class="error">错误：${err.message}</p>`;
+            }
+        }
+
+        function renderTable(students) {
+            const tbody = document.querySelector("#scoreTable tbody");
+            tbody.innerHTML = "";
+            students.forEach(s => {
+                const row = tbody.insertRow();
+                row.insertCell(0).innerText = s.id;
+                row.insertCell(1).innerText = s.name;
+                row.insertCell(2).innerText = s.score;
+            });
+        }
+
+        document.getElementById("searchBtn").onclick = () => {
+            const searchId = document.getElementById("searchId").value.trim();
+            if (!searchId) renderTable(currentData.students);
+            else {
+                const filtered = currentData.students.filter(s => s.id.includes(searchId));
+                renderTable(filtered);
+            }
+        };
+        document.getElementById("resetBtn").onclick = () => {
+            document.getElementById("searchId").value = "";
+            renderTable(currentData.students);
+        };
+
+        loadData();
+    </script>
+</body>
+</html>
