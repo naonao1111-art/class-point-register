@@ -2,242 +2,237 @@
   "students": [
     {
       "id": "001",
-      "name": "\u66fe\u5b50\u8f69",
+      "name": "曾子轩",
       "score": 100
     },
     {
       "id": "002",
-      "name": "\u9648\u9759\u6021",
+      "name": "陈静怡",
       "score": 100
     },
     {
       "id": "003",
-      "name": "\u9648\u6600\u6cfd",
+      "name": "陈昀泽",
       "score": 100
     },
     {
       "id": "004",
-      "name": "\u7a0b\u8212\u8fdc",
+      "name": "程舒远",
       "score": 100
     },
     {
       "id": "005",
-      "name": "\u8303\u665f\u8f69",
+      "name": "范晟轩",
       "score": 100
     },
     {
       "id": "006",
-      "name": "\u65b9\u665f\u777f",
+      "name": "方晟睿",
       "score": 100
     },
     {
       "id": "007",
-      "name": "\u65b9\u9e23\u626c",
+      "name": "方鸣扬",
       "score": 100
     },
     {
       "id": "008",
-      "name": "\u51af\u4e30\u7855",
+      "name": "冯丰硕",
       "score": 100
     },
     {
       "id": "009",
-      "name": "\u51af\u6c38\u660a",
+      "name": "冯永昊",
       "score": 100
     },
     {
       "id": "010",
-      "name": "\u987e\u69ff\u5bb8",
+      "name": "顾槿宸",
       "score": 100
     },
     {
       "id": "011",
-      "name": "\u80e1\u51ef\u7433",
+      "name": "胡凯琳",
       "score": 100
     },
     {
       "id": "012",
-      "name": "\u9ec4\u667a\u6052",
+      "name": "黄智恒",
       "score": 100
     },
     {
       "id": "013",
-      "name": "\u91d1\u946b\u7487",
+      "name": "金鑫璇",
       "score": 100
     },
     {
       "id": "014",
-      "name": "\u91d1\u667a\u5bb8",
+      "name": "金智宸",
       "score": 100
     },
     {
       "id": "015",
-      "name": "\u674e\u5ca9\u8e4a",
+      "name": "李岩蹊",
       "score": 100
     },
     {
       "id": "016",
-      "name": "\u5218\u535a\u51ef",
+      "name": "刘博凯",
       "score": 100
     },
     {
       "id": "017",
-      "name": "\u5218\u5fb7\u4e34",
+      "name": "刘德临",
       "score": 100
     },
     {
       "id": "018",
-      "name": "\u5218\u660a",
+      "name": "刘昊",
       "score": 100
     },
     {
       "id": "019",
-      "name": "\u9646\u739b\u4fd0",
+      "name": "陆玛俐",
       "score": 100
     },
     {
       "id": "020",
-      "name": "\u5415\u5ce5\u7a0b",
+      "name": "吕峥程",
       "score": 100
     },
     {
       "id": "021",
-      "name": "\u9a6c\u8fb0\u4f69",
+      "name": "马辰佩",
       "score": 100
     },
     {
       "id": "022",
-      "name": "\u9a6c\u4f0a\u97e9",
+      "name": "马伊韩",
       "score": 100
     },
     {
       "id": "023",
-      "name": "\u7267\u5468\u78ca",
+      "name": "牧周磊",
       "score": 100
     },
     {
       "id": "024",
-      "name": "\u6f58\u70e8\u78ca",
+      "name": "潘烨磊",
       "score": 100
     },
     {
       "id": "025",
-      "name": "\u6fee\u5929\u660a",
+      "name": "濮天昊",
       "score": 100
     },
     {
       "id": "026",
-      "name": "\u6c88\u4e50\u598d",
+      "name": "沈乐妍",
       "score": 100
     },
     {
       "id": "028",
-      "name": "\u6c88\u5929\u8fb0",
+      "name": "沈天辰",
       "score": 100
     },
     {
       "id": "029",
-      "name": "\u6c88\u59da\u680e",
+      "name": "沈姚栎",
       "score": 100
     },
     {
       "id": "030",
-      "name": "\u76db\u777f\u826f",
+      "name": "盛睿良",
       "score": 100
     },
     {
       "id": "031",
-      "name": "\u82cf\u4e49\u6db5",
+      "name": "苏义涵",
       "score": 100
     },
     {
       "id": "032",
-      "name": "\u7ae5\u6e05\u626c",
+      "name": "童清扬",
       "score": 100
     },
     {
       "id": "033",
-      "name": "\u738b\u674e\u5a67",
+      "name": "王李婧",
       "score": 100
     },
     {
       "id": "034",
-      "name": "\u5f90\u5fd7\u7fd4",
+      "name": "徐志翔",
       "score": 100
     },
     {
       "id": "035",
-      "name": "\u95eb\u4e4b\u8bfa",
+      "name": "闫之诺",
       "score": 100
     },
     {
       "id": "036",
-      "name": "\u6768\u5609\u6850",
+      "name": "杨嘉桐",
       "score": 100
     },
     {
       "id": "037",
-      "name": "\u6768\u5b50\u9e23",
+      "name": "杨子鸣",
       "score": 100
     },
     {
       "id": "038",
-      "name": "\u59da\u7ae3\u8c6a",
+      "name": "姚竣豪",
       "score": 100
     },
     {
       "id": "039",
-      "name": "\u80e1\u5bb5",
+      "name": "胡宵",
       "score": 100
     },
     {
       "id": "040",
-      "name": "\u59da\u5947\u80dc",
+      "name": "姚奇胜",
       "score": 100
     },
     {
       "id": "041",
-      "name": "\u59da\u817e\u6d69",
+      "name": "姚腾浩",
       "score": 100
     },
     {
       "id": "042",
-      "name": "\u53f6\u9f50\u695a",
+      "name": "叶齐楚",
       "score": 100
     },
     {
       "id": "043",
-      "name": "\u5e94\u624e\u5409",
+      "name": "应扎吉",
       "score": 100
     },
     {
       "id": "044",
-      "name": "\u4fde\u9f50",
+      "name": "俞齐",
       "score": 100
     },
     {
       "id": "045",
-      "name": "\u8881\u7166\u6cfd",
+      "name": "袁煦泽",
       "score": 100
     },
     {
       "id": "046",
-      "name": "\u90d1\u667a\u7a0b",
+      "name": "郑智程",
       "score": 100
     },
     {
       "id": "047",
-      "name": "\u6731\u6668\u66e6",
+      "name": "朱晨曦",
       "score": 100
     },
     {
       "id": "048",
-      "name": "\u6731\u7199\u5143",
-      "score": 100
-    },
-    {
-      "id": "27",
-      "name": "33",
+      "name": "朱熙元",
       "score": 100
     }
   ]
