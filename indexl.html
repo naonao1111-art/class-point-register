@@ -9,42 +9,42 @@
         th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
         th { background-color: #f2f2f2; }
         .error { color: red; }
+        .search-box { margin-bottom: 10px; }
     </style>
 </head>
 <body>
     <h1>班级积分公示板（只读）</h1>
-    <div>
+    <div class="search-box">
         <input type="text" id="searchId" placeholder="按学号查询">
         <button id="searchBtn">查询</button>
         <button id="resetBtn">显示全部</button>
     </div>
     <table id="scoreTable">
-        <thead><tr><th>学号</th><th>姓名</th><th>积分</th></tr></thead>
+        <thead>
+            <tr><th>学号</th><th>姓名</th><th>积分</th></tr>
+        </thead>
         <tbody></tbody>
     </table>
 
     <script>
-        // GitHub 配置（请修改为你的信息）
-        const REPO_OWNER = "你的用户名";
-        const REPO_NAME = "你的仓库名";
-        const FILE_PATH = "data.json";
-        const API_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`;
-        const TOKEN = "你的GitHub Token";   // 直接填写，或通过localStorage获取
+        // 公共仓库无需 Token，直接读取
+        const REPO_OWNER = "naonao1111-art";      // 替换为你的用户名
+        const REPO_NAME = "class-point-register"; // 替换为你的仓库名
+        const DATA_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data.json`;
 
-        let currentData = { students: [] };
+        let currentStudents = [];
 
         async function loadData() {
             try {
-                const resp = await fetch(API_URL, {
-                    headers: { Authorization: `token ${TOKEN}` }
-                });
-                if (!resp.ok) throw new Error("加载失败");
+                const resp = await fetch(DATA_URL);
+                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
                 const data = await resp.json();
                 const content = atob(data.content);
-                currentData = JSON.parse(content);
-                renderTable(currentData.students);
+                const json = JSON.parse(content);
+                currentStudents = json.students || [];
+                renderTable(currentStudents);
             } catch (err) {
-                document.body.innerHTML += `<p class="error">错误：${err.message}</p>`;
+                document.body.innerHTML += `<p class="error">加载失败：${err.message}</p>`;
             }
         }
 
@@ -61,15 +61,15 @@
 
         document.getElementById("searchBtn").onclick = () => {
             const searchId = document.getElementById("searchId").value.trim();
-            if (!searchId) renderTable(currentData.students);
+            if (!searchId) renderTable(currentStudents);
             else {
-                const filtered = currentData.students.filter(s => s.id.includes(searchId));
+                const filtered = currentStudents.filter(s => s.id.includes(searchId));
                 renderTable(filtered);
             }
         };
         document.getElementById("resetBtn").onclick = () => {
             document.getElementById("searchId").value = "";
-            renderTable(currentData.students);
+            renderTable(currentStudents);
         };
 
         loadData();

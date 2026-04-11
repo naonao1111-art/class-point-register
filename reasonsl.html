@@ -13,19 +13,19 @@
 <body>
     <h1>班级积分加减分记录</h1>
     <table id="reasonTable">
-        <thead><tr><th>时间</th><th>学号</th><th>姓名</th><th>分数变化</th><th>原因</th></tr></thead>
+        <thead>
+            <tr><th>时间</th><th>学号</th><th>姓名</th><th>分数变化</th><th>原因</th></tr>
+        </thead>
         <tbody></tbody>
     </table>
     <script>
-        const REPO_OWNER = "你的用户名";
-        const REPO_NAME = "你的仓库名";
-        const REASONS_FILE = "reasons.json";
-        const URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${REASONS_FILE}`;
-        const TOKEN = "你的GitHub Token";
+        const REPO_OWNER = "naonao1111-art";      // 替换为你的用户名
+        const REPO_NAME = "class-point-register"; // 替换为你的仓库名
+        const REASONS_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/reasons.json`;
 
         async function loadReasons() {
             try {
-                const resp = await fetch(URL, { headers: { Authorization: `token ${TOKEN}` } });
+                const resp = await fetch(REASONS_URL);
                 if (!resp.ok) throw new Error("加载失败");
                 const data = await resp.json();
                 const reasons = JSON.parse(atob(data.content));
@@ -39,7 +39,7 @@
                     row.insertCell(3).innerText = (r.delta > 0 ? "+" : "") + r.delta;
                     row.insertCell(4).innerText = r.reason;
                 });
-            } catch(err) {
+            } catch (err) {
                 document.body.innerHTML += `<p style="color:red">错误：${err.message}</p>`;
             }
         }

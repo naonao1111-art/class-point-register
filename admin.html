@@ -10,20 +10,29 @@
         button { margin: 2px; }
         .error { color: red; }
         .success { color: green; }
+        .token-input { margin-bottom: 10px; background: #f9f9f9; padding: 8px; border-radius: 5px; }
     </style>
 </head>
 <body>
     <div id="loginPanel">
         <h2>管理员登录</h2>
-        <input type="password" id="adminPwd" placeholder="密码">
-        <button id="loginBtn">登录</button>
-        <p id="loginMsg" class="error"></p>
+        <div class="token-input">
+            <label>GitHub Token (需要 repo 权限): </label>
+            <input type="password" id="githubToken" style="width: 300px;" placeholder="输入你的 Personal Access Token">
+            <button id="saveTokenBtn">保存 Token</button>
+            <span id="tokenStatus"></span>
+        </div>
+        <div>
+            <label>后台密码: </label>
+            <input type="password" id="adminPwd" placeholder="密码">
+            <button id="loginBtn">登录</button>
+            <p id="loginMsg" class="error"></p>
+        </div>
     </div>
 
     <div id="adminPanel" style="display:none;">
         <h1>班级积分管理后台</h1>
 
-        <!-- 学生管理 -->
         <div class="section">
             <h3>学生增删改查</h3>
             <div>
@@ -46,15 +55,13 @@
             </table>
         </div>
 
-        <!-- 互换学号 -->
         <div class="section">
-            <h3>互换两个学生的学号（姓名和积分会跟随交换）</h3>
+            <h3>互换学号（姓名和积分会跟随交换）</h3>
             <input type="text" id="swapId1" placeholder="学号A">
             <input type="text" id="swapId2" placeholder="学号B">
             <button id="swapBtn">交换</button>
         </div>
 
-        <!-- 加减分原因记录管理 -->
         <div class="section">
             <h3>加减分原因记录（仅可编辑原因文本）</h3>
             <table id="reasonsTable">
@@ -67,37 +74,38 @@
     </div>
 
     <script>
-        // ========== 配置 ==========
-        const REPO_OWNER = "你的用户名";
-        const REPO_NAME = "你的仓库名";
+        // 配置仓库信息（根据你的实际修改）
+        const REPO_OWNER = "naonao1111-art";
+        const REPO_NAME = "class-point-register";
         const DATA_FILE = "data.json";
         const REASONS_FILE = "reasons.json";
         const DATA_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_FILE}`;
         const REASONS_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${REASONS_FILE}`;
-        const TOKEN = "你的GitHub Token";   // 建议也使用 localStorage
-        const ADMIN_PASSWORD = "yjsawnnslbtn0211";   // 留白让用户自己写
+        const ADMIN_PASSWORD = "123456";  // 请修改为你自己的后台密码
 
+        let currentToken = "";
         let currentStudents = [];
         let currentReasons = [];
         let dataSha = "";
         let reasonsSha = "";
         let selectedStudentId = null;
 
-        // 辅助函数：读取 JSON 文件
-        async function fetchJSON(url) {
-            const resp = await fetch(url, { headers: { Authorization: `token ${TOKEN}` } });
+        // 辅助函数
+        async function fetchJSON(url, token) {
+            const headers = token ? { Authorization: `token ${token}` } : {};
+            const resp = await fetch(url, { headers });
             if (resp.status === 404) return { content: null, sha: null };
             if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
             const data = await resp.json();
             return { content: JSON.parse(atob(data.content)), sha: data.sha };
         }
 
-        async function saveJSON(url, content, sha, message) {
+        async function saveJSON(url, content, sha, token, message) {
             const newContent = btoa(JSON.stringify(content, null, 2));
             const payload = { message, content: newContent, sha };
             const resp = await fetch(url, {
                 method: "PUT",
-                headers: { Authorization: `token ${TOKEN}`, "Content-Type": "application/json" },
+                headers: { Authorization: `token ${token}`, "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
             });
             if (!resp.ok) throw new Error(`保存失败 HTTP ${resp.status}`);
@@ -106,7 +114,7 @@
         }
 
         async function loadAllData() {
-            const dataRes = await fetchJSON(DATA_URL);
+            const dataRes = await fetchJSON(DATA_URL, currentToken);
             if (dataRes.content) {
                 currentStudents = dataRes.content.students || [];
                 dataSha = dataRes.sha;
@@ -114,7 +122,7 @@
                 currentStudents = [];
                 dataSha = null;
             }
-            const reasonsRes = await fetchJSON(REASONS_URL);
+            const reasonsRes = await fetchJSON(REASONS_URL, currentToken);
             if (reasonsRes.content) {
                 currentReasons = reasonsRes.content;
                 reasonsSha = reasonsRes.sha;
@@ -126,14 +134,13 @@
 
         async function saveStudents() {
             const newData = { students: currentStudents };
-            dataSha = await saveJSON(DATA_URL, newData, dataSha, "更新学生数据");
+            dataSha = await saveJSON(DATA_URL, newData, dataSha, currentToken, "更新学生数据");
         }
 
         async function saveReasons() {
-            reasonsSha = await saveJSON(REASONS_URL, currentReasons, reasonsSha, "更新原因记录");
+            reasonsSha = await saveJSON(REASONS_URL, currentReasons, reasonsSha, currentToken, "更新原因记录");
         }
 
-        // 渲染学生表格
         function renderStudentsTable() {
             const tbody = document.querySelector("#stuTable tbody");
             tbody.innerHTML = "";
@@ -151,7 +158,6 @@
             });
         }
 
-        // 渲染原因表格（可编辑原因）
         function renderReasonsTable() {
             const tbody = document.querySelector("#reasonsTable tbody");
             tbody.innerHTML = "";
@@ -180,8 +186,7 @@
             });
         }
 
-        // 增删改查函数
-        function addStudent() {
+        async function addStudent() {
             const id = document.getElementById("stuId").value.trim();
             const name = document.getElementById("stuName").value.trim();
             let score = parseInt(document.getElementById("stuScore").value);
@@ -190,13 +195,12 @@
             score = Math.min(200, Math.max(0, score));
             if (currentStudents.find(s => s.id === id)) { alert("学号已存在"); return; }
             currentStudents.push({ id, name, score });
-            saveStudents().then(() => {
-                renderStudentsTable();
-                document.getElementById("adminMsg").innerText = "添加成功";
-            }).catch(e => alert(e));
+            await saveStudents();
+            renderStudentsTable();
+            document.getElementById("adminMsg").innerText = "添加成功";
         }
 
-        function updateStudent() {
+        async function updateStudent() {
             if (!selectedStudentId) { alert("请先选择一个学生"); return; }
             const id = document.getElementById("stuId").value.trim();
             const name = document.getElementById("stuName").value.trim();
@@ -206,27 +210,24 @@
             score = Math.min(200, Math.max(0, score));
             const index = currentStudents.findIndex(s => s.id === selectedStudentId);
             if (index === -1) return;
-            // 如果学号被修改，需要检查新学号是否已存在（且不是自己）
             if (id !== selectedStudentId && currentStudents.some(s => s.id === id)) {
                 alert("新学号已存在"); return;
             }
             currentStudents[index] = { id, name, score };
-            saveStudents().then(() => {
-                selectedStudentId = id;
-                renderStudentsTable();
-                document.getElementById("adminMsg").innerText = "修改成功";
-            }).catch(e => alert(e));
+            await saveStudents();
+            selectedStudentId = id;
+            renderStudentsTable();
+            document.getElementById("adminMsg").innerText = "修改成功";
         }
 
-        function deleteStudent() {
+        async function deleteStudent() {
             if (!selectedStudentId) { alert("请先选择一个学生"); return; }
             if (!confirm("确定删除吗？")) return;
             currentStudents = currentStudents.filter(s => s.id !== selectedStudentId);
-            saveStudents().then(() => {
-                selectedStudentId = null;
-                renderStudentsTable();
-                document.getElementById("adminMsg").innerText = "删除成功";
-            }).catch(e => alert(e));
+            await saveStudents();
+            selectedStudentId = null;
+            renderStudentsTable();
+            document.getElementById("adminMsg").innerText = "删除成功";
         }
 
         async function swapStudents() {
@@ -236,20 +237,15 @@
             const stu1 = currentStudents.find(s => s.id === id1);
             const stu2 = currentStudents.find(s => s.id === id2);
             if (!stu1 || !stu2) { alert("学号不存在"); return; }
-            // 交换整个记录（包括姓名、分数）
-            const temp = { ...stu1 };
-            stu1.id = stu2.id;
-            stu1.name = stu2.name;
-            stu1.score = stu2.score;
-            stu2.id = temp.id;
-            stu2.name = temp.name;
-            stu2.score = temp.score;
+            // 交换整个对象（id, name, score）
+            const tempId = stu1.id, tempName = stu1.name, tempScore = stu1.score;
+            stu1.id = stu2.id; stu1.name = stu2.name; stu1.score = stu2.score;
+            stu2.id = tempId; stu2.name = tempName; stu2.score = tempScore;
             await saveStudents();
             renderStudentsTable();
             document.getElementById("adminMsg").innerText = "交换成功";
         }
 
-        // 查询功能
         function filterStudents() {
             const searchId = document.getElementById("searchIdAdmin").value.trim();
             if (!searchId) renderStudentsTable();
@@ -273,28 +269,62 @@
         }
 
         // 登录逻辑
+        document.getElementById("saveTokenBtn").onclick = () => {
+            const token = document.getElementById("githubToken").value.trim();
+            if (token) {
+                sessionStorage.setItem("github_token", token);
+                currentToken = token;
+                document.getElementById("tokenStatus").innerText = "Token 已保存（当前会话有效）";
+                document.getElementById("tokenStatus").style.color = "green";
+            } else {
+                document.getElementById("tokenStatus").innerText = "请输入有效的 Token";
+            }
+        };
+
         document.getElementById("loginBtn").onclick = async () => {
             const pwd = document.getElementById("adminPwd").value;
             if (pwd !== ADMIN_PASSWORD) {
                 document.getElementById("loginMsg").innerText = "密码错误";
                 return;
             }
-            document.getElementById("loginPanel").style.display = "none";
-            document.getElementById("adminPanel").style.display = "block";
-            await loadAllData();
-            renderStudentsTable();
-            renderReasonsTable();
-            // 绑定按钮事件
-            document.getElementById("addStuBtn").onclick = addStudent;
-            document.getElementById("updateStuBtn").onclick = updateStudent;
-            document.getElementById("deleteStuBtn").onclick = deleteStudent;
-            document.getElementById("swapBtn").onclick = swapStudents;
-            document.getElementById("searchAdminBtn").onclick = filterStudents;
-            document.getElementById("resetAdminBtn").onclick = () => {
-                document.getElementById("searchIdAdmin").value = "";
+            // 尝试从 sessionStorage 读取 Token
+            let token = sessionStorage.getItem("github_token");
+            if (!token) {
+                token = document.getElementById("githubToken").value.trim();
+                if (!token) {
+                    document.getElementById("loginMsg").innerText = "请先输入并保存 GitHub Token";
+                    return;
+                }
+                sessionStorage.setItem("github_token", token);
+            }
+            currentToken = token;
+            try {
+                await loadAllData();
+                document.getElementById("loginPanel").style.display = "none";
+                document.getElementById("adminPanel").style.display = "block";
                 renderStudentsTable();
-            };
+                renderReasonsTable();
+                // 绑定事件
+                document.getElementById("addStuBtn").onclick = addStudent;
+                document.getElementById("updateStuBtn").onclick = updateStudent;
+                document.getElementById("deleteStuBtn").onclick = deleteStudent;
+                document.getElementById("swapBtn").onclick = swapStudents;
+                document.getElementById("searchAdminBtn").onclick = filterStudents;
+                document.getElementById("resetAdminBtn").onclick = () => {
+                    document.getElementById("searchIdAdmin").value = "";
+                    renderStudentsTable();
+                };
+            } catch (err) {
+                document.getElementById("loginMsg").innerText = "加载数据失败：" + err.message;
+            }
         };
+
+        // 如果已经保存了 Token，可以预填输入框（但不自动登录）
+        const savedToken = sessionStorage.getItem("github_token");
+        if (savedToken) {
+            document.getElementById("githubToken").value = savedToken;
+            document.getElementById("tokenStatus").innerText = "已有保存的 Token（需再次输入密码登录）";
+        }
     </script>
 </body>
 </html>
