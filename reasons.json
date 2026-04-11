@@ -2,15 +2,15 @@
   {
     "timestamp": "2026-04-11 19:02:00",
     "studentId": "039",
-    "studentName": "\u80e1\u5bb5",
+    "studentName": "胡宵",
     "delta": 10,
-    "reason": "\u5b9e\u9a8c\u7a0b\u5e8f"
+    "reason": "实验程序"
   },
   {
     "timestamp": "2026-04-11 19:14:18",
     "studentId": "039",
-    "studentName": "\u80e1\u5bb5",
+    "studentName": "胡宵",
     "delta": -10,
-    "reason": "-10"
+    "reason": "实验程序"
   }
 ]
