@@ -12,5 +12,33 @@
     "studentName": "胡宵",
     "delta": -2,
     "reason": "调试程序"
+  },
+  {
+    "timestamp": "2026-04-11 12:29:20",
+    "studentId": "045",
+    "studentName": "袁煦泽",
+    "delta": 3,
+    "reason": "调试程序（批量）"
+  },
+  {
+    "timestamp": "2026-04-11 12:29:20",
+    "studentId": "046",
+    "studentName": "郑智程",
+    "delta": 3,
+    "reason": "调试程序（批量）"
+  },
+  {
+    "timestamp": "2026-04-11 12:29:20",
+    "studentId": "047",
+    "studentName": "朱晨曦",
+    "delta": 3,
+    "reason": "调试程序（批量）"
+  },
+  {
+    "timestamp": "2026-04-11 12:29:20",
+    "studentId": "048",
+    "studentName": "朱熙元",
+    "delta": 3,
+    "reason": "调试程序（批量）"
   }
 ]
