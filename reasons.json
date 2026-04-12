@@ -22,7 +22,7 @@
   },
   {
     "timestamp": "2026-04-11 12:29:20",
-    "studentId": "016",
+    "studentId": "030",
     "studentName": "郑智程",
     "delta": 3,
     "reason": "调试程序（批量）"
@@ -50,7 +50,7 @@
   },
   {
     "timestamp": "2026-04-11 12:29:45",
-    "studentId": "016",
+    "studentId": "030",
     "studentName": "郑智程",
     "delta": -3,
     "reason": "调试程序（批量）"
