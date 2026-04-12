@@ -374,13 +374,28 @@
             const stu1 = currentStudents.find(s => s.id === id1);
             const stu2 = currentStudents.find(s => s.id === id2);
             if (!stu1 || !stu2) { alert("学号不存在"); return; }
-            // 交换整个对象（id, name, score）
-            const tempId = stu1.id, tempName = stu1.name, tempScore = stu1.score;
-            stu1.id = stu2.id; stu1.name = stu2.name; stu1.score = stu2.score;
-            stu2.id = tempId; stu2.name = tempName; stu2.score = tempScore;
+
+            // 只交换学号（姓名和积分不变）
+            stu1.id = id2;
+            stu2.id = id1;
+
+            // 同步更新 reasons 中所有相关记录的学号
+            for (let r of currentReasons) {
+                 if (r.studentId === id1) {
+                      r.studentId = id2;
+                } else if (r.studentId === id2) {
+                     r.studentId = id1;
+                }
+            }
+
+            // 保存学生数据和原因记录
             await saveStudents();
+            await saveReasons();
+
+            // 刷新表格显示
             renderStudentsTable();
-            document.getElementById("adminMsg").innerText = "交换成功";
+            renderReasonsTable();
+            document.getElementById("adminMsg").innerText = "学号交换成功，并已同步历史记录";
         }
 
         function filterStudents() {
