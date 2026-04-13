@@ -222,5 +222,12 @@
     "studentName": "曾子轩",
     "delta": 2,
     "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 21:50:27",
+    "studentId": "039",
+    "studentName": "胡宵",
+    "delta": -20,
+    "reason": "-20"
   }
 ]
