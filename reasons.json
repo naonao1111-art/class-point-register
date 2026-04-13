@@ -166,5 +166,61 @@
     "studentName": "姚奇胜",
     "delta": -5,
     "reason": "晚三迟到"
+  },
+  {
+    "timestamp": "2026-04-13 13:48:10",
+    "studentId": "010",
+    "studentName": "陈静怡",
+    "delta": 2,
+    "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 13:48:10",
+    "studentId": "001",
+    "studentName": "沈乐妍",
+    "delta": 2,
+    "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 13:48:10",
+    "studentId": "034",
+    "studentName": "盛睿良",
+    "delta": 2,
+    "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 13:48:10",
+    "studentId": "018",
+    "studentName": "苏义涵",
+    "delta": 2,
+    "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 13:48:10",
+    "studentId": "041",
+    "studentName": "童清扬",
+    "delta": 2,
+    "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 13:48:10",
+    "studentId": "042",
+    "studentName": "闫之诺",
+    "delta": 2,
+    "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 13:48:10",
+    "studentId": "020",
+    "studentName": "姚奇胜",
+    "delta": 2,
+    "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 13:48:10",
+    "studentId": "047",
+    "studentName": "曾子轩",
+    "delta": 2,
+    "reason": "班会课均分"
   }
 ]
