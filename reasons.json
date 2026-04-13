@@ -229,5 +229,61 @@
     "studentName": "胡宵",
     "delta": -20,
     "reason": "调试程序"
+  },
+  {
+    "timestamp": "2026-04-13 13:55:22",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": 5,
+    "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 13:55:22",
+    "studentId": "037",
+    "studentName": "陈昀泽",
+    "delta": 5,
+    "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 13:55:22",
+    "studentId": "045",
+    "studentName": "范晟轩",
+    "delta": 5,
+    "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 13:55:22",
+    "studentId": "022",
+    "studentName": "方晟睿",
+    "delta": 5,
+    "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 13:55:22",
+    "studentId": "017",
+    "studentName": "黄智恒",
+    "delta": 5,
+    "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 13:55:22",
+    "studentId": "028",
+    "studentName": "李岩蹊",
+    "delta": 5,
+    "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 13:55:22",
+    "studentId": "048",
+    "studentName": "杨子鸣",
+    "delta": 5,
+    "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 13:55:22",
+    "studentId": "004",
+    "studentName": "叶齐楚",
+    "delta": 5,
+    "reason": "班会课均分"
   }
 ]
