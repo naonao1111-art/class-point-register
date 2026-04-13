@@ -138,5 +138,33 @@
     "studentName": "沈姚栎",
     "delta": 1,
     "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 12:35:28",
+    "studentId": "010",
+    "studentName": "陈静怡",
+    "delta": -5,
+    "reason": "晚三迟到"
+  },
+  {
+    "timestamp": "2026-04-13 12:35:28",
+    "studentId": "045",
+    "studentName": "范晟轩",
+    "delta": -5,
+    "reason": "晚三迟到"
+  },
+  {
+    "timestamp": "2026-04-13 12:35:28",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": -5,
+    "reason": "晚三迟到"
+  },
+  {
+    "timestamp": "2026-04-13 12:35:28",
+    "studentId": "020",
+    "studentName": "姚奇胜",
+    "delta": -5,
+    "reason": "晚三迟到"
   }
 ]
