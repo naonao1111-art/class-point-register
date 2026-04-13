@@ -82,5 +82,61 @@
     "studentName": "叶齐楚",
     "delta": 10,
     "reason": "组织班会课"
+  },
+  {
+    "timestamp": "2026-04-13 12:26:58",
+    "studentId": "038",
+    "studentName": "方鸣扬",
+    "delta": 1,
+    "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 12:26:58",
+    "studentId": "027",
+    "studentName": "吕峥程",
+    "delta": 1,
+    "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 12:26:58",
+    "studentId": "003",
+    "studentName": "马辰佩",
+    "delta": 1,
+    "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 12:26:58",
+    "studentId": "006",
+    "studentName": "马伊韩",
+    "delta": 1,
+    "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 12:26:58",
+    "studentId": "023",
+    "studentName": "牧周磊",
+    "delta": 1,
+    "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 12:26:58",
+    "studentId": "026",
+    "studentName": "潘烨磊",
+    "delta": 1,
+    "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 12:26:58",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": 1,
+    "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 12:26:58",
+    "studentId": "005",
+    "studentName": "沈姚栎",
+    "delta": 1,
+    "reason": "班会课均分"
   }
 ]
