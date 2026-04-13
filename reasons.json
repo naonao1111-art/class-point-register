@@ -68,5 +68,12 @@
     "studentName": "朱熙元",
     "delta": -3,
     "reason": "调试程序（批量）"
+  },
+  {
+    "timestamp": "2026-04-13 12:26:02",
+    "studentId": "039",
+    "studentName": "胡宵",
+    "delta": 20,
+    "reason": "大考总分前10"
   }
 ]
