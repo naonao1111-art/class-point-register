@@ -75,5 +75,12 @@
     "studentName": "胡宵",
     "delta": 20,
     "reason": "大考总分前10"
+  },
+  {
+    "timestamp": "2026-04-13 16:21:44",
+    "studentId": "004",
+    "studentName": "叶齐楚",
+    "delta": 10,
+    "reason": "组织班会课"
   }
 ]
