@@ -334,5 +334,54 @@
     "studentName": "俞齐",
     "delta": 2,
     "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 13:57:10",
+    "studentId": "032",
+    "studentName": "程舒远",
+    "delta": 1,
+    "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 13:57:10",
+    "studentId": "007",
+    "studentName": "金鑫璇",
+    "delta": 1,
+    "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 13:57:10",
+    "studentId": "024",
+    "studentName": "沈天辰",
+    "delta": 1,
+    "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 13:57:10",
+    "studentId": "008",
+    "studentName": "王李婧",
+    "delta": 1,
+    "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 13:57:10",
+    "studentId": "014",
+    "studentName": "姚腾浩",
+    "delta": 1,
+    "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 13:57:10",
+    "studentId": "013",
+    "studentName": "袁煦泽",
+    "delta": 1,
+    "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 13:57:10",
+    "studentId": "040",
+    "studentName": "朱熙元",
+    "delta": 1,
+    "reason": "班会课均分"
   }
 ]
