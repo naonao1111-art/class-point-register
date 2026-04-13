@@ -285,5 +285,54 @@
     "studentName": "叶齐楚",
     "delta": 5,
     "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 13:56:19",
+    "studentId": "035",
+    "studentName": "冯丰硕",
+    "delta": 2,
+    "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 13:56:19",
+    "studentId": "002",
+    "studentName": "胡凯琳",
+    "delta": 2,
+    "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 13:56:19",
+    "studentId": "031",
+    "studentName": "刘博凯",
+    "delta": 2,
+    "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 13:56:19",
+    "studentId": "009",
+    "studentName": "陆玛俐",
+    "delta": 2,
+    "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 13:56:19",
+    "studentId": "039",
+    "studentName": "胡宵",
+    "delta": 2,
+    "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 13:56:19",
+    "studentId": "033",
+    "studentName": "应扎吉",
+    "delta": 2,
+    "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 13:56:19",
+    "studentId": "025",
+    "studentName": "俞齐",
+    "delta": 2,
+    "reason": "班会课均分"
   }
 ]
