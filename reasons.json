@@ -383,5 +383,12 @@
     "studentName": "朱熙元",
     "delta": 1,
     "reason": "班会课均分"
+  },
+  {
+    "timestamp": "2026-04-13 22:01:51",
+    "studentId": "037",
+    "studentName": "陈昀泽",
+    "delta": -5,
+    "reason": "自习课讲话、迟到"
   }
 ]
