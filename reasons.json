@@ -390,5 +390,26 @@
     "studentName": "陈昀泽",
     "delta": -5,
     "reason": "自习课讲话、迟到"
+  },
+  {
+    "timestamp": "2026-04-14 12:33:38",
+    "studentId": "035",
+    "studentName": "冯丰硕",
+    "delta": -5,
+    "reason": "2026.4.14晚三迟到"
+  },
+  {
+    "timestamp": "2026-04-14 12:33:38",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": -5,
+    "reason": "2026.4.14晚三迟到"
+  },
+  {
+    "timestamp": "2026-04-14 12:33:38",
+    "studentId": "033",
+    "studentName": "应扎吉",
+    "delta": -5,
+    "reason": "2026.4.14晚三迟到"
   }
 ]
