@@ -425,5 +425,12 @@
     "studentName": "冯丰硕",
     "delta": -5,
     "reason": "值日扣分0.5"
+  },
+  {
+    "timestamp": "2026-04-15 20:01:15",
+    "studentId": "035",
+    "studentName": "冯丰硕",
+    "delta": -5,
+    "reason": "自习课讲话、迟到"
   }
 ]
