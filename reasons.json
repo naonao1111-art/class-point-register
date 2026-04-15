@@ -460,5 +460,12 @@
     "studentName": "黄智恒",
     "delta": -5,
     "reason": "自习课讲话、迟到"
+  },
+  {
+    "timestamp": "2026-04-15 20:42:41",
+    "studentId": "039",
+    "studentName": "胡宵",
+    "delta": -5,
+    "reason": "-5"
   }
 ]
