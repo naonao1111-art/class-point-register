@@ -467,5 +467,19 @@
     "studentName": "胡宵",
     "delta": -5,
     "reason": "-5"
+  },
+  {
+    "timestamp": "2026-04-16 00:07:58",
+    "studentId": "010",
+    "studentName": "陈静怡",
+    "delta": -5,
+    "reason": "4.16早上迟到"
+  },
+  {
+    "timestamp": "2026-04-16 00:07:58",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": -5,
+    "reason": "4.16早上迟到"
   }
 ]
