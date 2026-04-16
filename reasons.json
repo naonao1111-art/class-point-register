@@ -488,5 +488,12 @@
     "studentName": "沈天辰",
     "delta": 5,
     "reason": "扣分恢复"
+  },
+  {
+    "timestamp": "2026-04-16 20:28:14",
+    "studentId": "007",
+    "studentName": "金鑫璇",
+    "delta": -5,
+    "reason": "自习课讲话、迟到"
   }
 ]
