@@ -481,5 +481,12 @@
     "studentName": "濮天昊",
     "delta": -5,
     "reason": "4.16早上迟到"
+  },
+  {
+    "timestamp": "2026-04-16 00:09:19",
+    "studentId": "024",
+    "studentName": "沈天辰",
+    "delta": 5,
+    "reason": "扣分恢复"
   }
 ]
