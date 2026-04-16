@@ -495,5 +495,12 @@
     "studentName": "金鑫璇",
     "delta": -5,
     "reason": "自习课讲话、迟到"
+  },
+  {
+    "timestamp": "2026-04-16 20:29:04",
+    "studentId": "026",
+    "studentName": "潘烨磊",
+    "delta": -5,
+    "reason": "自习课讲话、迟到"
   }
 ]
