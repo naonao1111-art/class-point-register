@@ -516,5 +516,12 @@
     "studentName": "沈天辰",
     "delta": -5,
     "reason": "自习课讲话、迟到"
+  },
+  {
+    "timestamp": "2026-04-17 20:37:37",
+    "studentId": "027",
+    "studentName": "吕峥程",
+    "delta": -5,
+    "reason": "自习课讲话、迟到"
   }
 ]
