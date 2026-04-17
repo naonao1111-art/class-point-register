@@ -523,5 +523,12 @@
     "studentName": "吕峥程",
     "delta": -5,
     "reason": "自习课讲话、迟到"
+  },
+  {
+    "timestamp": "2026-04-17 20:38:28",
+    "studentId": "044",
+    "studentName": "金智宸",
+    "delta": -5,
+    "reason": "自习课讲话、迟到"
   }
 ]
