@@ -544,5 +544,33 @@
     "studentName": "胡宵",
     "delta": 15,
     "reason": "单科班排第一"
+  },
+  {
+    "timestamp": "2026-04-18 12:36:47",
+    "studentId": "032",
+    "studentName": "程舒远",
+    "delta": 10,
+    "reason": "4.15技术总分2-5"
+  },
+  {
+    "timestamp": "2026-04-18 12:36:47",
+    "studentId": "015",
+    "studentName": "冯永昊",
+    "delta": 10,
+    "reason": "4.15技术总分2-5"
+  },
+  {
+    "timestamp": "2026-04-18 12:36:47",
+    "studentId": "019",
+    "studentName": "顾槿宸",
+    "delta": 10,
+    "reason": "4.15技术总分2-5"
+  },
+  {
+    "timestamp": "2026-04-18 12:36:47",
+    "studentId": "033",
+    "studentName": "应扎吉",
+    "delta": 10,
+    "reason": "4.15技术总分2-5"
   }
 ]
