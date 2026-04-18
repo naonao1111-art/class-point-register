@@ -537,5 +537,12 @@
     "studentName": "胡宵",
     "delta": -5,
     "reason": "扣分0.5"
+  },
+  {
+    "timestamp": "2026-04-18 20:34:33",
+    "studentId": "039",
+    "studentName": "胡宵",
+    "delta": 15,
+    "reason": "单科班排第一"
   }
 ]
