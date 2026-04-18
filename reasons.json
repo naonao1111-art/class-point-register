@@ -530,5 +530,12 @@
     "studentName": "金智宸",
     "delta": -5,
     "reason": "自习课讲话、迟到"
+  },
+  {
+    "timestamp": "2026-04-18 20:34:04",
+    "studentId": "039",
+    "studentName": "胡宵",
+    "delta": -5,
+    "reason": "扣分0.5"
   }
 ]
