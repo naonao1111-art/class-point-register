@@ -572,5 +572,75 @@
     "studentName": "应扎吉",
     "delta": 10,
     "reason": "4.15技术总分2-5"
+  },
+  {
+    "timestamp": "2026-04-18 12:38:26",
+    "studentId": "010",
+    "studentName": "陈静怡",
+    "delta": 7,
+    "reason": "4.15技术总分6-15"
+  },
+  {
+    "timestamp": "2026-04-18 12:38:26",
+    "studentId": "038",
+    "studentName": "方鸣扬",
+    "delta": 7,
+    "reason": "4.15技术总分6-15"
+  },
+  {
+    "timestamp": "2026-04-18 12:38:26",
+    "studentId": "027",
+    "studentName": "吕峥程",
+    "delta": 7,
+    "reason": "4.15技术总分6-15"
+  },
+  {
+    "timestamp": "2026-04-18 12:38:26",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": 7,
+    "reason": "4.15技术总分6-15"
+  },
+  {
+    "timestamp": "2026-04-18 12:38:26",
+    "studentId": "041",
+    "studentName": "童清扬",
+    "delta": 7,
+    "reason": "4.15技术总分6-15"
+  },
+  {
+    "timestamp": "2026-04-18 12:38:26",
+    "studentId": "016",
+    "studentName": "徐志翔",
+    "delta": 7,
+    "reason": "4.15技术总分6-15"
+  },
+  {
+    "timestamp": "2026-04-18 12:38:26",
+    "studentId": "042",
+    "studentName": "闫之诺",
+    "delta": 7,
+    "reason": "4.15技术总分6-15"
+  },
+  {
+    "timestamp": "2026-04-18 12:38:26",
+    "studentId": "036",
+    "studentName": "姚竣豪",
+    "delta": 7,
+    "reason": "4.15技术总分6-15"
+  },
+  {
+    "timestamp": "2026-04-18 12:38:26",
+    "studentId": "012",
+    "studentName": "郑智程",
+    "delta": 7,
+    "reason": "4.15技术总分6-15"
+  },
+  {
+    "timestamp": "2026-04-18 12:38:26",
+    "studentId": "047",
+    "studentName": "曾子轩",
+    "delta": 7,
+    "reason": "4.15技术总分6-15"
   }
 ]
