@@ -747,5 +747,61 @@
     "studentName": "濮天昊",
     "delta": -5,
     "reason": "4.22早上迟到"
+  },
+  {
+    "timestamp": "2026-04-26 11:20:26",
+    "studentId": "035",
+    "studentName": "冯丰硕",
+    "delta": -10,
+    "reason": "中午未静班"
+  },
+  {
+    "timestamp": "2026-04-26 11:20:26",
+    "studentId": "002",
+    "studentName": "胡凯琳",
+    "delta": -10,
+    "reason": "中午未静班"
+  },
+  {
+    "timestamp": "2026-04-26 11:20:26",
+    "studentId": "031",
+    "studentName": "刘博凯",
+    "delta": -10,
+    "reason": "中午未静班"
+  },
+  {
+    "timestamp": "2026-04-26 11:20:26",
+    "studentId": "046",
+    "studentName": "刘昊",
+    "delta": -10,
+    "reason": "中午未静班"
+  },
+  {
+    "timestamp": "2026-04-26 11:20:26",
+    "studentId": "009",
+    "studentName": "陆玛俐",
+    "delta": -10,
+    "reason": "中午未静班"
+  },
+  {
+    "timestamp": "2026-04-26 11:20:26",
+    "studentId": "039",
+    "studentName": "胡宵",
+    "delta": -10,
+    "reason": "中午未静班"
+  },
+  {
+    "timestamp": "2026-04-26 11:20:26",
+    "studentId": "033",
+    "studentName": "应扎吉",
+    "delta": -10,
+    "reason": "中午未静班"
+  },
+  {
+    "timestamp": "2026-04-26 11:20:26",
+    "studentId": "025",
+    "studentName": "俞齐",
+    "delta": -10,
+    "reason": "中午未静班"
   }
 ]
