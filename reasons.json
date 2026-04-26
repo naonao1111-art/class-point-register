@@ -712,5 +712,26 @@
     "studentName": "朱熙元",
     "delta": 3,
     "reason": "4.15技术总分16-25"
+  },
+  {
+    "timestamp": "2026-04-26 01:59:24",
+    "studentId": "017",
+    "studentName": "黄智恒",
+    "delta": -5,
+    "reason": "4.21周二晚自习讲话"
+  },
+  {
+    "timestamp": "2026-04-26 01:59:24",
+    "studentId": "031",
+    "studentName": "刘博凯",
+    "delta": -5,
+    "reason": "4.21周二晚自习讲话"
+  },
+  {
+    "timestamp": "2026-04-26 01:59:24",
+    "studentId": "004",
+    "studentName": "叶齐楚",
+    "delta": -5,
+    "reason": "4.21周二晚自习讲话"
   }
 ]
