@@ -740,5 +740,12 @@
     "studentName": "陈静怡",
     "delta": -5,
     "reason": "4.21周二晚自习讲话"
+  },
+  {
+    "timestamp": "2026-04-26 04:43:55",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": -5,
+    "reason": "4.22早上迟到"
   }
 ]
