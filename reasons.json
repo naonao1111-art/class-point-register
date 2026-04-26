@@ -803,5 +803,26 @@
     "studentName": "俞齐",
     "delta": -10,
     "reason": "中午未静班"
+  },
+  {
+    "timestamp": "2026-04-26 13:52:51",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": -5,
+    "reason": "2026.4.26晚自习迟到"
+  },
+  {
+    "timestamp": "2026-04-26 13:52:51",
+    "studentId": "017",
+    "studentName": "黄智恒",
+    "delta": -5,
+    "reason": "2026.4.26晚自习迟到"
+  },
+  {
+    "timestamp": "2026-04-26 13:52:51",
+    "studentId": "042",
+    "studentName": "闫之诺",
+    "delta": -5,
+    "reason": "2026.4.26晚自习迟到"
   }
 ]
