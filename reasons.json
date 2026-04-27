@@ -1195,5 +1195,19 @@
     "studentName": "朱熙元",
     "delta": -10,
     "reason": "中午未静班"
+  },
+  {
+    "timestamp": "2026-04-27 11:27:39",
+    "studentId": "026",
+    "studentName": "潘烨磊",
+    "delta": -5,
+    "reason": "4.27晚二迟到"
+  },
+  {
+    "timestamp": "2026-04-27 11:27:39",
+    "studentId": "005",
+    "studentName": "沈姚栎",
+    "delta": -5,
+    "reason": "4.27晚二迟到"
   }
 ]
