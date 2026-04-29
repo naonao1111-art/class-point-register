@@ -1216,5 +1216,54 @@
     "studentName": "胡宵",
     "delta": -5,
     "reason": "4.28早上迟到"
+  },
+  {
+    "timestamp": "2026-04-29 13:50:37",
+    "studentId": "015",
+    "studentName": "冯永昊",
+    "delta": 3,
+    "reason": "4.28值日认真"
+  },
+  {
+    "timestamp": "2026-04-29 13:50:37",
+    "studentId": "019",
+    "studentName": "顾槿宸",
+    "delta": 3,
+    "reason": "4.28值日认真"
+  },
+  {
+    "timestamp": "2026-04-29 13:50:37",
+    "studentId": "044",
+    "studentName": "金智宸",
+    "delta": 3,
+    "reason": "4.28值日认真"
+  },
+  {
+    "timestamp": "2026-04-29 13:50:37",
+    "studentId": "043",
+    "studentName": "刘德临",
+    "delta": 3,
+    "reason": "4.28值日认真"
+  },
+  {
+    "timestamp": "2026-04-29 13:50:37",
+    "studentId": "016",
+    "studentName": "徐志翔",
+    "delta": 3,
+    "reason": "4.28值日认真"
+  },
+  {
+    "timestamp": "2026-04-29 13:50:37",
+    "studentId": "036",
+    "studentName": "姚竣豪",
+    "delta": 3,
+    "reason": "4.28值日认真"
+  },
+  {
+    "timestamp": "2026-04-29 13:50:37",
+    "studentId": "012",
+    "studentName": "郑智程",
+    "delta": 3,
+    "reason": "4.28值日认真"
   }
 ]
