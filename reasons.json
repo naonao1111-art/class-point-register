@@ -1209,5 +1209,12 @@
     "studentName": "沈姚栎",
     "delta": -5,
     "reason": "4.27晚二迟到"
+  },
+  {
+    "timestamp": "2026-04-29 13:48:28",
+    "studentId": "039",
+    "studentName": "胡宵",
+    "delta": -5,
+    "reason": "4.28早上迟到"
   }
 ]
