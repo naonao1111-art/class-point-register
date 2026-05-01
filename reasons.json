@@ -1293,5 +1293,12 @@
     "studentName": "胡宵",
     "delta": 1,
     "reason": "2026.4.30try"
+  },
+  {
+    "timestamp": "2026-05-01 15:52:24",
+    "studentId": "039",
+    "studentName": "胡宵",
+    "delta": -1,
+    "reason": "2026.4.30try"
   }
 ]
