@@ -7,13 +7,14 @@
         body { font-family: Arial, sans-serif; margin: 20px; }
         table { border-collapse: collapse; width: 100%; margin-top: 20px; }
         th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
-        th { background-color: #f2f2f2; }
+        th { background-color: #f2f2f2; cursor: pointer; user-select: none; }
+        th:hover { background-color: #e0e0e0; }
         .error { color: red; }
         .search-box { margin-bottom: 10px; }
     </style>
 </head>
 <body>
-    <h1>班级积分公示板（只读）</h1>
+    <h1>班级积分公示板</h1>
     <div class="search-box">
         <input type="text" id="searchId" placeholder="按学号查询">
         <button id="searchBtn">查询</button>
@@ -21,26 +22,27 @@
     </div>
     <table id="scoreTable">
         <thead>
-            <tr><th>学号</th><th>姓名</th><th>积分</th></tr>
+            <tr>
+                <th data-sort="id">学号 ▲▼</th>
+                <th data-sort="name">姓名 ▲▼</th>
+                <th data-sort="score">积分 ▲▼</th>
+            </tr>
         </thead>
         <tbody></tbody>
     </table>
 
     <script>
-        // ========== 配置（请修改为你的实际信息）==========
-        const REPO_OWNER = "naonao1111-art";      // 替换为你的用户名
-        const REPO_NAME = "class-point-register"; // 替换为你的仓库名
+        const REPO_OWNER = "naonao1111-art";
+        const REPO_NAME = "class-point-register";
         const DATA_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data.json`;
 
         let currentStudents = [];
+        let currentSort = { field: 'id', order: 'asc' }; // 默认学号升序
 
-        // 正确的 base64 解码函数（支持 UTF-8 中文）
         function base64DecodeToUtf8(base64Str) {
             const binaryStr = atob(base64Str);
             const bytes = new Uint8Array(binaryStr.length);
-            for (let i = 0; i < binaryStr.length; i++) {
-                bytes[i] = binaryStr.charCodeAt(i);
-            }
+            for (let i = 0; i < binaryStr.length; i++) bytes[i] = binaryStr.charCodeAt(i);
             return new TextDecoder('utf-8').decode(bytes);
         }
 
@@ -58,10 +60,34 @@
             }
         }
 
+        // 排序函数
+        function sortStudents(students, field, order) {
+            const sorted = [...students];
+            sorted.sort((a, b) => {
+                let valA = a[field];
+                let valB = b[field];
+                if (field === 'score') {
+                    valA = Number(valA);
+                    valB = Number(valB);
+                    if (valA < valB) return order === 'asc' ? -1 : 1;
+                    if (valA > valB) return order === 'asc' ? 1 : -1;
+                    return 0;
+                } else {
+                    // 对于字符串（学号、姓名），使用拼音排序
+                    valA = String(valA);
+                    valB = String(valB);
+                    const compareResult = valA.localeCompare(valB, 'zh-CN');
+                    return order === 'asc' ? compareResult : -compareResult;
+                }
+            });
+            return sorted;
+        }
+
         function renderTable(students) {
+            const sorted = sortStudents(students, currentSort.field, currentSort.order);
             const tbody = document.querySelector("#scoreTable tbody");
             tbody.innerHTML = "";
-            students.forEach(s => {
+            sorted.forEach(s => {
                 const row = tbody.insertRow();
                 row.insertCell(0).innerText = s.id;
                 row.insertCell(1).innerText = s.name;
@@ -69,13 +95,24 @@
             });
         }
 
+        // 处理排序点击
+        document.querySelectorAll("#scoreTable th").forEach(th => {
+            th.addEventListener("click", () => {
+                const field = th.getAttribute("data-sort");
+                if (currentSort.field === field) {
+                    currentSort.order = currentSort.order === 'asc' ? 'desc' : 'asc';
+                } else {
+                    currentSort.field = field;
+                    currentSort.order = 'asc';
+                }
+                renderTable(currentStudents);
+            });
+        });
+
         document.getElementById("searchBtn").onclick = () => {
             const searchId = document.getElementById("searchId").value.trim();
-            if (!searchId) renderTable(currentStudents);
-            else {
-                const filtered = currentStudents.filter(s => s.id.includes(searchId));
-                renderTable(filtered);
-            }
+            const filtered = searchId ? currentStudents.filter(s => s.id.includes(searchId)) : currentStudents;
+            renderTable(filtered);
         };
         document.getElementById("resetBtn").onclick = () => {
             document.getElementById("searchId").value = "";

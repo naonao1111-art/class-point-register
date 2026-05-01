@@ -11,7 +11,10 @@
         .error { color: red; }
         .success { color: green; }
         .token-input { margin-bottom: 10px; background: #f9f9f9; padding: 8px; border-radius: 5px; }
+        th { cursor: pointer; user-select: none; background-color: #f2f2f2; }
+        th:hover { background-color: #e0e0e0; }
     </style>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 </head>
 <body>
     <div id="loginPanel">
@@ -42,21 +45,24 @@
                 <button id="addStuBtn">添加学生</button>
                 <button id="updateStuBtn">修改当前选中</button>
                 <button id="deleteStuBtn">删除选中</button>
+                <button id="resetInitialBtn" style="background-color:#ff9800;">重置所有积分为0</button>
             </div>
             <hr>
             <div>
                 <input type="text" id="searchIdAdmin" placeholder="按学号查询">
                 <button id="searchAdminBtn">查询</button>
                 <button id="resetAdminBtn">显示全部</button>
+                <button id="exportStudentsBtn">导出学生积分表 (XLSX)</button>
+                <button id="exportReasonsBtn">导出积分变化记录 (XLSX)</button>
             </div>
             <table id="stuTable">
                 <thead>
                     <tr>
+                        <th data-sort="id">学号 ▲▼</th>
+                        <th data-sort="name">姓名 ▲▼</th>
+                        <th data-sort="score">积分 ▲▼</th>
                         <th>选择</th>
-                        <th>单选</th>
-                        <th>学号</th>
-                        <th>姓名</th>
-                        <th>积分</th>
+                        <th>操作</th>
                     </tr>
                 </thead>
                 <tbody></tbody>
@@ -64,7 +70,7 @@
         </div>
 
         <div class="section">
-            <h3>互换学号（姓名和积分会跟随交换）</h3>
+            <h3>互换学号（只交换学号，姓名和积分不变）</h3>
             <input type="text" id="swapId1" placeholder="学号A">
             <input type="text" id="swapId2" placeholder="学号B">
             <button id="swapBtn">交换</button>
@@ -105,15 +111,27 @@
         <p id="adminMsg"></p>
     </div>
 
+    <!-- 密码模态框 -->
+    <div id="passwordModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;">
+        <div style="background:white; width:300px; margin:100px auto; padding:20px; border-radius:8px;">
+            <h3>请输入管理员密码</h3>
+            <input type="password" id="modalPassword" style="width:100%; padding:5px;">
+            <div style="margin-top:10px;">
+                <button id="modalConfirmBtn">确认</button>
+                <button id="modalCancelBtn">取消</button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // ========== 配置（请修改为你的实际信息）==========
+        // ========== 配置 ==========
         const REPO_OWNER = "naonao1111-art";
         const REPO_NAME = "class-point-register";
         const DATA_FILE = "data.json";
         const REASONS_FILE = "reasons.json";
         const DATA_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_FILE}`;
         const REASONS_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${REASONS_FILE}`;
-        const ADMIN_PASSWORD = "yjsawnnslbtn0211";  // 请修改为你自己的后台密码
+        const ADMIN_PASSWORD = "yjsawnnslbtn0211";  // 请修改
 
         let currentToken = "";
         let currentStudents = [];
@@ -121,28 +139,24 @@
         let dataSha = "";
         let reasonsSha = "";
         let selectedStudentId = null;
+        let currentSort = { field: 'id', order: 'asc' };
 
-        // ========== 正确的 Base64 编解码（支持 UTF-8 中文） ==========
+        // Base64 编解码
         function base64DecodeToUtf8(base64Str) {
             const binaryStr = atob(base64Str);
             const bytes = new Uint8Array(binaryStr.length);
-            for (let i = 0; i < binaryStr.length; i++) {
-                bytes[i] = binaryStr.charCodeAt(i);
-            }
+            for (let i = 0; i < binaryStr.length; i++) bytes[i] = binaryStr.charCodeAt(i);
             return new TextDecoder('utf-8').decode(bytes);
         }
-
         function utf8ToBase64(str) {
             const encoder = new TextEncoder();
             const data = encoder.encode(str);
             let binary = '';
-            for (let i = 0; i < data.length; i++) {
-                binary += String.fromCharCode(data[i]);
-            }
+            for (let i = 0; i < data.length; i++) binary += String.fromCharCode(data[i]);
             return btoa(binary);
         }
 
-        // ========== GitHub API 操作 ==========
+        // GitHub API
         async function fetchJSON(url, token) {
             const headers = token ? { Authorization: `token ${token}` } : {};
             const resp = await fetch(url, { headers });
@@ -152,7 +166,6 @@
             const content = JSON.parse(base64DecodeToUtf8(data.content));
             return { content, sha: data.sha };
         }
-
         async function saveJSON(url, content, sha, token, message) {
             const jsonStr = JSON.stringify(content, null, 2);
             const newContent = utf8ToBase64(jsonStr);
@@ -185,41 +198,61 @@
                 reasonsSha = null;
             }
         }
-
         async function saveStudents() {
             const newData = { students: currentStudents };
             dataSha = await saveJSON(DATA_URL, newData, dataSha, currentToken, "更新学生数据");
         }
-
         async function saveReasons() {
             reasonsSha = await saveJSON(REASONS_URL, currentReasons, reasonsSha, currentToken, "更新原因记录");
         }
 
-        // ========== 渲染表格 ==========
+        // 排序函数
+        function sortStudents(students, field, order) {
+            const sorted = [...students];
+            sorted.sort((a, b) => {
+                let valA = a[field];
+                let valB = b[field];
+                if (field === 'score') {
+                    valA = Number(valA);
+                    valB = Number(valB);
+                    if (valA < valB) return order === 'asc' ? -1 : 1;
+                    if (valA > valB) return order === 'asc' ? 1 : -1;
+                    return 0;
+                } else {
+                    // 对于字符串（学号、姓名），使用拼音排序
+                    valA = String(valA);
+                    valB = String(valB);
+                    const compareResult = valA.localeCompare(valB, 'zh-CN');
+                    return order === 'asc' ? compareResult : -compareResult;
+                }
+            });
+            return sorted;
+        }
+
+        // 渲染学生表格（带排序）
         function renderStudentsTable() {
             const tbody = document.querySelector("#stuTable tbody");
             tbody.innerHTML = "";
-            currentStudents.forEach(s => {
+            const sorted = sortStudents(currentStudents, currentSort.field, currentSort.order);
+            sorted.forEach(s => {
                 const row = tbody.insertRow();
-                // 复选框（多选）
-                const chkCell = row.insertCell(0);
+                row.insertCell(0).innerText = s.id;
+                row.insertCell(1).innerText = s.name;
+                row.insertCell(2).innerText = s.score;
+                const chkCell = row.insertCell(3);
                 const chk = document.createElement("input");
                 chk.type = "checkbox";
                 chk.className = "student-checkbox";
                 chk.value = s.id;
                 chkCell.appendChild(chk);
-                // 单选按钮（用于单个修改）
-                const radioCell = row.insertCell(1);
+                const actionCell = row.insertCell(4);
                 const radio = document.createElement("input");
                 radio.type = "radio";
                 radio.name = "selectedStu";
                 radio.value = s.id;
                 radio.onclick = () => { selectedStudentId = s.id; };
-                radioCell.appendChild(radio);
-                // 学号、姓名、积分
-                row.insertCell(2).innerText = s.id;
-                row.insertCell(3).innerText = s.name;
-                row.insertCell(4).innerText = s.score;
+                actionCell.appendChild(radio);
+                actionCell.appendChild(document.createTextNode(" 选中"));
             });
         }
 
@@ -251,32 +284,18 @@
             });
         }
 
-        // ========== 批量修改功能 ==========
+        // 批量修改
         async function batchUpdate() {
-            // 验证管理员密码
-            const pwd = prompt("请输入管理员密码进行批量修改:");
-            if (pwd !== ADMIN_PASSWORD) {
-                alert("密码错误，操作取消");
-                return;
-            }
+            const pwd = await showPasswordModal();
+            if (pwd === null || pwd !== ADMIN_PASSWORD) { alert("密码错误，操作取消"); return; }
 
             const checkboxes = document.querySelectorAll(".student-checkbox:checked");
-            if (checkboxes.length === 0) {
-                alert("请至少选择一个学生");
-                return;
-            }
+            if (checkboxes.length === 0) { alert("请至少选择一个学生"); return; }
             const delta = parseInt(document.getElementById("batchDelta").value);
-            if (isNaN(delta)) {
-                alert("请输入有效的分数变化");
-                return;
-            }
+            if (isNaN(delta)) { alert("请输入有效的分数变化"); return; }
             const reason = document.getElementById("batchReason").value.trim();
-            if (!reason) {
-                alert("请输入修改原因");
-                return;
-            }
+            if (!reason) { alert("请输入修改原因"); return; }
 
-            // 收集需要修改的学生
             const updates = [];
             for (let chk of checkboxes) {
                 const sid = chk.value;
@@ -284,30 +303,19 @@
                 if (student) {
                     let newScore = student.score + delta;
                     newScore = Math.min(200, Math.max(0, newScore));
-                    if (newScore !== student.score) {
-                        updates.push({ student, oldScore: student.score, newScore });
-                    }
+                    if (newScore !== student.score) updates.push({ student, newScore });
                 }
             }
-            if (updates.length === 0) {
-                alert("所选学生积分均无变化（已达上限或下限）");
-                return;
-            }
+            if (updates.length === 0) { alert("所选学生积分均无变化（已达上限或下限）"); return; }
+            if (!confirm(`即将修改 ${updates.length} 名学生，积分变化 ${delta>0?"+":""}${delta}，原因：“${reason}”。确认吗？`)) return;
 
-            if (!confirm(`即将修改 ${updates.length} 名学生，积分变化 ${delta>0?"+":""}${delta}，原因：“${reason}”。确认吗？`)) {
-                return;
-            }
-
-            // 修改内存中学生积分
-            for (let u of updates) {
-                u.student.score = u.newScore;
-            }
+            for (let u of updates) u.student.score = u.newScore;
             await saveStudents();
 
-            // 追加原因记录
-            const now = new Date().toISOString().slice(0,19).replace('T',' ');
+            const now = new Date();
+            const timestamp = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
             const newRecords = updates.map(u => ({
-                timestamp: now,
+                timestamp: timestamp,
                 studentId: u.student.id,
                 studentName: u.student.name,
                 delta: delta,
@@ -316,13 +324,50 @@
             currentReasons.push(...newRecords);
             await saveReasons();
 
-            // 刷新界面
             renderStudentsTable();
             renderReasonsTable();
             document.getElementById("adminMsg").innerText = `批量修改成功，共 ${updates.length} 名学生`;
         }
 
-        // ========== 增删改查操作 ==========
+        // 导出功能
+        function exportStudents() {
+            const wsData = [["学号", "姓名", "积分"]];
+            currentStudents.forEach(s => wsData.push([s.id, s.name, s.score]));
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "学生积分");
+            XLSX.writeFile(wb, `学生积分_${new Date().toLocaleString()}.xlsx`);
+        }
+        function exportReasons() {
+            const wsData = [["时间", "学号", "姓名", "分数变化", "原因"]];
+            currentReasons.forEach(r => wsData.push([r.timestamp, r.studentId, r.studentName, (r.delta>0?"+":"")+r.delta, r.reason]));
+            const ws = XLSX.utils.aoa_to_sheet(wsData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "积分变化记录");
+            XLSX.writeFile(wb, `积分变化_${new Date().toLocaleString()}.xlsx`);
+        }
+
+        // 一键恢复初始值
+        async function resetToInitial() {
+            const pwd = await showPasswordModal();
+           if (pwd !== ADMIN_PASSWORD) { alert("密码错误，操作取消"); return; }
+          // 询问是否清空记录
+          const clearReasons = confirm("将所有人积分重置为0，是否同时清空所有积分变化记录？\n点击“确定”清空记录，点击“取消”保留记录。");
+          // 将所有学生的分数设为 0
+          for (let s of currentStudents) {
+              s.score = 0;
+          }
+          await saveStudents();
+          if (clearReasons) {
+              currentReasons = [];
+              await saveReasons();
+          }
+          renderStudentsTable();
+          renderReasonsTable();
+          document.getElementById("adminMsg").innerText = "已将所有学生积分重置为0" + (clearReasons ? "，并清空了记录" : "");
+        }
+
+        // 增删改查操作（略，与原来一致，但需要调用 renderStudentsTable 时重新排序）
         async function addStudent() {
             const id = document.getElementById("stuId").value.trim();
             const name = document.getElementById("stuName").value.trim();
@@ -336,7 +381,6 @@
             renderStudentsTable();
             document.getElementById("adminMsg").innerText = "添加成功";
         }
-
         async function updateStudent() {
             if (!selectedStudentId) { alert("请先选择一个学生"); return; }
             const id = document.getElementById("stuId").value.trim();
@@ -347,16 +391,13 @@
             score = Math.min(200, Math.max(0, score));
             const index = currentStudents.findIndex(s => s.id === selectedStudentId);
             if (index === -1) return;
-            if (id !== selectedStudentId && currentStudents.some(s => s.id === id)) {
-                alert("新学号已存在"); return;
-            }
+            if (id !== selectedStudentId && currentStudents.some(s => s.id === id)) { alert("新学号已存在"); return; }
             currentStudents[index] = { id, name, score };
             await saveStudents();
             selectedStudentId = id;
             renderStudentsTable();
             document.getElementById("adminMsg").innerText = "修改成功";
         }
-
         async function deleteStudent() {
             if (!selectedStudentId) { alert("请先选择一个学生"); return; }
             if (!confirm("确定删除吗？")) return;
@@ -366,7 +407,6 @@
             renderStudentsTable();
             document.getElementById("adminMsg").innerText = "删除成功";
         }
-
         async function swapStudents() {
             const id1 = document.getElementById("swapId1").value.trim();
             const id2 = document.getElementById("swapId2").value.trim();
@@ -374,30 +414,18 @@
             const stu1 = currentStudents.find(s => s.id === id1);
             const stu2 = currentStudents.find(s => s.id === id2);
             if (!stu1 || !stu2) { alert("学号不存在"); return; }
-
-            // 只交换学号（姓名和积分不变）
             stu1.id = id2;
             stu2.id = id1;
-
-            // 同步更新 reasons 中所有相关记录的学号
             for (let r of currentReasons) {
-                 if (r.studentId === id1) {
-                      r.studentId = id2;
-                } else if (r.studentId === id2) {
-                     r.studentId = id1;
-                }
+                if (r.studentId === id1) r.studentId = id2;
+                else if (r.studentId === id2) r.studentId = id1;
             }
-
-            // 保存学生数据和原因记录
             await saveStudents();
             await saveReasons();
-
-            // 刷新表格显示
             renderStudentsTable();
             renderReasonsTable();
             document.getElementById("adminMsg").innerText = "学号交换成功，并已同步历史记录";
         }
-
         function filterStudents() {
             const searchId = document.getElementById("searchIdAdmin").value.trim();
             if (!searchId) renderStudentsTable();
@@ -407,27 +435,65 @@
                 tbody.innerHTML = "";
                 filtered.forEach(s => {
                     const row = tbody.insertRow();
-                    const chkCell = row.insertCell(0);
+                    row.insertCell(0).innerText = s.id;
+                    row.insertCell(1).innerText = s.name;
+                    row.insertCell(2).innerText = s.score;
+                    const chkCell = row.insertCell(3);
                     const chk = document.createElement("input");
                     chk.type = "checkbox";
                     chk.className = "student-checkbox";
                     chk.value = s.id;
                     chkCell.appendChild(chk);
-                    const radioCell = row.insertCell(1);
+                    const actionCell = row.insertCell(4);
                     const radio = document.createElement("input");
                     radio.type = "radio";
                     radio.name = "selectedStu";
                     radio.value = s.id;
                     radio.onclick = () => { selectedStudentId = s.id; };
-                    radioCell.appendChild(radio);
-                    row.insertCell(2).innerText = s.id;
-                    row.insertCell(3).innerText = s.name;
-                    row.insertCell(4).innerText = s.score;
+                    actionCell.appendChild(radio);
+                    actionCell.appendChild(document.createTextNode(" 选中"));
                 });
             }
         }
 
-        // ========== 登录逻辑 ==========
+        // 模态框
+        let modalResolve = null;
+        function showPasswordModal() {
+            return new Promise((resolve) => {
+                modalResolve = resolve;
+                document.getElementById("passwordModal").style.display = "block";
+                document.getElementById("modalPassword").value = "";
+                document.getElementById("modalPassword").focus();
+            });
+        }
+        document.getElementById("modalConfirmBtn").onclick = () => {
+            const pwd = document.getElementById("modalPassword").value;
+            document.getElementById("passwordModal").style.display = "none";
+            if (modalResolve) modalResolve(pwd);
+        };
+        document.getElementById("modalCancelBtn").onclick = () => {
+            document.getElementById("passwordModal").style.display = "none";
+            if (modalResolve) modalResolve(null);
+        };
+
+        // 排序事件绑定（表格排序）
+        function bindSortEvents() {
+            document.querySelectorAll("#stuTable th").forEach(th => {
+                th.addEventListener("click", () => {
+                    const field = th.getAttribute("data-sort");
+                    if (!field) return;
+                    if (currentSort.field === field) {
+                        currentSort.order = currentSort.order === 'asc' ? 'desc' : 'asc';
+                    } else {
+                        currentSort.field = field;
+                        currentSort.order = 'asc';
+                    }
+                    renderStudentsTable();
+                });
+            });
+        }
+
+        // 登录逻辑
         document.getElementById("saveTokenBtn").onclick = () => {
             const token = document.getElementById("githubToken").value.trim();
             if (token) {
@@ -439,20 +505,13 @@
                 document.getElementById("tokenStatus").innerText = "请输入有效的 Token";
             }
         };
-
         document.getElementById("loginBtn").onclick = async () => {
             const pwd = document.getElementById("adminPwd").value;
-            if (pwd !== ADMIN_PASSWORD) {
-                document.getElementById("loginMsg").innerText = "密码错误";
-                return;
-            }
+            if (pwd !== ADMIN_PASSWORD) { document.getElementById("loginMsg").innerText = "密码错误"; return; }
             let token = sessionStorage.getItem("github_token");
             if (!token) {
                 token = document.getElementById("githubToken").value.trim();
-                if (!token) {
-                    document.getElementById("loginMsg").innerText = "请先输入并保存 GitHub Token";
-                    return;
-                }
+                if (!token) { document.getElementById("loginMsg").innerText = "请先输入并保存 GitHub Token"; return; }
                 sessionStorage.setItem("github_token", token);
             }
             currentToken = token;
@@ -462,30 +521,24 @@
                 document.getElementById("adminPanel").style.display = "block";
                 renderStudentsTable();
                 renderReasonsTable();
-                // 绑定事件
+                bindSortEvents();
+                // 绑定按钮事件
                 document.getElementById("addStuBtn").onclick = addStudent;
                 document.getElementById("updateStuBtn").onclick = updateStudent;
                 document.getElementById("deleteStuBtn").onclick = deleteStudent;
                 document.getElementById("swapBtn").onclick = swapStudents;
                 document.getElementById("searchAdminBtn").onclick = filterStudents;
-                document.getElementById("resetAdminBtn").onclick = () => {
-                    document.getElementById("searchIdAdmin").value = "";
-                    renderStudentsTable();
-                };
-                // 批量修改事件
-                document.getElementById("selectAllBtn").onclick = () => {
-                    document.querySelectorAll(".student-checkbox").forEach(cb => cb.checked = true);
-                };
-                document.getElementById("deselectAllBtn").onclick = () => {
-                    document.querySelectorAll(".student-checkbox").forEach(cb => cb.checked = false);
-                };
+                document.getElementById("resetAdminBtn").onclick = () => { document.getElementById("searchIdAdmin").value = ""; renderStudentsTable(); };
+                document.getElementById("selectAllBtn").onclick = () => { document.querySelectorAll(".student-checkbox").forEach(cb => cb.checked = true); };
+                document.getElementById("deselectAllBtn").onclick = () => { document.querySelectorAll(".student-checkbox").forEach(cb => cb.checked = false); };
                 document.getElementById("batchUpdateBtn").onclick = batchUpdate;
+                document.getElementById("exportStudentsBtn").onclick = exportStudents;
+                document.getElementById("exportReasonsBtn").onclick = exportReasons;
+                document.getElementById("resetInitialBtn").onclick = resetToInitial;
             } catch (err) {
                 document.getElementById("loginMsg").innerText = "加载数据失败：" + err.message;
             }
         };
-
-        // 预填已保存的 Token
         const savedToken = sessionStorage.getItem("github_token");
         if (savedToken) {
             document.getElementById("githubToken").value = savedToken;
