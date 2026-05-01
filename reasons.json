@@ -1286,5 +1286,12 @@
     "studentName": "郑智程",
     "delta": -2,
     "reason": "-2"
+  },
+  {
+    "timestamp": "2026-05-01 15:51:32",
+    "studentId": "039",
+    "studentName": "胡宵",
+    "delta": 1,
+    "reason": "2026.4.30try"
   }
 ]
