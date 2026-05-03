@@ -1,1 +1,79 @@
-[]
+[
+  {
+    "timestamp": "2026-05-03 17:32:14",
+    "studentId": "002",
+    "studentName": "胡凯琳",
+    "delta": 3,
+    "reason": "2026.5.2志愿"
+  },
+  {
+    "timestamp": "2026-05-03 17:32:14",
+    "studentId": "004",
+    "studentName": "叶齐楚",
+    "delta": 3,
+    "reason": "2026.5.2志愿"
+  },
+  {
+    "timestamp": "2026-05-03 17:32:14",
+    "studentId": "010",
+    "studentName": "陈静怡",
+    "delta": 3,
+    "reason": "2026.5.2志愿"
+  },
+  {
+    "timestamp": "2026-05-03 17:32:14",
+    "studentId": "017",
+    "studentName": "黄智恒",
+    "delta": 3,
+    "reason": "2026.5.2志愿"
+  },
+  {
+    "timestamp": "2026-05-03 17:32:14",
+    "studentId": "025",
+    "studentName": "俞齐",
+    "delta": 3,
+    "reason": "2026.5.2志愿"
+  },
+  {
+    "timestamp": "2026-05-03 17:32:14",
+    "studentId": "034",
+    "studentName": "盛睿良",
+    "delta": 3,
+    "reason": "2026.5.2志愿"
+  },
+  {
+    "timestamp": "2026-05-03 17:32:14",
+    "studentId": "037",
+    "studentName": "陈昀泽",
+    "delta": 3,
+    "reason": "2026.5.2志愿"
+  },
+  {
+    "timestamp": "2026-05-03 17:32:14",
+    "studentId": "039",
+    "studentName": "胡宵",
+    "delta": 3,
+    "reason": "2026.5.2志愿"
+  },
+  {
+    "timestamp": "2026-05-03 17:32:14",
+    "studentId": "042",
+    "studentName": "闫之诺",
+    "delta": 3,
+    "reason": "2026.5.2志愿"
+  },
+  {
+    "timestamp": "2026-05-03 17:32:14",
+    "studentId": "046",
+    "studentName": "刘昊",
+    "delta": 3,
+    "reason": "2026.5.2志愿"
+  },
+  {
+    "timestamp": "2026-05-03 17:32:14",
+    "studentId": "047",
+    "studentName": "曾子轩",
+    "delta": 3,
+    "reason": "2026.5.2志愿"
+  }
+]
