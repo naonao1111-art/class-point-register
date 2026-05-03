@@ -131,7 +131,7 @@
         const REASONS_FILE = "reasons.json";
         const DATA_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_FILE}`;
         const REASONS_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${REASONS_FILE}`;
-        const ADMIN_PASSWORD = "bonvoyagemayyourpathbeclearmayyougettowheredreamsareallcrystallineandsweet";  // 请修改
+        const ADMIN_PASSWORD = "bonvoyagemayyourpathbeclearmayyougettowheredreamsareallcrystallineandsweet";  
 
         let currentToken = "";
         let currentStudents = [];
@@ -302,7 +302,7 @@
                 const student = currentStudents.find(s => s.id === sid);
                 if (student) {
                     let newScore = student.score + delta;
-                    newScore = Math.min(200, Math.max(0, newScore));
+                    newScore = Math.min(10000, Math.max(-10000, newScore));
                     if (newScore !== student.score) updates.push({ student, newScore });
                 }
             }
