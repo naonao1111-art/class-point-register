@@ -75,5 +75,89 @@
     "studentName": "曾子轩",
     "delta": 3,
     "reason": "2026.5.2志愿"
+  },
+  {
+    "timestamp": "2026-05-05 10:25:17",
+    "studentId": "003",
+    "studentName": "马辰佩",
+    "delta": -2,
+    "reason": "五一放假未搬凳子"
+  },
+  {
+    "timestamp": "2026-05-05 10:25:17",
+    "studentId": "005",
+    "studentName": "沈姚栎",
+    "delta": -2,
+    "reason": "五一放假未搬凳子"
+  },
+  {
+    "timestamp": "2026-05-05 10:25:17",
+    "studentId": "006",
+    "studentName": "马伊韩",
+    "delta": -2,
+    "reason": "五一放假未搬凳子"
+  },
+  {
+    "timestamp": "2026-05-05 10:25:17",
+    "studentId": "007",
+    "studentName": "金鑫璇",
+    "delta": -2,
+    "reason": "五一放假未搬凳子"
+  },
+  {
+    "timestamp": "2026-05-05 10:25:17",
+    "studentId": "008",
+    "studentName": "王李婧",
+    "delta": -2,
+    "reason": "五一放假未搬凳子"
+  },
+  {
+    "timestamp": "2026-05-05 10:25:17",
+    "studentId": "013",
+    "studentName": "袁煦泽",
+    "delta": -2,
+    "reason": "五一放假未搬凳子"
+  },
+  {
+    "timestamp": "2026-05-05 10:25:17",
+    "studentId": "014",
+    "studentName": "姚腾浩",
+    "delta": -2,
+    "reason": "五一放假未搬凳子"
+  },
+  {
+    "timestamp": "2026-05-05 10:25:17",
+    "studentId": "018",
+    "studentName": "苏义涵",
+    "delta": -2,
+    "reason": "五一放假未搬凳子"
+  },
+  {
+    "timestamp": "2026-05-05 10:25:17",
+    "studentId": "024",
+    "studentName": "沈天辰",
+    "delta": -2,
+    "reason": "五一放假未搬凳子"
+  },
+  {
+    "timestamp": "2026-05-05 10:25:17",
+    "studentId": "025",
+    "studentName": "俞齐",
+    "delta": -2,
+    "reason": "五一放假未搬凳子"
+  },
+  {
+    "timestamp": "2026-05-05 10:25:17",
+    "studentId": "034",
+    "studentName": "盛睿良",
+    "delta": -2,
+    "reason": "五一放假未搬凳子"
+  },
+  {
+    "timestamp": "2026-05-05 10:25:17",
+    "studentId": "037",
+    "studentName": "陈昀泽",
+    "delta": -2,
+    "reason": "五一放假未搬凳子"
   }
 ]
