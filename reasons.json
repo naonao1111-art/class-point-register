@@ -173,5 +173,19 @@
     "studentName": "濮天昊",
     "delta": -3,
     "reason": "5.6早上迟到"
+  },
+  {
+    "timestamp": "2026-05-06 21:54:31",
+    "studentId": "004",
+    "studentName": "叶齐楚",
+    "delta": -6,
+    "reason": "晚三讲话"
+  },
+  {
+    "timestamp": "2026-05-06 21:54:31",
+    "studentId": "017",
+    "studentName": "黄智恒",
+    "delta": -6,
+    "reason": "晚三讲话"
   }
 ]
