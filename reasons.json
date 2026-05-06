@@ -208,5 +208,33 @@
     "studentName": "朱晨曦",
     "delta": -6,
     "reason": "17：39讲话"
+  },
+  {
+    "timestamp": "2026-05-06 21:56:19",
+    "studentId": "016",
+    "studentName": "徐志翔",
+    "delta": -5,
+    "reason": "4.29物理作业未交"
+  },
+  {
+    "timestamp": "2026-05-06 21:56:19",
+    "studentId": "017",
+    "studentName": "黄智恒",
+    "delta": -5,
+    "reason": "4.29物理作业未交"
+  },
+  {
+    "timestamp": "2026-05-06 21:56:19",
+    "studentId": "028",
+    "studentName": "李岩蹊",
+    "delta": -5,
+    "reason": "4.29物理作业未交"
+  },
+  {
+    "timestamp": "2026-05-06 21:56:19",
+    "studentId": "045",
+    "studentName": "范晟轩",
+    "delta": -5,
+    "reason": "4.29物理作业未交"
   }
 ]
