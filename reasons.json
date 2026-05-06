@@ -159,5 +159,19 @@
     "studentName": "陈昀泽",
     "delta": -2,
     "reason": "五一放假未搬凳子"
+  },
+  {
+    "timestamp": "2026-05-06 21:53:36",
+    "studentId": "004",
+    "studentName": "叶齐楚",
+    "delta": -3,
+    "reason": "5.6早上迟到"
+  },
+  {
+    "timestamp": "2026-05-06 21:53:36",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": -3,
+    "reason": "5.6早上迟到"
   }
 ]
