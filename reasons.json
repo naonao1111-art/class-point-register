@@ -201,5 +201,12 @@
     "studentName": "刘博凯",
     "delta": -3,
     "reason": "扣分0.5"
+  },
+  {
+    "timestamp": "2026-05-06 21:55:30",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": -6,
+    "reason": "17：39讲话"
   }
 ]
