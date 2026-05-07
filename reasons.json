@@ -285,5 +285,12 @@
     "studentName": "陈静怡",
     "delta": -6,
     "reason": "晚一讲话"
+  },
+  {
+    "timestamp": "2026-05-07 21:58:15",
+    "studentId": "004",
+    "studentName": "叶齐楚",
+    "delta": -18,
+    "reason": "晚三讲话*3"
   }
 ]
