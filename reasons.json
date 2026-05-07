@@ -250,5 +250,12 @@
     "studentName": "冯丰硕",
     "delta": -3,
     "reason": "5.6校裤没穿"
+  },
+  {
+    "timestamp": "2026-05-07 21:56:21",
+    "studentId": "031",
+    "studentName": "刘博凯",
+    "delta": -3,
+    "reason": "扣分0.5"
   }
 ]
