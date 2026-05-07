@@ -236,5 +236,12 @@
     "studentName": "范晟轩",
     "delta": -5,
     "reason": "4.29物理作业未交"
+  },
+  {
+    "timestamp": "2026-05-07 12:26:31",
+    "studentId": "026",
+    "studentName": "潘烨磊",
+    "delta": -3,
+    "reason": "5.6双倍"
   }
 ]
