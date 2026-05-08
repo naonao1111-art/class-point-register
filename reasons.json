@@ -313,5 +313,12 @@
     "studentName": "朱晨曦",
     "delta": -3,
     "reason": "教室内吃早饭"
+  },
+  {
+    "timestamp": "2026-05-08 21:48:39",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": -2,
+    "reason": "化学课睡觉"
   }
 ]
