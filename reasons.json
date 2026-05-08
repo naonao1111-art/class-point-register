@@ -320,5 +320,26 @@
     "studentName": "朱晨曦",
     "delta": -2,
     "reason": "化学课睡觉"
+  },
+  {
+    "timestamp": "2026-05-08 21:50:27",
+    "studentId": "017",
+    "studentName": "黄智恒",
+    "delta": -3,
+    "reason": "物理课影响课堂秩序"
+  },
+  {
+    "timestamp": "2026-05-08 21:50:27",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": -3,
+    "reason": "物理课影响课堂秩序"
+  },
+  {
+    "timestamp": "2026-05-08 21:50:27",
+    "studentId": "042",
+    "studentName": "闫之诺",
+    "delta": -3,
+    "reason": "物理课影响课堂秩序"
   }
 ]
