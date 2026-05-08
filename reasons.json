@@ -292,5 +292,26 @@
     "studentName": "叶齐楚",
     "delta": -18,
     "reason": "晚三讲话*3"
+  },
+  {
+    "timestamp": "2026-05-08 21:48:14",
+    "studentId": "001",
+    "studentName": "沈乐妍",
+    "delta": -3,
+    "reason": "教室内吃早饭"
+  },
+  {
+    "timestamp": "2026-05-08 21:48:14",
+    "studentId": "010",
+    "studentName": "陈静怡",
+    "delta": -3,
+    "reason": "教室内吃早饭"
+  },
+  {
+    "timestamp": "2026-05-08 21:48:14",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": -3,
+    "reason": "教室内吃早饭"
   }
 ]
