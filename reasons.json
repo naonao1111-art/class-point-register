@@ -348,5 +348,12 @@
     "studentName": "范晟轩",
     "delta": -2,
     "reason": "周六没搬凳子"
+  },
+  {
+    "timestamp": "2026-05-10 21:48:56",
+    "studentId": "047",
+    "studentName": "曾子轩",
+    "delta": -6,
+    "reason": "晚三讲话"
   }
 ]
