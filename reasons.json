@@ -355,5 +355,12 @@
     "studentName": "曾子轩",
     "delta": -6,
     "reason": "晚三讲话"
+  },
+  {
+    "timestamp": "2026-05-10 21:49:14",
+    "studentId": "004",
+    "studentName": "叶齐楚",
+    "delta": 6,
+    "reason": "管理纪律"
   }
 ]
