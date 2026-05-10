@@ -362,5 +362,12 @@
     "studentName": "叶齐楚",
     "delta": 6,
     "reason": "管理纪律"
+  },
+  {
+    "timestamp": "2026-05-10 21:49:30",
+    "studentId": "004",
+    "studentName": "叶齐楚",
+    "delta": -6,
+    "reason": "晚三没静班"
   }
 ]
