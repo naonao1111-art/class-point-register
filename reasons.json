@@ -341,5 +341,12 @@
     "studentName": "闫之诺",
     "delta": -3,
     "reason": "物理课影响课堂秩序"
+  },
+  {
+    "timestamp": "2026-05-10 21:48:39",
+    "studentId": "045",
+    "studentName": "范晟轩",
+    "delta": -2,
+    "reason": "周六没搬凳子"
   }
 ]
