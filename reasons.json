@@ -383,5 +383,19 @@
     "studentName": "童清扬",
     "delta": 3,
     "reason": "51检查凳子"
+  },
+  {
+    "timestamp": "2026-05-11 17:21:01",
+    "studentId": "006",
+    "studentName": "马伊韩",
+    "delta": -3,
+    "reason": "5.11早上迟到"
+  },
+  {
+    "timestamp": "2026-05-11 17:21:01",
+    "studentId": "009",
+    "studentName": "陆玛俐",
+    "delta": -3,
+    "reason": "5.11早上迟到"
   }
 ]
