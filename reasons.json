@@ -369,5 +369,19 @@
     "studentName": "叶齐楚",
     "delta": -6,
     "reason": "晚三没静班"
+  },
+  {
+    "timestamp": "2026-05-11 17:20:27",
+    "studentId": "020",
+    "studentName": "姚奇胜",
+    "delta": 3,
+    "reason": "51检查凳子"
+  },
+  {
+    "timestamp": "2026-05-11 17:20:27",
+    "studentId": "041",
+    "studentName": "童清扬",
+    "delta": 3,
+    "reason": "51检查凳子"
   }
 ]
