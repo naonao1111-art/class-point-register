@@ -460,5 +460,12 @@
     "studentName": "胡宵",
     "delta": 1,
     "reason": "5.5-5.10固定加分"
+  },
+  {
+    "timestamp": "2026-05-12 21:51:45",
+    "studentId": "025",
+    "studentName": "俞齐",
+    "delta": -3,
+    "reason": "宿舍扣分0.5"
   }
 ]
