@@ -467,5 +467,12 @@
     "studentName": "俞齐",
     "delta": -3,
     "reason": "宿舍扣分0.5"
+  },
+  {
+    "timestamp": "2026-05-12 21:52:04",
+    "studentId": "036",
+    "studentName": "姚竣豪",
+    "delta": -3,
+    "reason": "5.11值日扣分0.5"
   }
 ]
