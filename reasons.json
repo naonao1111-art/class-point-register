@@ -523,5 +523,12 @@
     "studentName": "胡凯琳",
     "delta": -3,
     "reason": "5.12早上迟到"
+  },
+  {
+    "timestamp": "2026-05-12 21:55:53",
+    "studentId": "002",
+    "studentName": "胡凯琳",
+    "delta": 3,
+    "reason": "因病恢复"
   }
 ]
