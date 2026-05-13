@@ -551,5 +551,12 @@
     "studentName": "吕峥程",
     "delta": -6,
     "reason": "早上讲话"
+  },
+  {
+    "timestamp": "2026-05-13 22:03:12",
+    "studentId": "034",
+    "studentName": "盛睿良",
+    "delta": -9,
+    "reason": "扣分1.5（窗台藏爆了）"
   }
 ]
