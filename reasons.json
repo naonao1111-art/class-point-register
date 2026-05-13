@@ -530,5 +530,12 @@
     "studentName": "胡凯琳",
     "delta": 3,
     "reason": "因病恢复"
+  },
+  {
+    "timestamp": "2026-05-13 12:34:35",
+    "studentId": "020",
+    "studentName": "姚奇胜",
+    "delta": -6,
+    "reason": "早上讲话"
   }
 ]
