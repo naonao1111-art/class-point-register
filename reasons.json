@@ -544,5 +544,12 @@
     "studentName": "姚奇胜",
     "delta": -3,
     "reason": "程序故障导致扣分失败"
+  },
+  {
+    "timestamp": "2026-05-13 22:02:18",
+    "studentId": "027",
+    "studentName": "吕峥程",
+    "delta": -6,
+    "reason": "早上讲话"
   }
 ]
