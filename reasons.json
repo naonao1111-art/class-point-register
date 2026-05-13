@@ -558,5 +558,12 @@
     "studentName": "盛睿良",
     "delta": -9,
     "reason": "扣分1.5（窗台藏爆了）"
+  },
+  {
+    "timestamp": "2026-05-13 22:03:51",
+    "studentId": "024",
+    "studentName": "沈天辰",
+    "delta": -1,
+    "reason": "扣分0.5（均分）"
   }
 ]
