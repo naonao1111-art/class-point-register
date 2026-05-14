@@ -600,5 +600,12 @@
     "studentName": "马伊韩",
     "delta": -1,
     "reason": "5.13扣分（均分）"
+  },
+  {
+    "timestamp": "2026-05-14 21:47:14",
+    "studentId": "024",
+    "studentName": "沈天辰",
+    "delta": -2,
+    "reason": "5.12扣分"
   }
 ]
