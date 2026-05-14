@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>积分规则明细</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #fafafa; }
+        .container { max-width: 800px; margin: 0 auto; }
+        table { border-collapse: collapse; width: 100%; margin-top: 15px; }
+        th, td { border: 1px solid #ddd; padding: 10px; text-align: center; }
+        th { background-color: #f2f2f2; }
+        .add-section { margin-bottom: 30px; background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .sub-section { margin-bottom: 30px; background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        h2 { color: #333; margin-top: 0; }
+        .back-link { margin-bottom: 20px; display: inline-block; color: #2196F3; text-decoration: none; font-size: 14px; }
+        .back-link:hover { text-decoration: underline; }
+        .score-add { color: #4CAF50; font-weight: bold; }
+        .score-sub { color: #f44336; font-weight: bold; }
+        .empty-tip { color: #999; text-align: center; padding: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="indexl.html" class="back-link">← 返回积分公示板</a>
+        <h1>班级积分加减分规则明细</h1>
+
+        <div class="add-section">
+            <h2>🟢 加分项</h2>
+            <table id="addTable">
+                <thead><tr><th>行为</th><th>分值</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+
+        <div class="sub-section">
+            <h2>🔴 减分项</h2>
+            <table id="subTable">
+                <thead><tr><th>行为</th><th>分值</th></tr></thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const REPO_OWNER = "naonao1111-art";
+        const REPO_NAME = "class-point-register";
+        const RULES_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/rules.json`;
+
+        function base64DecodeToUtf8(base64Str) {
+            const binaryStr = atob(base64Str);
+            const bytes = new Uint8Array(binaryStr.length);
+            for (let i = 0; i < binaryStr.length; i++) bytes[i] = binaryStr.charCodeAt(i);
+            return new TextDecoder('utf-8').decode(bytes);
+        }
+
+        async function loadRules() {
+            try {
+                const resp = await fetch(RULES_URL);
+                if (resp.status === 404) {
+                    document.querySelector("#addTable tbody").innerHTML = '<tr><td colspan="2" class="empty-tip">暂无规则数据</td></tr>';
+                    document.querySelector("#subTable tbody").innerHTML = '<tr><td colspan="2" class="empty-tip">暂无规则数据</td></tr>';
+                    return;
+                }
+                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                const data = await resp.json();
+                const content = JSON.parse(base64DecodeToUtf8(data.content));
+                const rules = content.rules || [];
+
+                const addRules = rules.filter(r => r.score > 0).sort((a, b) => b.score - a.score);
+                const subRules = rules.filter(r => r.score < 0).sort((a, b) => a.score - b.score);
+
+                const addTbody = document.querySelector("#addTable tbody");
+                const subTbody = document.querySelector("#subTable tbody");
+
+                addTbody.innerHTML = "";
+                subTbody.innerHTML = "";
+
+                if (addRules.length === 0) {
+                    addTbody.innerHTML = '<tr><td colspan="2" class="empty-tip">暂无加分规则</td></tr>';
+                } else {
+                    addRules.forEach(r => {
+                        const row = addTbody.insertRow();
+                        row.insertCell(0).innerText = r.action;
+                        row.insertCell(1).innerHTML = `<span class="score-add">+${r.score}</span>`;
+                    });
+                }
+
+                if (subRules.length === 0) {
+                    subTbody.innerHTML = '<tr><td colspan="2" class="empty-tip">暂无减分规则</td></tr>';
+                } else {
+                    subRules.forEach(r => {
+                        const row = subTbody.insertRow();
+                        row.insertCell(0).innerText = r.action;
+                        row.insertCell(1).innerHTML = `<span class="score-sub">${r.score}</span>`;
+                    });
+                }
+            } catch (err) {
+                document.body.innerHTML += `<p style="color:red; text-align:center;">加载失败：${err.message}</p>`;
+            }
+        }
+        loadRules();
+    </script>
+</body>
+</html>

@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>积分规则管理</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table, th, td { border: 1px solid #ccc; border-collapse: collapse; padding: 8px; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #aaa; border-radius: 5px; }
+        button { margin: 2px; padding: 5px 10px; cursor: pointer; }
+        .error { color: red; }
+        .success { color: green; }
+        .token-input { margin-bottom: 10px; background: #f9f9f9; padding: 8px; border-radius: 5px; }
+        input[type="text"], input[type="number"] { margin: 2px; padding: 5px; }
+        th { background-color: #f2f2f2; }
+        .nav-link { display: inline-block; margin-bottom: 15px; color: #2196F3; text-decoration: none; }
+        .nav-link:hover { text-decoration: underline; }
+        #adminMsg { margin-top: 10px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div id="loginPanel">
+        <h2>管理员登录</h2>
+        <div class="token-input">
+            <label>GitHub Token (需要 repo 权限): </label>
+            <input type="password" id="githubToken" style="width: 300px;" placeholder="输入你的 Personal Access Token">
+            <button id="saveTokenBtn">保存 Token</button>
+            <span id="tokenStatus"></span>
+        </div>
+        <div>
+            <label>后台密码: </label>
+            <input type="password" id="adminPwd" placeholder="密码">
+            <button id="loginBtn">登录</button>
+            <p id="loginMsg" class="error"></p>
+        </div>
+    </div>
+
+    <div id="adminPanel" style="display:none;">
+        <h1>积分规则管理</h1>
+        <a href="admin.html" class="nav-link">← 返回管理后台</a>
+
+        <div class="section">
+            <h3>规则增删改查</h3>
+            <div>
+                <input type="text" id="ruleAction" placeholder="行为描述（如：流动红旗）" style="width: 200px;">
+                <input type="number" id="ruleScore" placeholder="分值（如：5 或 -2）" style="width: 150px;">
+                <button id="addRuleBtn">添加规则</button>
+                <button id="updateRuleBtn">修改当前选中</button>
+                <button id="deleteRuleBtn">删除选中</button>
+            </div>
+            <table id="ruleTable" style="margin-top:10px;">
+                <thead>
+                    <tr>
+                        <th>行为</th>
+                        <th>分值</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <p id="adminMsg"></p>
+    </div>
+
+    <script>
+        const REPO_OWNER = "naonao1111-art";
+        const REPO_NAME = "class-point-register";
+        const RULES_FILE = "rules.json";
+        const RULES_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${RULES_FILE}`;
+        const ADMIN_PASSWORD_HASH = "621afced69a8a7037d5576facd2b9ae488da1988b6f847fb6f6e724f734eb30c";
+
+        let currentToken = "";
+        let currentRules = [];
+        let rulesSha = "";
+        let selectedRuleIndex = null;
+
+        function base64DecodeToUtf8(base64Str) {
+            const binaryStr = atob(base64Str);
+            const bytes = new Uint8Array(binaryStr.length);
+            for (let i = 0; i < binaryStr.length; i++) bytes[i] = binaryStr.charCodeAt(i);
+            return new TextDecoder('utf-8').decode(bytes);
+        }
+        function utf8ToBase64(str) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(str);
+            let binary = '';
+            for (let i = 0; i < data.length; i++) binary += String.fromCharCode(data[i]);
+            return btoa(binary);
+        }
+
+
+        // SHA256 哈希函数（用于密码校验，避免明文暴露）
+        async function sha256(message) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+        async function fetchJSON(url, token) {
+            const headers = token ? { Authorization: `token ${token}` } : {};
+            const resp = await fetch(url, { headers });
+            if (resp.status === 404) return { content: null, sha: null };
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            const data = await resp.json();
+            const content = JSON.parse(base64DecodeToUtf8(data.content));
+            return { content, sha: data.sha };
+        }
+        async function saveJSON(url, content, sha, token, message) {
+            const jsonStr = JSON.stringify(content, null, 2);
+            const newContent = utf8ToBase64(jsonStr);
+            const payload = { message, content: newContent, sha };
+            const resp = await fetch(url, {
+                method: "PUT",
+                headers: { Authorization: `token ${token}`, "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+            if (!resp.ok) throw new Error(`保存失败 HTTP ${resp.status}`);
+            const result = await resp.json();
+            return result.content.sha;
+        }
+
+        async function loadRules() {
+            const res = await fetchJSON(RULES_URL, currentToken);
+            if (res.content) {
+                currentRules = res.content.rules || [];
+                rulesSha = res.sha;
+            } else {
+                currentRules = [];
+                rulesSha = null;
+            }
+        }
+        async function saveRules() {
+            const newData = { rules: currentRules };
+            rulesSha = await saveJSON(RULES_URL, newData, rulesSha, currentToken, "更新积分规则");
+        }
+
+        function renderRules() {
+            const tbody = document.querySelector("#ruleTable tbody");
+            tbody.innerHTML = "";
+            currentRules.forEach((r, idx) => {
+                const row = tbody.insertRow();
+                row.insertCell(0).innerText = r.action;
+                const scoreCell = row.insertCell(1);
+                scoreCell.innerText = (r.score > 0 ? "+" : "") + r.score;
+                scoreCell.style.color = r.score > 0 ? "#4CAF50" : (r.score < 0 ? "#f44336" : "black");
+                const actionCell = row.insertCell(2);
+                const radio = document.createElement("input");
+                radio.type = "radio";
+                radio.name = "selectedRule";
+                radio.onclick = () => {
+                    selectedRuleIndex = idx;
+                    document.getElementById("ruleAction").value = r.action;
+                    document.getElementById("ruleScore").value = r.score;
+                };
+                actionCell.appendChild(radio);
+                actionCell.appendChild(document.createTextNode(" 选中"));
+            });
+        }
+
+        async function addRule() {
+            const action = document.getElementById("ruleAction").value.trim();
+            const score = parseInt(document.getElementById("ruleScore").value);
+            if (!action) { alert("请输入行为描述"); return; }
+            if (isNaN(score) || score === 0) { alert("请输入有效分值（不能为0）"); return; }
+            if (currentRules.some(r => r.action === action)) { alert("该规则已存在"); return; }
+            currentRules.push({ action, score });
+            await saveRules();
+            renderRules();
+            document.getElementById("adminMsg").innerText = "添加成功";
+            document.getElementById("adminMsg").className = "success";
+            document.getElementById("ruleAction").value = "";
+            document.getElementById("ruleScore").value = "";
+        }
+
+        async function updateRule() {
+            if (selectedRuleIndex === null) { alert("请先选择一条规则"); return; }
+            const action = document.getElementById("ruleAction").value.trim();
+            const score = parseInt(document.getElementById("ruleScore").value);
+            if (!action) { alert("请输入行为描述"); return; }
+            if (isNaN(score) || score === 0) { alert("请输入有效分值（不能为0）"); return; }
+            const duplicate = currentRules.find((r, idx) => r.action === action && idx !== selectedRuleIndex);
+            if (duplicate) { alert("该行为描述已存在"); return; }
+            currentRules[selectedRuleIndex] = { action, score };
+            await saveRules();
+            renderRules();
+            document.getElementById("adminMsg").innerText = "修改成功";
+            document.getElementById("adminMsg").className = "success";
+        }
+
+        async function deleteRule() {
+            if (selectedRuleIndex === null) { alert("请先选择一条规则"); return; }
+            if (!confirm("确定删除该规则吗？")) return;
+            currentRules.splice(selectedRuleIndex, 1);
+            selectedRuleIndex = null;
+            await saveRules();
+            renderRules();
+            document.getElementById("adminMsg").innerText = "删除成功";
+            document.getElementById("adminMsg").className = "success";
+            document.getElementById("ruleAction").value = "";
+            document.getElementById("ruleScore").value = "";
+        }
+
+        document.getElementById("saveTokenBtn").onclick = () => {
+            const token = document.getElementById("githubToken").value.trim();
+            if (token) {
+                sessionStorage.setItem("github_token", token);
+                currentToken = token;
+                document.getElementById("tokenStatus").innerText = "Token 已保存（当前会话有效）";
+                document.getElementById("tokenStatus").style.color = "green";
+            } else {
+                document.getElementById("tokenStatus").innerText = "请输入有效的 Token";
+            }
+        };
+        document.getElementById("loginBtn").onclick = async () => {
+            const pwd = document.getElementById("adminPwd").value;
+            const pwdHash = await sha256(pwd);
+            if (pwdHash !== ADMIN_PASSWORD_HASH) { document.getElementById("loginMsg").innerText = "密码错误"; return; }
+            let token = sessionStorage.getItem("github_token");
+            if (!token) {
+                token = document.getElementById("githubToken").value.trim();
+                if (!token) { document.getElementById("loginMsg").innerText = "请先输入并保存 GitHub Token"; return; }
+                sessionStorage.setItem("github_token", token);
+            }
+            currentToken = token;
+            try {
+                await loadRules();
+                document.getElementById("loginPanel").style.display = "none";
+                document.getElementById("adminPanel").style.display = "block";
+                renderRules();
+                document.getElementById("addRuleBtn").onclick = addRule;
+                document.getElementById("updateRuleBtn").onclick = updateRule;
+                document.getElementById("deleteRuleBtn").onclick = deleteRule;
+            } catch (err) {
+                document.getElementById("loginMsg").innerText = "加载数据失败：" + err.message;
+            }
+        };
+        const savedToken = sessionStorage.getItem("github_token");
+        if (savedToken) {
+            document.getElementById("githubToken").value = savedToken;
+            document.getElementById("tokenStatus").innerText = "已有保存的 Token（需再次输入密码登录）";
+        }
+    </script>
+</body>
+</html>

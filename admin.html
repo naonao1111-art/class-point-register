@@ -13,6 +13,9 @@
         .token-input { margin-bottom: 10px; background: #f9f9f9; padding: 8px; border-radius: 5px; }
         th { cursor: pointer; user-select: none; background-color: #f2f2f2; }
         th:hover { background-color: #e0e0e0; }
+        .nav-section { background: #e3f2fd; padding: 12px; border-radius: 5px; margin-bottom: 20px; }
+        .nav-section a { margin-right: 20px; color: #1565c0; text-decoration: none; font-weight: bold; }
+        .nav-section a:hover { text-decoration: underline; }
     </style>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 </head>
@@ -35,6 +38,11 @@
 
     <div id="adminPanel" style="display:none;">
         <h1>班级积分管理后台</h1>
+
+        <div class="nav-section">
+            <a href="show_control.html">📋 管理积分规则</a>
+            <a href="class_control.html">👥 管理班委</a>
+        </div>
 
         <div class="section">
             <h3>学生增删改查</h3>
@@ -131,7 +139,7 @@
         const REASONS_FILE = "reasons.json";
         const DATA_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_FILE}`;
         const REASONS_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${REASONS_FILE}`;
-        const ADMIN_PASSWORD = "bonvoyagemayyourpathbeclearmayyougettowheredreamsareallcrystallineandsweet";  
+        const ADMIN_PASSWORD_HASH = "621afced69a8a7037d5576facd2b9ae488da1988b6f847fb6f6e724f734eb30c";
 
         let currentToken = "";
         let currentStudents = [];
@@ -141,6 +149,15 @@
         let selectedStudentId = null;
         let currentSort = { field: 'id', order: 'asc' };
 
+
+        // SHA256 哈希函数（用于密码校验，避免明文暴露）
+        async function sha256(message) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
         // Base64 编解码
         function base64DecodeToUtf8(base64Str) {
             const binaryStr = atob(base64Str);
@@ -287,7 +304,8 @@
         // 批量修改
         async function batchUpdate() {
             const pwd = await showPasswordModal();
-            if (pwd === null || pwd !== ADMIN_PASSWORD) { alert("密码错误，操作取消"); return; }
+            const pwdHash = await sha256(pwd);
+            if (pwd === null || pwdHash !== ADMIN_PASSWORD_HASH) { alert("密码错误，操作取消"); return; }
 
             const checkboxes = document.querySelectorAll(".student-checkbox:checked");
             if (checkboxes.length === 0) { alert("请至少选择一个学生"); return; }
@@ -350,7 +368,8 @@
         // 一键恢复初始值
         async function resetToInitial() {
             const pwd = await showPasswordModal();
-           if (pwd !== ADMIN_PASSWORD) { alert("密码错误，操作取消"); return; }
+           const pwdHash = await sha256(pwd);
+           if (pwdHash !== ADMIN_PASSWORD_HASH) { alert("密码错误，操作取消"); return; }
           // 询问是否清空记录
           const clearReasons = confirm("将所有人积分重置为0，是否同时清空所有积分变化记录？\n点击“确定”清空记录，点击“取消”保留记录。");
           // 将所有学生的分数设为 0
@@ -507,7 +526,8 @@
         };
         document.getElementById("loginBtn").onclick = async () => {
             const pwd = document.getElementById("adminPwd").value;
-            if (pwd !== ADMIN_PASSWORD) { document.getElementById("loginMsg").innerText = "密码错误"; return; }
+            const pwdHash = await sha256(pwd);
+            if (pwdHash !== ADMIN_PASSWORD_HASH) { document.getElementById("loginMsg").innerText = "密码错误"; return; }
             let token = sessionStorage.getItem("github_token");
             if (!token) {
                 token = document.getElementById("githubToken").value.trim();

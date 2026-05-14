@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>班委管理</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table, th, td { border: 1px solid #ccc; border-collapse: collapse; padding: 8px; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #aaa; border-radius: 5px; }
+        button { margin: 2px; padding: 5px 10px; cursor: pointer; }
+        .error { color: red; }
+        .success { color: green; }
+        .token-input { margin-bottom: 10px; background: #f9f9f9; padding: 8px; border-radius: 5px; }
+        input[type="text"] { margin: 2px; padding: 5px; width: 150px; }
+        th { background-color: #f2f2f2; }
+        .nav-link { display: inline-block; margin-bottom: 15px; color: #2196F3; text-decoration: none; }
+        .nav-link:hover { text-decoration: underline; }
+        #adminMsg { margin-top: 10px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div id="loginPanel">
+        <h2>管理员登录</h2>
+        <div class="token-input">
+            <label>GitHub Token (需要 repo 权限): </label>
+            <input type="password" id="githubToken" style="width: 300px;" placeholder="输入你的 Personal Access Token">
+            <button id="saveTokenBtn">保存 Token</button>
+            <span id="tokenStatus"></span>
+        </div>
+        <div>
+            <label>后台密码: </label>
+            <input type="password" id="adminPwd" placeholder="密码">
+            <button id="loginBtn">登录</button>
+            <p id="loginMsg" class="error"></p>
+        </div>
+    </div>
+
+    <div id="adminPanel" style="display:none;">
+        <h1>班委管理</h1>
+        <a href="admin.html" class="nav-link">← 返回管理后台</a>
+
+        <div class="section">
+            <h3>班委增删改查</h3>
+            <div>
+                <input type="text" id="memberPosition" placeholder="职务（如：班长）">
+                <input type="text" id="memberName" placeholder="姓名">
+                <button id="addMemberBtn">添加班委</button>
+                <button id="updateMemberBtn">修改当前选中</button>
+                <button id="deleteMemberBtn">删除选中</button>
+            </div>
+            <table id="memberTable" style="margin-top:10px;">
+                <thead>
+                    <tr>
+                        <th>职务</th>
+                        <th>姓名</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+        <p id="adminMsg"></p>
+    </div>
+
+    <script>
+        const REPO_OWNER = "naonao1111-art";
+        const REPO_NAME = "class-point-register";
+        const CLASS_FILE = "class_committee.json";
+        const CLASS_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CLASS_FILE}`;
+        const ADMIN_PASSWORD_HASH = "621afced69a8a7037d5576facd2b9ae488da1988b6f847fb6f6e724f734eb30c";
+
+        let currentToken = "";
+        let currentMembers = [];
+        let classSha = "";
+        let selectedMemberIndex = null;
+
+        function base64DecodeToUtf8(base64Str) {
+            const binaryStr = atob(base64Str);
+            const bytes = new Uint8Array(binaryStr.length);
+            for (let i = 0; i < binaryStr.length; i++) bytes[i] = binaryStr.charCodeAt(i);
+            return new TextDecoder('utf-8').decode(bytes);
+        }
+        function utf8ToBase64(str) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(str);
+            let binary = '';
+            for (let i = 0; i < data.length; i++) binary += String.fromCharCode(data[i]);
+            return btoa(binary);
+        }
+
+
+        // SHA256 哈希函数（用于密码校验，避免明文暴露）
+        async function sha256(message) {
+            const encoder = new TextEncoder();
+            const data = encoder.encode(message);
+            const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+        async function fetchJSON(url, token) {
+            const headers = token ? { Authorization: `token ${token}` } : {};
+            const resp = await fetch(url, { headers });
+            if (resp.status === 404) return { content: null, sha: null };
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            const data = await resp.json();
+            const content = JSON.parse(base64DecodeToUtf8(data.content));
+            return { content, sha: data.sha };
+        }
+        async function saveJSON(url, content, sha, token, message) {
+            const jsonStr = JSON.stringify(content, null, 2);
+            const newContent = utf8ToBase64(jsonStr);
+            const payload = { message, content: newContent, sha };
+            const resp = await fetch(url, {
+                method: "PUT",
+                headers: { Authorization: `token ${token}`, "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+            if (!resp.ok) throw new Error(`保存失败 HTTP ${resp.status}`);
+            const result = await resp.json();
+            return result.content.sha;
+        }
+
+        async function loadMembers() {
+            const res = await fetchJSON(CLASS_URL, currentToken);
+            if (res.content) {
+                currentMembers = res.content.members || [];
+                classSha = res.sha;
+            } else {
+                currentMembers = [];
+                classSha = null;
+            }
+        }
+        async function saveMembers() {
+            const newData = { members: currentMembers };
+            classSha = await saveJSON(CLASS_URL, newData, classSha, currentToken, "更新班委信息");
+        }
+
+        function renderMembers() {
+            const tbody = document.querySelector("#memberTable tbody");
+            tbody.innerHTML = "";
+            currentMembers.forEach((m, idx) => {
+                const row = tbody.insertRow();
+                row.insertCell(0).innerText = m.position;
+                row.insertCell(1).innerText = m.name;
+                const actionCell = row.insertCell(2);
+                const radio = document.createElement("input");
+                radio.type = "radio";
+                radio.name = "selectedMember";
+                radio.onclick = () => {
+                    selectedMemberIndex = idx;
+                    document.getElementById("memberPosition").value = m.position;
+                    document.getElementById("memberName").value = m.name;
+                };
+                actionCell.appendChild(radio);
+                actionCell.appendChild(document.createTextNode(" 选中"));
+            });
+        }
+
+        async function addMember() {
+            const position = document.getElementById("memberPosition").value.trim();
+            const name = document.getElementById("memberName").value.trim();
+            if (!position || !name) { alert("职务和姓名不能为空"); return; }
+            currentMembers.push({ position, name });
+            await saveMembers();
+            renderMembers();
+            document.getElementById("adminMsg").innerText = "添加成功";
+            document.getElementById("adminMsg").className = "success";
+            document.getElementById("memberPosition").value = "";
+            document.getElementById("memberName").value = "";
+        }
+
+        async function updateMember() {
+            if (selectedMemberIndex === null) { alert("请先选择一位班委"); return; }
+            const position = document.getElementById("memberPosition").value.trim();
+            const name = document.getElementById("memberName").value.trim();
+            if (!position || !name) { alert("职务和姓名不能为空"); return; }
+            currentMembers[selectedMemberIndex] = { position, name };
+            await saveMembers();
+            renderMembers();
+            document.getElementById("adminMsg").innerText = "修改成功";
+            document.getElementById("adminMsg").className = "success";
+        }
+
+        async function deleteMember() {
+            if (selectedMemberIndex === null) { alert("请先选择一位班委"); return; }
+            if (!confirm("确定删除该班委吗？")) return;
+            currentMembers.splice(selectedMemberIndex, 1);
+            selectedMemberIndex = null;
+            await saveMembers();
+            renderMembers();
+            document.getElementById("adminMsg").innerText = "删除成功";
+            document.getElementById("adminMsg").className = "success";
+            document.getElementById("memberPosition").value = "";
+            document.getElementById("memberName").value = "";
+        }
+
+        document.getElementById("saveTokenBtn").onclick = () => {
+            const token = document.getElementById("githubToken").value.trim();
+            if (token) {
+                sessionStorage.setItem("github_token", token);
+                currentToken = token;
+                document.getElementById("tokenStatus").innerText = "Token 已保存（当前会话有效）";
+                document.getElementById("tokenStatus").style.color = "green";
+            } else {
+                document.getElementById("tokenStatus").innerText = "请输入有效的 Token";
+            }
+        };
+        document.getElementById("loginBtn").onclick = async () => {
+            const pwd = document.getElementById("adminPwd").value;
+            const pwdHash = await sha256(pwd);
+            if (pwdHash !== ADMIN_PASSWORD_HASH) { document.getElementById("loginMsg").innerText = "密码错误"; return; }
+            let token = sessionStorage.getItem("github_token");
+            if (!token) {
+                token = document.getElementById("githubToken").value.trim();
+                if (!token) { document.getElementById("loginMsg").innerText = "请先输入并保存 GitHub Token"; return; }
+                sessionStorage.setItem("github_token", token);
+            }
+            currentToken = token;
+            try {
+                await loadMembers();
+                document.getElementById("loginPanel").style.display = "none";
+                document.getElementById("adminPanel").style.display = "block";
+                renderMembers();
+                document.getElementById("addMemberBtn").onclick = addMember;
+                document.getElementById("updateMemberBtn").onclick = updateMember;
+                document.getElementById("deleteMemberBtn").onclick = deleteMember;
+            } catch (err) {
+                document.getElementById("loginMsg").innerText = "加载数据失败：" + err.message;
+            }
+        };
+        const savedToken = sessionStorage.getItem("github_token");
+        if (savedToken) {
+            document.getElementById("githubToken").value = savedToken;
+            document.getElementById("tokenStatus").innerText = "已有保存的 Token（需再次输入密码登录）";
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>班委情况</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #fafafa; }
+        .container { max-width: 600px; margin: 0 auto; }
+        table { border-collapse: collapse; width: 100%; margin-top: 15px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: center; }
+        th { background-color: #f2f2f2; }
+        .back-link { margin-bottom: 20px; display: inline-block; color: #2196F3; text-decoration: none; font-size: 14px; }
+        .back-link:hover { text-decoration: underline; }
+        h1 { color: #333; }
+        .empty-tip { color: #999; text-align: center; padding: 20px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="indexl.html" class="back-link">← 返回积分公示板</a>
+        <h1>班委情况</h1>
+        <table id="classTable">
+            <thead><tr><th>职务</th><th>姓名</th></tr></thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script>
+        const REPO_OWNER = "naonao1111-art";
+        const REPO_NAME = "class-point-register";
+        const CLASS_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/class_committee.json`;
+
+        function base64DecodeToUtf8(base64Str) {
+            const binaryStr = atob(base64Str);
+            const bytes = new Uint8Array(binaryStr.length);
+            for (let i = 0; i < binaryStr.length; i++) bytes[i] = binaryStr.charCodeAt(i);
+            return new TextDecoder('utf-8').decode(bytes);
+        }
+
+        async function loadClass() {
+            try {
+                const resp = await fetch(CLASS_URL);
+                if (resp.status === 404) {
+                    document.querySelector("#classTable tbody").innerHTML = '<tr><td colspan="2" class="empty-tip">暂无班委数据</td></tr>';
+                    return;
+                }
+                if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+                const data = await resp.json();
+                const content = JSON.parse(base64DecodeToUtf8(data.content));
+                const members = content.members || [];
+                const tbody = document.querySelector("#classTable tbody");
+                tbody.innerHTML = "";
+                if (members.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="2" class="empty-tip">暂无班委数据</td></tr>';
+                } else {
+                    members.forEach(m => {
+                        const row = tbody.insertRow();
+                        row.insertCell(0).innerText = m.position;
+                        row.insertCell(1).innerText = m.name;
+                    });
+                }
+            } catch (err) {
+                document.body.innerHTML += `<p style="color:red; text-align:center;">加载失败：${err.message}</p>`;
+            }
+        }
+        loadClass();
+    </script>
+</body>
+</html>
