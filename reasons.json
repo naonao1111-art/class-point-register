@@ -586,5 +586,19 @@
     "studentName": "闫之诺",
     "delta": -2,
     "reason": "物理课睡觉"
+  },
+  {
+    "timestamp": "2026-05-14 21:46:30",
+    "studentId": "005",
+    "studentName": "沈姚栎",
+    "delta": -1,
+    "reason": "5.13扣分（均分）"
+  },
+  {
+    "timestamp": "2026-05-14 21:46:30",
+    "studentId": "006",
+    "studentName": "马伊韩",
+    "delta": -1,
+    "reason": "5.13扣分（均分）"
   }
 ]
