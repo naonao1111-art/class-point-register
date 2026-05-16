@@ -656,5 +656,61 @@
     "studentName": "牧周磊",
     "delta": -2,
     "reason": "5.15凳子没搬"
+  },
+  {
+    "timestamp": "2026-05-16 21:51:57",
+    "studentId": "008",
+    "studentName": "王李婧",
+    "delta": -3,
+    "reason": "5.15-5.16值日不及时"
+  },
+  {
+    "timestamp": "2026-05-16 21:51:57",
+    "studentId": "019",
+    "studentName": "顾槿宸",
+    "delta": -3,
+    "reason": "5.15-5.16值日不及时"
+  },
+  {
+    "timestamp": "2026-05-16 21:51:57",
+    "studentId": "020",
+    "studentName": "姚奇胜",
+    "delta": -3,
+    "reason": "5.15-5.16值日不及时"
+  },
+  {
+    "timestamp": "2026-05-16 21:51:57",
+    "studentId": "026",
+    "studentName": "潘烨磊",
+    "delta": -3,
+    "reason": "5.15-5.16值日不及时"
+  },
+  {
+    "timestamp": "2026-05-16 21:51:57",
+    "studentId": "037",
+    "studentName": "陈昀泽",
+    "delta": -3,
+    "reason": "5.15-5.16值日不及时"
+  },
+  {
+    "timestamp": "2026-05-16 21:51:57",
+    "studentId": "041",
+    "studentName": "童清扬",
+    "delta": -3,
+    "reason": "5.15-5.16值日不及时"
+  },
+  {
+    "timestamp": "2026-05-16 21:51:57",
+    "studentId": "042",
+    "studentName": "闫之诺",
+    "delta": -3,
+    "reason": "5.15-5.16值日不及时"
+  },
+  {
+    "timestamp": "2026-05-16 21:51:57",
+    "studentId": "047",
+    "studentName": "曾子轩",
+    "delta": -3,
+    "reason": "5.15-5.16值日不及时"
   }
 ]
