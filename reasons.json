@@ -614,5 +614,47 @@
     "studentName": "濮天昊",
     "delta": -6,
     "reason": "5.14电器没关（晚饭+放学后）"
+  },
+  {
+    "timestamp": "2026-05-16 11:04:45",
+    "studentId": "010",
+    "studentName": "陈静怡",
+    "delta": -2,
+    "reason": "5.15凳子没搬"
+  },
+  {
+    "timestamp": "2026-05-16 11:04:45",
+    "studentId": "038",
+    "studentName": "方鸣扬",
+    "delta": -2,
+    "reason": "5.15凳子没搬"
+  },
+  {
+    "timestamp": "2026-05-16 11:04:45",
+    "studentId": "035",
+    "studentName": "冯丰硕",
+    "delta": -2,
+    "reason": "5.15凳子没搬"
+  },
+  {
+    "timestamp": "2026-05-16 11:04:45",
+    "studentId": "002",
+    "studentName": "胡凯琳",
+    "delta": -2,
+    "reason": "5.15凳子没搬"
+  },
+  {
+    "timestamp": "2026-05-16 11:04:45",
+    "studentId": "009",
+    "studentName": "陆玛俐",
+    "delta": -2,
+    "reason": "5.15凳子没搬"
+  },
+  {
+    "timestamp": "2026-05-16 11:04:45",
+    "studentId": "023",
+    "studentName": "牧周磊",
+    "delta": -2,
+    "reason": "5.15凳子没搬"
   }
 ]
