@@ -543,7 +543,7 @@
     "studentId": "020",
     "studentName": "姚奇胜",
     "delta": -3,
-    "reason": "程序故障导致扣分失败"
+    "reason": "程序故障导致扣分失败（-3）"
   },
   {
     "timestamp": "2026-05-13 22:02:18",
