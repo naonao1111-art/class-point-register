@@ -22,7 +22,12 @@
 <body>
     <div id="loginPanel">
         <h2>管理员登录</h2>
-        <p style="color:#666; margin-bottom:15px;">Token 已自动从配置读取，无需手动输入</p>
+        <div class="token-input">
+            <label>GitHub Token (需要 repo 权限): </label>
+            <input type="password" id="githubToken" style="width: 300px;" placeholder="输入你的 Personal Access Token">
+            <button id="saveTokenBtn">保存 Token</button>
+            <span id="tokenStatus"></span>
+        </div>
         <div>
             <label>后台密码: </label>
             <input type="password" id="adminPwd" placeholder="密码">
@@ -134,57 +139,54 @@
         const REASONS_FILE = "reasons.json";
         const DATA_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_FILE}`;
         const REASONS_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${REASONS_FILE}`;
-        let ADMIN_PASSWORD_HASH = "";
-
-        // 从 config.json 加载密码哈希
-        async function loadPasswordHash() {
-            try {
-                const resp = await fetch("https://naonao1111-art.github.io/class-point-register/config.json");
-                if (resp.ok) {
-                    const config = await resp.json();
-                    ADMIN_PASSWORD_HASH = config.admin_password_hash || "";
-                }
-            } catch (e) {
-                console.error("加载密码配置失败", e);
-            }
-            // 如果加载失败，使用备用哈希
-            if (!ADMIN_PASSWORD_HASH) {
-                ADMIN_PASSWORD_HASH = "621afced69a8a7037d5576facd2b9ae488da1988b6f847fb6f6e724f734eb30c";
-            }
-        }
-
-        // 页面加载时立即获取密码哈希
-        loadPasswordHash();
+        const ADMIN_PASSWORD_HASH = "621afced69a8a7037d5576facd2b9ae488da1988b6f847fb6f6e724f734eb30c";
 
         let currentToken = "";
         let currentStudents = [];
-
-        // 自动从 config.json 加载 Token 和密码哈希
-        async function loadConfig() {
-            try {
-                const resp = await fetch("https://naonao1111-art.github.io/class-point-register/config.json");
-                if (!resp.ok) throw new Error("加载配置失败");
-                const config = await resp.json();
-                currentToken = config.github_token || "";
-                ADMIN_PASSWORD_HASH = config.admin_password_hash || "";
-                return true;
-            } catch (err) {
-                console.error("配置加载失败:", err);
-                document.getElementById("loginMsg").innerText = "无法加载配置，请检查网络或 config.json 是否存在";
-                return false;
-            }
-        }
-
-        // 页面加载时立即获取配置
-        loadConfig();
         let currentReasons = [];
         let dataSha = "";
         let reasonsSha = "";
         let selectedStudentId = null;
         let currentSort = { field: 'id', order: 'asc' };
 
+        // ========== 编码/解码工具（核心改动） ==========
+        function encodeToken(token) {
+            try {
+                const shifted = token.split('').map(c => String.fromCharCode(c.charCodeAt(0) + 1)).join('');
+                const b64 = btoa(shifted);
+                return b64.split('').reverse().join('');
+            } catch (e) { return ""; }
+        }
 
-        // SHA256 哈希函数（用于密码校验，避免明文暴露）
+        function decodeToken(obfuscated) {
+            try {
+                if (!obfuscated) return "";
+                const reversed = obfuscated.split('').reverse().join('');
+                const shifted = atob(reversed);
+                return shifted.split('').map(c => String.fromCharCode(c.charCodeAt(0) - 1)).join('');
+            } catch (e) {
+                console.error("Token 解码失败", e);
+                return "";
+            }
+        }
+
+        let CONFIG = {};
+        async function loadConfig() {
+            try {
+                const resp = await fetch("https://naonao1111-art.github.io/class-point-register/config_encoded.json");
+                if (resp.ok) {
+                    const config = await resp.json();
+                    CONFIG = {
+                        admin_password_hash: config.admin_password_hash || "",
+                        github_token: decodeToken(config.github_token_obfuscated || "")
+                    };
+                }
+            } catch (e) {
+                console.error("加载配置失败", e);
+            }
+        }
+        loadConfig();
+
         async function sha256(message) {
             const encoder = new TextEncoder();
             const data = encoder.encode(message);
@@ -192,7 +194,7 @@
             const hashArray = Array.from(new Uint8Array(hashBuffer));
             return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         }
-        // Base64 编解码
+
         function base64DecodeToUtf8(base64Str) {
             const binaryStr = atob(base64Str);
             const bytes = new Uint8Array(binaryStr.length);
@@ -207,9 +209,9 @@
             return btoa(binary);
         }
 
-        // GitHub API
         async function fetchJSON(url, token) {
-            const headers = token ? { Authorization: `token ${token}` } : {};
+            const tokenStr = token || CONFIG.github_token;
+            const headers = tokenStr ? { Authorization: `token ${tokenStr}` } : {};
             const resp = await fetch(url, { headers });
             if (resp.status === 404) return { content: null, sha: null };
             if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
@@ -217,13 +219,15 @@
             const content = JSON.parse(base64DecodeToUtf8(data.content));
             return { content, sha: data.sha };
         }
+
         async function saveJSON(url, content, sha, token, message) {
             const jsonStr = JSON.stringify(content, null, 2);
             const newContent = utf8ToBase64(jsonStr);
             const payload = { message, content: newContent, sha };
+            const tokenStr = token || CONFIG.github_token;
             const resp = await fetch(url, {
                 method: "PUT",
-                headers: { Authorization: `token ${token}`, "Content-Type": "application/json" },
+                headers: { Authorization: `token ${tokenStr}`, "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
             });
             if (!resp.ok) throw new Error(`保存失败 HTTP ${resp.status}`);
@@ -257,7 +261,6 @@
             reasonsSha = await saveJSON(REASONS_URL, currentReasons, reasonsSha, currentToken, "更新原因记录");
         }
 
-        // 排序函数
         function sortStudents(students, field, order) {
             const sorted = [...students];
             sorted.sort((a, b) => {
@@ -270,7 +273,6 @@
                     if (valA > valB) return order === 'asc' ? 1 : -1;
                     return 0;
                 } else {
-                    // 对于字符串（学号、姓名），使用拼音排序
                     valA = String(valA);
                     valB = String(valB);
                     const compareResult = valA.localeCompare(valB, 'zh-CN');
@@ -280,7 +282,6 @@
             return sorted;
         }
 
-        // 渲染学生表格（带排序）
         function renderStudentsTable() {
             const tbody = document.querySelector("#stuTable tbody");
             tbody.innerHTML = "";
@@ -335,7 +336,6 @@
             });
         }
 
-        // 批量修改
         async function batchUpdate() {
             const pwd = await showPasswordModal();
             const pwdHash = await sha256(pwd);
@@ -381,7 +381,6 @@
             document.getElementById("adminMsg").innerText = `批量修改成功，共 ${updates.length} 名学生`;
         }
 
-        // 导出功能
         function exportStudents() {
             const wsData = [["学号", "姓名", "积分"]];
             currentStudents.forEach(s => wsData.push([s.id, s.name, s.score]));
@@ -399,14 +398,11 @@
             XLSX.writeFile(wb, `积分变化_${new Date().toLocaleString()}.xlsx`);
         }
 
-        // 一键恢复初始值
         async function resetToInitial() {
             const pwd = await showPasswordModal();
            const pwdHash = await sha256(pwd);
            if (pwdHash !== ADMIN_PASSWORD_HASH) { alert("密码错误，操作取消"); return; }
-          // 询问是否清空记录
           const clearReasons = confirm("将所有人积分重置为0，是否同时清空所有积分变化记录？\n点击“确定”清空记录，点击“取消”保留记录。");
-          // 将所有学生的分数设为 0
           for (let s of currentStudents) {
               s.score = 0;
           }
@@ -420,7 +416,6 @@
           document.getElementById("adminMsg").innerText = "已将所有学生积分重置为0" + (clearReasons ? "，并清空了记录" : "");
         }
 
-        // 增删改查操作（略，与原来一致，但需要调用 renderStudentsTable 时重新排序）
         async function addStudent() {
             const id = document.getElementById("stuId").value.trim();
             const name = document.getElementById("stuName").value.trim();
@@ -509,7 +504,6 @@
             }
         }
 
-        // 模态框
         let modalResolve = null;
         function showPasswordModal() {
             return new Promise((resolve) => {
@@ -529,7 +523,6 @@
             if (modalResolve) modalResolve(null);
         };
 
-        // 排序事件绑定（表格排序）
         function bindSortEvents() {
             document.querySelectorAll("#stuTable th").forEach(th => {
                 th.addEventListener("click", () => {
@@ -546,14 +539,28 @@
             });
         }
 
-        // 登录逻辑
-document.getElementById("loginBtn").onclick = async () => {
-            // 确保密码哈希已加载
-            if (!ADMIN_PASSWORD_HASH) await loadPasswordHash();
+        document.getElementById("saveTokenBtn").onclick = () => {
+            const token = document.getElementById("githubToken").value.trim();
+            if (token) {
+                sessionStorage.setItem("github_token", token);
+                currentToken = token;
+                document.getElementById("tokenStatus").innerText = "Token 已保存（当前会话有效）";
+                document.getElementById("tokenStatus").style.color = "green";
+            } else {
+                document.getElementById("tokenStatus").innerText = "请输入有效的 Token";
+            }
+        };
+        document.getElementById("loginBtn").onclick = async () => {
             const pwd = document.getElementById("adminPwd").value;
             const pwdHash = await sha256(pwd);
             if (pwdHash !== ADMIN_PASSWORD_HASH) { document.getElementById("loginMsg").innerText = "密码错误"; return; }
-            if (!currentToken) { document.getElementById("loginMsg").innerText = "Token 未加载，请刷新重试"; return; }
+            let token = sessionStorage.getItem("github_token");
+            if (!token) {
+                token = document.getElementById("githubToken").value.trim();
+                if (!token) { document.getElementById("loginMsg").innerText = "请先输入并保存 GitHub Token"; return; }
+                sessionStorage.setItem("github_token", token);
+            }
+            currentToken = token;
             try {
                 await loadAllData();
                 document.getElementById("loginPanel").style.display = "none";
@@ -561,7 +568,6 @@ document.getElementById("loginBtn").onclick = async () => {
                 renderStudentsTable();
                 renderReasonsTable();
                 bindSortEvents();
-                // 绑定按钮事件
                 document.getElementById("addStuBtn").onclick = addStudent;
                 document.getElementById("updateStuBtn").onclick = updateStudent;
                 document.getElementById("deleteStuBtn").onclick = deleteStudent;
@@ -578,7 +584,11 @@ document.getElementById("loginBtn").onclick = async () => {
                 document.getElementById("loginMsg").innerText = "加载数据失败：" + err.message;
             }
         };
-
+        const savedToken = sessionStorage.getItem("github_token");
+        if (savedToken) {
+            document.getElementById("githubToken").value = savedToken;
+            document.getElementById("tokenStatus").innerText = "已有保存的 Token（需再次输入密码登录）";
+        }
     </script>
 </body>
 </html>
