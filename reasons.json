@@ -607,5 +607,12 @@
     "studentName": "沈天辰",
     "delta": -2,
     "reason": "5.12扣分"
+  },
+  {
+    "timestamp": "2026-05-16 11:01:44",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": -6,
+    "reason": "5.14电器没关（晚饭+放学后）"
   }
 ]
