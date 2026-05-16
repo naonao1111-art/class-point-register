@@ -10,7 +10,6 @@
         button { margin: 2px; padding: 5px 10px; cursor: pointer; }
         .error { color: red; }
         .success { color: green; }
-        .token-input { margin-bottom: 10px; background: #f9f9f9; padding: 8px; border-radius: 5px; }
         input[type="text"] { margin: 2px; padding: 5px; width: 150px; }
         th { background-color: #f2f2f2; }
         .nav-link { display: inline-block; margin-bottom: 15px; color: #2196F3; text-decoration: none; }
@@ -21,12 +20,6 @@
 <body>
     <div id="loginPanel">
         <h2>管理员登录</h2>
-        <div class="token-input">
-            <label>GitHub Token (需要 repo 权限): </label>
-            <input type="password" id="githubToken" style="width: 300px;" placeholder="输入你的 Personal Access Token">
-            <button id="saveTokenBtn">保存 Token</button>
-            <span id="tokenStatus"></span>
-        </div>
         <div>
             <label>后台密码: </label>
             <input type="password" id="adminPwd" placeholder="密码">
@@ -69,15 +62,7 @@
         const CLASS_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CLASS_FILE}`;
         const ADMIN_PASSWORD_HASH = "621afced69a8a7037d5576facd2b9ae488da1988b6f847fb6f6e724f734eb30c";
 
-        // ========== 编码/解码工具（核心改动） ==========
-        function encodeToken(token) {
-            try {
-                const shifted = token.split('').map(c => String.fromCharCode(c.charCodeAt(0) + 1)).join('');
-                const b64 = btoa(shifted);
-                return b64.split('').reverse().join('');
-            } catch (e) { return ""; }
-        }
-
+        // ========== 编码/解码工具 ==========
         function decodeToken(obfuscated) {
             try {
                 if (!obfuscated) return "";
@@ -90,7 +75,7 @@
             }
         }
 
-        let CONFIG = {};
+        let CONFIG = { github_token: "" };
         async function loadConfig() {
             try {
                 const resp = await fetch("https://naonao1111-art.github.io/class-point-register/config_encoded.json");
@@ -103,9 +88,7 @@
                 }
             } catch (e) { console.error("加载配置失败", e); }
         }
-        loadConfig();
 
-        let currentToken = "";
         let currentMembers = [];
         let classSha = "";
         let selectedMemberIndex = null;
@@ -132,8 +115,8 @@
             return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
         }
 
-        async function fetchJSON(url, token) {
-            const tokenStr = token || CONFIG.github_token;
+        async function fetchJSON(url) {
+            const tokenStr = CONFIG.github_token;
             const headers = tokenStr ? { Authorization: `token ${tokenStr}` } : {};
             const resp = await fetch(url, { headers });
             if (resp.status === 404) return { content: null, sha: null };
@@ -143,11 +126,11 @@
             return { content, sha: data.sha };
         }
 
-        async function saveJSON(url, content, sha, token, message) {
+        async function saveJSON(url, content, sha, message) {
             const jsonStr = JSON.stringify(content, null, 2);
             const newContent = utf8ToBase64(jsonStr);
             const payload = { message, content: newContent, sha };
-            const tokenStr = token || CONFIG.github_token;
+            const tokenStr = CONFIG.github_token;
             const resp = await fetch(url, {
                 method: "PUT",
                 headers: { Authorization: `token ${tokenStr}`, "Content-Type": "application/json" },
@@ -159,7 +142,7 @@
         }
 
         async function loadMembers() {
-            const res = await fetchJSON(CLASS_URL, currentToken);
+            const res = await fetchJSON(CLASS_URL);
             if (res.content) {
                 currentMembers = res.content.members || [];
                 classSha = res.sha;
@@ -170,7 +153,7 @@
         }
         async function saveMembers() {
             const newData = { members: currentMembers };
-            classSha = await saveJSON(CLASS_URL, newData, classSha, currentToken, "更新班委信息");
+            classSha = await saveJSON(CLASS_URL, newData, classSha, "更新班委信息");
         }
 
         function renderMembers() {
@@ -232,28 +215,20 @@
             document.getElementById("memberName").value = "";
         }
 
-        document.getElementById("saveTokenBtn").onclick = () => {
-            const token = document.getElementById("githubToken").value.trim();
-            if (token) {
-                sessionStorage.setItem("github_token", token);
-                currentToken = token;
-                document.getElementById("tokenStatus").innerText = "Token 已保存（当前会话有效）";
-                document.getElementById("tokenStatus").style.color = "green";
-            } else {
-                document.getElementById("tokenStatus").innerText = "请输入有效的 Token";
-            }
-        };
         document.getElementById("loginBtn").onclick = async () => {
+            await loadConfig();
+
             const pwd = document.getElementById("adminPwd").value;
             const pwdHash = await sha256(pwd);
-            if (pwdHash !== ADMIN_PASSWORD_HASH) { document.getElementById("loginMsg").innerText = "密码错误"; return; }
-            let token = sessionStorage.getItem("github_token");
-            if (!token) {
-                token = document.getElementById("githubToken").value.trim();
-                if (!token) { document.getElementById("loginMsg").innerText = "请先输入并保存 GitHub Token"; return; }
-                sessionStorage.setItem("github_token", token);
+            if (pwdHash !== ADMIN_PASSWORD_HASH) {
+                document.getElementById("loginMsg").innerText = "密码错误";
+                return;
             }
-            currentToken = token;
+            if (!CONFIG.github_token) {
+                document.getElementById("loginMsg").innerText = "无法从仓库读取 Token，请检查 config_encoded.json";
+                return;
+            }
+
             try {
                 await loadMembers();
                 document.getElementById("loginPanel").style.display = "none";
@@ -266,11 +241,6 @@
                 document.getElementById("loginMsg").innerText = "加载数据失败：" + err.message;
             }
         };
-        const savedToken = sessionStorage.getItem("github_token");
-        if (savedToken) {
-            document.getElementById("githubToken").value = savedToken;
-            document.getElementById("tokenStatus").innerText = "已有保存的 Token（需再次输入密码登录）";
-        }
     </script>
 </body>
 </html>
