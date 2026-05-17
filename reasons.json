@@ -761,5 +761,12 @@
     "studentName": "胡宵",
     "delta": -2,
     "reason": "5。17"
+  },
+  {
+    "timestamp": "2026-05-17 20:27:16",
+    "studentId": "004",
+    "studentName": "叶齐楚",
+    "delta": 2,
+    "reason": "管晚自习"
   }
 ]
