@@ -754,5 +754,12 @@
     "studentName": "潘烨磊",
     "delta": 1,
     "reason": "5.11-5.16固定加分"
+  },
+  {
+    "timestamp": "2026-05-17 17:24:13",
+    "studentId": "039",
+    "studentName": "胡宵",
+    "delta": -2,
+    "reason": "5。17"
   }
 ]
