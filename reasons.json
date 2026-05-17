@@ -712,5 +712,47 @@
     "studentName": "曾子轩",
     "delta": -3,
     "reason": "5.15-5.16值日不及时"
+  },
+  {
+    "timestamp": "2026-05-17 17:23:50",
+    "studentId": "039",
+    "studentName": "胡宵",
+    "delta": 1,
+    "reason": "5.11-5.16固定加分"
+  },
+  {
+    "timestamp": "2026-05-17 17:23:50",
+    "studentId": "022",
+    "studentName": "方晟睿",
+    "delta": 1,
+    "reason": "5.11-5.16固定加分"
+  },
+  {
+    "timestamp": "2026-05-17 17:23:50",
+    "studentId": "002",
+    "studentName": "胡凯琳",
+    "delta": 1,
+    "reason": "5.11-5.16固定加分"
+  },
+  {
+    "timestamp": "2026-05-17 17:23:50",
+    "studentId": "019",
+    "studentName": "顾槿宸",
+    "delta": 1,
+    "reason": "5.11-5.16固定加分"
+  },
+  {
+    "timestamp": "2026-05-17 17:23:50",
+    "studentId": "006",
+    "studentName": "马伊韩",
+    "delta": 1,
+    "reason": "5.11-5.16固定加分"
+  },
+  {
+    "timestamp": "2026-05-17 17:23:50",
+    "studentId": "026",
+    "studentName": "潘烨磊",
+    "delta": 1,
+    "reason": "5.11-5.16固定加分"
   }
 ]
