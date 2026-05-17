@@ -768,5 +768,12 @@
     "studentName": "叶齐楚",
     "delta": 2,
     "reason": "管晚自习"
+  },
+  {
+    "timestamp": "2026-05-17 21:53:05",
+    "studentId": "004",
+    "studentName": "叶齐楚",
+    "delta": 2,
+    "reason": "管晚自习（3）"
   }
 ]
