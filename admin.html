@@ -155,7 +155,10 @@
         let CONFIG = { github_token: "" };
         async function loadConfig() {
             try {
-                const resp = await fetch("https://naonao1111-art.github.io/class-point-register/config_encoded.json");
+                const resp = await fetch(
+                    "https://naonao1111-art.github.io/class-point-register/config_encoded.json?t=" + Date.now(),
+                    { cache: "no-store" }
+                );
                 if (resp.ok) {
                     const config = await resp.json();
                     CONFIG = {
