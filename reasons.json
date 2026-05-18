@@ -782,5 +782,12 @@
     "studentName": "朱晨曦",
     "delta": 100000000,
     "reason": "shuai（已撤销）"
+  },
+  {
+    "timestamp": "2026-05-18 21:57:02",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": 6,
+    "reason": "管晚自习"
   }
 ]
