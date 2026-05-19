@@ -810,5 +810,54 @@
     "studentName": "朱晨曦",
     "delta": -5,
     "reason": "5.18物理作业"
+  },
+  {
+    "timestamp": "2026-05-19 17:26:42",
+    "studentId": "002",
+    "studentName": "胡凯琳",
+    "delta": -5,
+    "reason": "3次以上政治作业未交"
+  },
+  {
+    "timestamp": "2026-05-19 17:26:42",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": -5,
+    "reason": "3次以上政治作业未交"
+  },
+  {
+    "timestamp": "2026-05-19 17:26:42",
+    "studentId": "024",
+    "studentName": "沈天辰",
+    "delta": -5,
+    "reason": "3次以上政治作业未交"
+  },
+  {
+    "timestamp": "2026-05-19 17:26:42",
+    "studentId": "031",
+    "studentName": "刘博凯",
+    "delta": -5,
+    "reason": "3次以上政治作业未交"
+  },
+  {
+    "timestamp": "2026-05-19 17:26:42",
+    "studentId": "035",
+    "studentName": "冯丰硕",
+    "delta": -5,
+    "reason": "3次以上政治作业未交"
+  },
+  {
+    "timestamp": "2026-05-19 17:26:42",
+    "studentId": "040",
+    "studentName": "朱熙元",
+    "delta": -5,
+    "reason": "3次以上政治作业未交"
+  },
+  {
+    "timestamp": "2026-05-19 17:26:42",
+    "studentId": "044",
+    "studentName": "金智宸",
+    "delta": -5,
+    "reason": "3次以上政治作业未交"
   }
 ]
