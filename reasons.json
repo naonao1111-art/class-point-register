@@ -789,5 +789,12 @@
     "studentName": "朱晨曦",
     "delta": 6,
     "reason": "管晚自习"
+  },
+  {
+    "timestamp": "2026-05-19 12:30:52",
+    "studentId": "019",
+    "studentName": "顾槿宸",
+    "delta": -3,
+    "reason": "5.19中午没关灯"
   }
 ]
