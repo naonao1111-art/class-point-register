@@ -936,5 +936,12 @@
     "studentName": "姚奇胜",
     "delta": -6,
     "reason": "5.18晚三"
+  },
+  {
+    "timestamp": "2026-05-19 19:24:43",
+    "studentId": "045",
+    "studentName": "范晟轩",
+    "delta": 1,
+    "reason": "晚一管半小时"
   }
 ]
