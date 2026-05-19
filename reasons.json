@@ -796,5 +796,12 @@
     "studentName": "顾槿宸",
     "delta": -3,
     "reason": "5.19中午没关灯"
+  },
+  {
+    "timestamp": "2026-05-19 17:25:32",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": -2,
+    "reason": "5.18物理课"
   }
 ]
