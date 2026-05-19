@@ -859,5 +859,12 @@
     "studentName": "金智宸",
     "delta": -5,
     "reason": "3次以上政治作业未交"
+  },
+  {
+    "timestamp": "2026-05-19 17:27:01",
+    "studentId": "044",
+    "studentName": "金智宸",
+    "delta": -3,
+    "reason": "5.18擦窗台被提醒"
   }
 ]
