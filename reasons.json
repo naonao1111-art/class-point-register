@@ -943,5 +943,12 @@
     "studentName": "范晟轩",
     "delta": 1,
     "reason": "晚一管半小时"
+  },
+  {
+    "timestamp": "2026-05-19 19:25:04",
+    "studentId": "038",
+    "studentName": "方鸣扬",
+    "delta": 2,
+    "reason": "5.18"
   }
 ]
