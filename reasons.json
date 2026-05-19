@@ -929,5 +929,12 @@
     "studentName": "刘昊",
     "delta": -5,
     "reason": "物理午写"
+  },
+  {
+    "timestamp": "2026-05-19 17:28:42",
+    "studentId": "020",
+    "studentName": "姚奇胜",
+    "delta": -6,
+    "reason": "5.18晚三"
   }
 ]
