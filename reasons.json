@@ -866,5 +866,68 @@
     "studentName": "金智宸",
     "delta": -3,
     "reason": "5.18擦窗台被提醒"
+  },
+  {
+    "timestamp": "2026-05-19 17:28:21",
+    "studentId": "009",
+    "studentName": "陆玛俐",
+    "delta": -5,
+    "reason": "物理午写"
+  },
+  {
+    "timestamp": "2026-05-19 17:28:21",
+    "studentId": "017",
+    "studentName": "黄智恒",
+    "delta": -5,
+    "reason": "物理午写"
+  },
+  {
+    "timestamp": "2026-05-19 17:28:21",
+    "studentId": "023",
+    "studentName": "牧周磊",
+    "delta": -5,
+    "reason": "物理午写"
+  },
+  {
+    "timestamp": "2026-05-19 17:28:21",
+    "studentId": "024",
+    "studentName": "沈天辰",
+    "delta": -5,
+    "reason": "物理午写"
+  },
+  {
+    "timestamp": "2026-05-19 17:28:21",
+    "studentId": "025",
+    "studentName": "俞齐",
+    "delta": -5,
+    "reason": "物理午写"
+  },
+  {
+    "timestamp": "2026-05-19 17:28:21",
+    "studentId": "027",
+    "studentName": "吕峥程",
+    "delta": -5,
+    "reason": "物理午写"
+  },
+  {
+    "timestamp": "2026-05-19 17:28:21",
+    "studentId": "028",
+    "studentName": "李岩蹊",
+    "delta": -5,
+    "reason": "物理午写"
+  },
+  {
+    "timestamp": "2026-05-19 17:28:21",
+    "studentId": "043",
+    "studentName": "刘德临",
+    "delta": -5,
+    "reason": "物理午写"
+  },
+  {
+    "timestamp": "2026-05-19 17:28:21",
+    "studentId": "046",
+    "studentName": "刘昊",
+    "delta": -5,
+    "reason": "物理午写"
   }
 ]
