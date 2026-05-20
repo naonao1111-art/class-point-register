@@ -964,5 +964,26 @@
     "studentName": "顾槿宸",
     "delta": -6,
     "reason": "5.19晚自习讲话"
+  },
+  {
+    "timestamp": "2026-05-20 17:28:58",
+    "studentId": "001",
+    "studentName": "沈乐妍",
+    "delta": -3,
+    "reason": "520早上迟到"
+  },
+  {
+    "timestamp": "2026-05-20 17:28:58",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": -3,
+    "reason": "520早上迟到"
+  },
+  {
+    "timestamp": "2026-05-20 17:28:58",
+    "studentId": "039",
+    "studentName": "胡宵",
+    "delta": -3,
+    "reason": "520早上迟到"
   }
 ]
