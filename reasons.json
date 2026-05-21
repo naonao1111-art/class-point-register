@@ -1069,5 +1069,54 @@
     "studentName": "郑智程",
     "delta": 6,
     "reason": "520-521自习课非常认真"
+  },
+  {
+    "timestamp": "2026-05-21 21:56:08",
+    "studentId": "032",
+    "studentName": "程舒远",
+    "delta": 3,
+    "reason": "520-521自习课比较认真"
+  },
+  {
+    "timestamp": "2026-05-21 21:56:08",
+    "studentId": "045",
+    "studentName": "范晟轩",
+    "delta": 3,
+    "reason": "520-521自习课比较认真"
+  },
+  {
+    "timestamp": "2026-05-21 21:56:08",
+    "studentId": "002",
+    "studentName": "胡凯琳",
+    "delta": 3,
+    "reason": "520-521自习课比较认真"
+  },
+  {
+    "timestamp": "2026-05-21 21:56:08",
+    "studentId": "028",
+    "studentName": "李岩蹊",
+    "delta": 3,
+    "reason": "520-521自习课比较认真"
+  },
+  {
+    "timestamp": "2026-05-21 21:56:08",
+    "studentId": "009",
+    "studentName": "陆玛俐",
+    "delta": 3,
+    "reason": "520-521自习课比较认真"
+  },
+  {
+    "timestamp": "2026-05-21 21:56:08",
+    "studentId": "006",
+    "studentName": "马伊韩",
+    "delta": 3,
+    "reason": "520-521自习课比较认真"
+  },
+  {
+    "timestamp": "2026-05-21 21:56:08",
+    "studentId": "013",
+    "studentName": "袁煦泽",
+    "delta": 3,
+    "reason": "520-521自习课比较认真"
   }
 ]
