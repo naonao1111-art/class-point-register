@@ -1314,5 +1314,12 @@
     "studentName": "叶齐楚",
     "delta": -6,
     "reason": "520-521自习课2次（补充）"
+  },
+  {
+    "timestamp": "2026-05-21 23:30:56",
+    "studentId": "044",
+    "studentName": "金智宸",
+    "delta": 6,
+    "reason": "520扣分恢复"
   }
 ]
