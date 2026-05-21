@@ -1237,5 +1237,26 @@
     "studentName": "叶齐楚",
     "delta": -6,
     "reason": "520-521自习课2次"
+  },
+  {
+    "timestamp": "2026-05-21 22:03:41",
+    "studentId": "020",
+    "studentName": "姚奇胜",
+    "delta": -18,
+    "reason": "520-521自习课3次"
+  },
+  {
+    "timestamp": "2026-05-21 22:03:41",
+    "studentId": "033",
+    "studentName": "应扎吉",
+    "delta": -18,
+    "reason": "520-521自习课3次"
+  },
+  {
+    "timestamp": "2026-05-21 22:03:41",
+    "studentId": "025",
+    "studentName": "俞齐",
+    "delta": -18,
+    "reason": "520-521自习课3次"
   }
 ]
