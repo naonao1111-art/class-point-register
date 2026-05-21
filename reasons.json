@@ -1118,5 +1118,68 @@
     "studentName": "袁煦泽",
     "delta": 3,
     "reason": "520-521自习课比较认真"
+  },
+  {
+    "timestamp": "2026-05-21 22:00:18",
+    "studentId": "037",
+    "studentName": "陈昀泽",
+    "delta": -6,
+    "reason": "520-521自习课1次"
+  },
+  {
+    "timestamp": "2026-05-21 22:00:18",
+    "studentId": "035",
+    "studentName": "冯丰硕",
+    "delta": -6,
+    "reason": "520-521自习课1次"
+  },
+  {
+    "timestamp": "2026-05-21 22:00:18",
+    "studentId": "017",
+    "studentName": "黄智恒",
+    "delta": -6,
+    "reason": "520-521自习课1次"
+  },
+  {
+    "timestamp": "2026-05-21 22:00:18",
+    "studentId": "031",
+    "studentName": "刘博凯",
+    "delta": -6,
+    "reason": "520-521自习课1次"
+  },
+  {
+    "timestamp": "2026-05-21 22:00:18",
+    "studentId": "024",
+    "studentName": "沈天辰",
+    "delta": -6,
+    "reason": "520-521自习课1次"
+  },
+  {
+    "timestamp": "2026-05-21 22:00:18",
+    "studentId": "041",
+    "studentName": "童清扬",
+    "delta": -6,
+    "reason": "520-521自习课1次"
+  },
+  {
+    "timestamp": "2026-05-21 22:00:18",
+    "studentId": "014",
+    "studentName": "姚腾浩",
+    "delta": -6,
+    "reason": "520-521自习课1次"
+  },
+  {
+    "timestamp": "2026-05-21 22:00:18",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": -6,
+    "reason": "520-521自习课1次"
+  },
+  {
+    "timestamp": "2026-05-21 22:00:18",
+    "studentId": "040",
+    "studentName": "朱熙元",
+    "delta": -6,
+    "reason": "520-521自习课1次"
   }
 ]
