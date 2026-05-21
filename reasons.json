@@ -1321,5 +1321,12 @@
     "studentName": "金智宸",
     "delta": 6,
     "reason": "520扣分恢复"
+  },
+  {
+    "timestamp": "2026-05-21 23:31:43",
+    "studentId": "036",
+    "studentName": "姚竣豪",
+    "delta": -6,
+    "reason": "520多次电器未关"
   }
 ]
