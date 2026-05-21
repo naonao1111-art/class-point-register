@@ -1181,5 +1181,61 @@
     "studentName": "朱熙元",
     "delta": -6,
     "reason": "520-521自习课1次"
+  },
+  {
+    "timestamp": "2026-05-21 22:03:19",
+    "studentId": "047",
+    "studentName": "曾子轩",
+    "delta": -6,
+    "reason": "520-521自习课2次"
+  },
+  {
+    "timestamp": "2026-05-21 22:03:19",
+    "studentId": "044",
+    "studentName": "金智宸",
+    "delta": -6,
+    "reason": "520-521自习课2次"
+  },
+  {
+    "timestamp": "2026-05-21 22:03:19",
+    "studentId": "046",
+    "studentName": "刘昊",
+    "delta": -6,
+    "reason": "520-521自习课2次"
+  },
+  {
+    "timestamp": "2026-05-21 22:03:19",
+    "studentId": "027",
+    "studentName": "吕峥程",
+    "delta": -6,
+    "reason": "520-521自习课2次"
+  },
+  {
+    "timestamp": "2026-05-21 22:03:19",
+    "studentId": "023",
+    "studentName": "牧周磊",
+    "delta": -6,
+    "reason": "520-521自习课2次"
+  },
+  {
+    "timestamp": "2026-05-21 22:03:19",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": -6,
+    "reason": "520-521自习课2次"
+  },
+  {
+    "timestamp": "2026-05-21 22:03:19",
+    "studentId": "036",
+    "studentName": "姚竣豪",
+    "delta": -6,
+    "reason": "520-521自习课2次"
+  },
+  {
+    "timestamp": "2026-05-21 22:03:19",
+    "studentId": "004",
+    "studentName": "叶齐楚",
+    "delta": -6,
+    "reason": "520-521自习课2次"
   }
 ]
