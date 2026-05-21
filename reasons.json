@@ -1034,5 +1034,40 @@
     "studentName": "范晟轩",
     "delta": 1,
     "reason": "分试卷"
+  },
+  {
+    "timestamp": "2026-05-21 21:55:13",
+    "studentId": "022",
+    "studentName": "方晟睿",
+    "delta": 6,
+    "reason": "520-521自习课非常认真"
+  },
+  {
+    "timestamp": "2026-05-21 21:55:13",
+    "studentId": "015",
+    "studentName": "冯永昊",
+    "delta": 6,
+    "reason": "520-521自习课非常认真"
+  },
+  {
+    "timestamp": "2026-05-21 21:55:13",
+    "studentId": "007",
+    "studentName": "金鑫璇",
+    "delta": 6,
+    "reason": "520-521自习课非常认真"
+  },
+  {
+    "timestamp": "2026-05-21 21:55:13",
+    "studentId": "048",
+    "studentName": "杨子鸣",
+    "delta": 6,
+    "reason": "520-521自习课非常认真"
+  },
+  {
+    "timestamp": "2026-05-21 21:55:13",
+    "studentId": "012",
+    "studentName": "郑智程",
+    "delta": 6,
+    "reason": "520-521自习课非常认真"
   }
 ]
