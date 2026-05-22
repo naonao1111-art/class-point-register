@@ -1447,5 +1447,12 @@
     "studentName": "胡宵",
     "delta": -0.5,
     "reason": "实验程序"
+  },
+  {
+    "timestamp": "2026-05-22 22:46:09",
+    "studentId": "039",
+    "studentName": "胡宵",
+    "delta": -0.5,
+    "reason": "实验程序（恢复分数）"
   }
 ]
