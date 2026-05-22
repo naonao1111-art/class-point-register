@@ -36,7 +36,7 @@
             <h3>规则增删改查</h3>
             <div>
                 <input type="text" id="ruleAction" placeholder="行为描述（如：流动红旗）" style="width: 200px;">
-                <input type="number" id="ruleScore" placeholder="分值（如：5 或 -2）" style="width: 150px;" step="0.1">
+                <input type="number" id="ruleScore" placeholder="分值（如：5 或 -2）" style="width: 150px;">
                 <button id="addRuleBtn">添加规则</button>
                 <button id="updateRuleBtn">修改当前选中</button>
                 <button id="deleteRuleBtn">删除选中</button>
@@ -185,7 +185,7 @@
 
         async function addRule() {
             const action = document.getElementById("ruleAction").value.trim();
-            const score = parseFloat(document.getElementById("ruleScore").value);
+            const score = parseInt(document.getElementById("ruleScore").value);
             if (!action) { alert("请输入行为描述"); return; }
             if (isNaN(score) || score === 0) { alert("请输入有效分值（不能为0）"); return; }
             if (currentRules.some(r => r.action === action)) { alert("该规则已存在"); return; }
@@ -201,7 +201,7 @@
         async function updateRule() {
             if (selectedRuleIndex === null) { alert("请先选择一条规则"); return; }
             const action = document.getElementById("ruleAction").value.trim();
-            const score = parseFloat(document.getElementById("ruleScore").value);
+            const score = parseInt(document.getElementById("ruleScore").value);
             if (!action) { alert("请输入行为描述"); return; }
             if (isNaN(score) || score === 0) { alert("请输入有效分值（不能为0）"); return; }
             const duplicate = currentRules.find((r, idx) => r.action === action && idx !== selectedRuleIndex);

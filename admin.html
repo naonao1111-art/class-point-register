@@ -15,12 +15,6 @@
         .nav-section { background: #e3f2fd; padding: 12px; border-radius: 5px; margin-bottom: 20px; }
         .nav-section a { margin-right: 20px; color: #1565c0; text-decoration: none; font-weight: bold; }
         .nav-section a:hover { text-decoration: underline; }
-        .rule-select-row { display: flex; align-items: center; gap: 10px; margin: 5px 0; flex-wrap: wrap; }
-        .rule-select-row label { font-weight: bold; }
-        .rule-select-row select, .rule-select-row input { padding: 5px; }
-        .reason-prefix { width: 80px; }
-        .reason-full { width: 250px; }
-        .score-input { width: 80px; }
     </style>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
 </head>
@@ -48,7 +42,7 @@
             <div>
                 <input type="text" id="stuId" placeholder="学号">
                 <input type="text" id="stuName" placeholder="姓名">
-                <input type="number" id="stuScore" placeholder="积分" value="100" step="0.1">
+                <input type="number" id="stuScore" placeholder="积分" value="100">
                 <button id="addStuBtn">添加学生</button>
                 <button id="updateStuBtn">修改当前选中</button>
                 <button id="deleteStuBtn">删除选中</button>
@@ -89,20 +83,13 @@
                 <button id="selectAllBtn">全选</button>
                 <button id="deselectAllBtn">取消全选</button>
             </div>
-            <div class="rule-select-row">
-                <label>快捷选择规则:</label>
-                <select id="ruleSelect">
-                    <option value="">-- 手动输入 --</option>
-                </select>
-                <label>分数变化:</label>
-                <input type="number" id="batchDelta" placeholder="±分数" step="0.1" class="score-input">
-                <label>自定义前缀:</label>
-                <input type="text" id="reasonPrefix" placeholder="如: 522" class="reason-prefix">
-                <label>原因:</label>
-                <input type="text" id="batchReason" placeholder="原因" class="reason-full">
+            <div>
+                <label>分数变化: </label>
+                <input type="number" id="batchDelta" placeholder="例如 +5 或 -2">
+                <label>原因: </label>
+                <input type="text" id="batchReason" placeholder="流动红旗全班+5" style="width: 200px;">
                 <button id="batchUpdateBtn">批量修改</button>
             </div>
-            <p style="color:#666; font-size:12px;">提示：选择规则后自动填充分数和原因；可在"自定义前缀"前添加文字，与规则原因拼接（如"522"+"分试卷"="522分试卷"）；分数可手动修改。</p>
         </div>
 
         <div class="section">
@@ -141,18 +128,14 @@
         const REPO_NAME = "class-point-register";
         const DATA_FILE = "data.json";
         const REASONS_FILE = "reasons.json";
-        const RULES_FILE = "rules.json";
         const DATA_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_FILE}`;
         const REASONS_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${REASONS_FILE}`;
-        const RULES_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${RULES_FILE}`;
         const ADMIN_PASSWORD_HASH = "621afced69a8a7037d5576facd2b9ae488da1988b6f847fb6f6e724f734eb30c";
 
         let currentStudents = [];
         let currentReasons = [];
-        let currentRules = [];
         let dataSha = "";
         let reasonsSha = "";
-        let rulesSha = "";
         let selectedStudentId = null;
         let currentSort = { field: 'id', order: 'asc' };
 
@@ -253,15 +236,6 @@
                 currentReasons = [];
                 reasonsSha = null;
             }
-            const rulesRes = await fetchJSON(RULES_URL);
-            if (rulesRes.content) {
-                currentRules = rulesRes.content.rules || [];
-                rulesSha = rulesRes.sha;
-            } else {
-                currentRules = [];
-                rulesSha = null;
-            }
-            renderRuleSelect();
         }
         async function saveStudents() {
             const newData = { students: currentStudents };
@@ -270,40 +244,6 @@
         async function saveReasons() {
             reasonsSha = await saveJSON(REASONS_URL, currentReasons, reasonsSha, "更新原因记录");
         }
-
-        // ========== 规则下拉选择 ==========
-        function renderRuleSelect() {
-            const select = document.getElementById("ruleSelect");
-            select.innerHTML = '<option value="">-- 手动输入 --</option>';
-            currentRules.forEach((r, idx) => {
-                const opt = document.createElement("option");
-                opt.value = idx;
-                opt.textContent = `${r.action} (${r.score > 0 ? '+' : ''}${r.score})`;
-                select.appendChild(opt);
-            });
-        }
-
-        document.getElementById("ruleSelect").onchange = function() {
-            const idx = this.value;
-            if (idx === "") {
-                document.getElementById("batchDelta").value = "";
-                document.getElementById("batchReason").value = "";
-                return;
-            }
-            const rule = currentRules[idx];
-            document.getElementById("batchDelta").value = rule.score;
-            const prefix = document.getElementById("reasonPrefix").value.trim();
-            document.getElementById("batchReason").value = prefix ? prefix + rule.action : rule.action;
-        };
-
-        document.getElementById("reasonPrefix").oninput = function() {
-            const idx = document.getElementById("ruleSelect").value;
-            if (idx !== "") {
-                const rule = currentRules[idx];
-                const prefix = this.value.trim();
-                document.getElementById("batchReason").value = prefix ? prefix + rule.action : rule.action;
-            }
-        };
 
         function sortStudents(students, field, order) {
             const sorted = [...students];
@@ -380,24 +320,15 @@
             });
         }
 
-        async function verifyPassword() {
+        async function batchUpdate() {
             const pwd = await showPasswordModal();
-            if (pwd === null) return false;
             const pwdHash = await sha256(pwd);
             const effectiveHash = CONFIG.admin_password_hash || ADMIN_PASSWORD_HASH;
-            if (pwdHash !== effectiveHash) {
-                alert("密码错误，操作取消");
-                return false;
-            }
-            return true;
-        }
-
-        async function batchUpdate() {
-            if (!await verifyPassword()) return;
+            if (pwdHash !== effectiveHash){ alert("密码错误，操作取消"); return; }
 
             const checkboxes = document.querySelectorAll(".student-checkbox:checked");
             if (checkboxes.length === 0) { alert("请至少选择一个学生"); return; }
-            const delta = parseFloat(document.getElementById("batchDelta").value);
+            const delta = parseInt(document.getElementById("batchDelta").value);
             if (isNaN(delta)) { alert("请输入有效的分数变化"); return; }
             const reason = document.getElementById("batchReason").value.trim();
             if (!reason) { alert("请输入修改原因"); return; }
@@ -413,7 +344,7 @@
                 }
             }
             if (updates.length === 0) { alert("所选学生积分均无变化（已达上限或下限）"); return; }
-            if (!confirm(`即将修改 ${updates.length} 名学生，积分变化 ${delta>0?"+":""}${delta}，原因："${reason}"。确认吗？`)) return;
+            if (!confirm(`即将修改 ${updates.length} 名学生，积分变化 ${delta>0?"+":""}${delta}，原因：“${reason}”。确认吗？`)) return;
 
             for (let u of updates) u.student.score = u.newScore;
             await saveStudents();
@@ -453,27 +384,28 @@
         }
 
         async function resetToInitial() {
-            if (!await verifyPassword()) return;
-            const clearReasons = confirm("将所有人积分重置为0，是否同时清空所有积分变化记录？
-点击"确定"清空记录，点击"取消"保留记录。");
-            for (let s of currentStudents) {
-                s.score = 0;
-            }
-            await saveStudents();
-            if (clearReasons) {
-                currentReasons = [];
-                await saveReasons();
-            }
-            renderStudentsTable();
-            renderReasonsTable();
-            document.getElementById("adminMsg").innerText = "已将所有学生积分重置为0" + (clearReasons ? "，并清空了记录" : "");
+            const pwd = await showPasswordModal();
+           const pwdHash = await sha256(pwd);
+           const effectiveHash = CONFIG.admin_password_hash || ADMIN_PASSWORD_HASH;
+           if (pwdHash !== effectiveHash){ alert("密码错误，操作取消"); return; }
+          const clearReasons = confirm("将所有人积分重置为0，是否同时清空所有积分变化记录？\n点击“确定”清空记录，点击“取消”保留记录。");
+          for (let s of currentStudents) {
+              s.score = 0;
+          }
+          await saveStudents();
+          if (clearReasons) {
+              currentReasons = [];
+              await saveReasons();
+          }
+          renderStudentsTable();
+          renderReasonsTable();
+          document.getElementById("adminMsg").innerText = "已将所有学生积分重置为0" + (clearReasons ? "，并清空了记录" : "");
         }
 
         async function addStudent() {
-            if (!await verifyPassword()) return;
             const id = document.getElementById("stuId").value.trim();
             const name = document.getElementById("stuName").value.trim();
-            let score = parseFloat(document.getElementById("stuScore").value);
+            let score = parseInt(document.getElementById("stuScore").value);
             if (!id || !name) { alert("学号和姓名不能为空"); return; }
             if (isNaN(score)) score = 100;
             score = Math.min(1000000000, Math.max(-10000000, score));
@@ -484,11 +416,10 @@
             document.getElementById("adminMsg").innerText = "添加成功";
         }
         async function updateStudent() {
-            if (!await verifyPassword()) return;
             if (!selectedStudentId) { alert("请先选择一个学生"); return; }
             const id = document.getElementById("stuId").value.trim();
             const name = document.getElementById("stuName").value.trim();
-            let score = parseFloat(document.getElementById("stuScore").value);
+            let score = parseInt(document.getElementById("stuScore").value);
             if (!id || !name) { alert("学号和姓名不能为空"); return; }
             if (isNaN(score)) score = 100;
             score = Math.min(100000000, Math.max(-1000000000, score));
@@ -502,7 +433,6 @@
             document.getElementById("adminMsg").innerText = "修改成功";
         }
         async function deleteStudent() {
-            if (!await verifyPassword()) return;
             if (!selectedStudentId) { alert("请先选择一个学生"); return; }
             if (!confirm("确定删除吗？")) return;
             currentStudents = currentStudents.filter(s => s.id !== selectedStudentId);
@@ -512,7 +442,6 @@
             document.getElementById("adminMsg").innerText = "删除成功";
         }
         async function swapStudents() {
-            if (!await verifyPassword()) return;
             const id1 = document.getElementById("swapId1").value.trim();
             const id2 = document.getElementById("swapId2").value.trim();
             if (!id1 || !id2) { alert("请输入两个学号"); return; }
