@@ -1328,5 +1328,19 @@
     "studentName": "姚竣豪",
     "delta": -6,
     "reason": "520多次电器未关"
+  },
+  {
+    "timestamp": "2026-05-22 12:31:48",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": -2,
+    "reason": "物理课睡觉"
+  },
+  {
+    "timestamp": "2026-05-22 12:31:48",
+    "studentId": "040",
+    "studentName": "朱熙元",
+    "delta": -2,
+    "reason": "物理课睡觉"
   }
 ]
