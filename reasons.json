@@ -1454,5 +1454,12 @@
     "studentName": "胡宵",
     "delta": -0.5,
     "reason": "实验程序（恢复分数）"
+  },
+  {
+    "timestamp": "2026-05-22 22:46:47",
+    "studentId": "045",
+    "studentName": "范晟轩",
+    "delta": 2,
+    "reason": "浇花一周"
   }
 ]
