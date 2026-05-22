@@ -1384,5 +1384,54 @@
     "studentName": "金智宸",
     "delta": -5,
     "reason": "前六次历史作业3次以上未交"
+  },
+  {
+    "timestamp": "2026-05-22 22:31:50",
+    "studentId": "010",
+    "studentName": "陈静怡",
+    "delta": 3,
+    "reason": "值日认真"
+  },
+  {
+    "timestamp": "2026-05-22 22:31:50",
+    "studentId": "045",
+    "studentName": "范晟轩",
+    "delta": 3,
+    "reason": "值日认真"
+  },
+  {
+    "timestamp": "2026-05-22 22:31:50",
+    "studentId": "007",
+    "studentName": "金鑫璇",
+    "delta": 3,
+    "reason": "值日认真"
+  },
+  {
+    "timestamp": "2026-05-22 22:31:50",
+    "studentId": "009",
+    "studentName": "陆玛俐",
+    "delta": 3,
+    "reason": "值日认真"
+  },
+  {
+    "timestamp": "2026-05-22 22:31:50",
+    "studentId": "023",
+    "studentName": "牧周磊",
+    "delta": 3,
+    "reason": "值日认真"
+  },
+  {
+    "timestamp": "2026-05-22 22:31:50",
+    "studentId": "014",
+    "studentName": "姚腾浩",
+    "delta": 3,
+    "reason": "值日认真"
+  },
+  {
+    "timestamp": "2026-05-22 22:31:50",
+    "studentId": "013",
+    "studentName": "袁煦泽",
+    "delta": 3,
+    "reason": "值日认真"
   }
 ]
