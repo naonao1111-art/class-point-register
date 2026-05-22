@@ -1461,5 +1461,33 @@
     "studentName": "范晟轩",
     "delta": 2,
     "reason": "浇花一周"
+  },
+  {
+    "timestamp": "2026-05-23 06:08:37",
+    "studentId": "001",
+    "studentName": "沈乐妍",
+    "delta": 1,
+    "reason": "参加比赛（固定）"
+  },
+  {
+    "timestamp": "2026-05-23 06:08:37",
+    "studentId": "010",
+    "studentName": "陈静怡",
+    "delta": 1,
+    "reason": "参加比赛（固定）"
+  },
+  {
+    "timestamp": "2026-05-23 06:08:37",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": 1,
+    "reason": "参加比赛（固定）"
+  },
+  {
+    "timestamp": "2026-05-23 06:08:37",
+    "studentId": "022",
+    "studentName": "方晟睿",
+    "delta": 1,
+    "reason": "参加比赛（固定）"
   }
 ]
