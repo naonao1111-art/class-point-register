@@ -82,11 +82,10 @@
             <button id="swapBtn">交换</button>
         </div>
 
-        <!-- 新增：快捷加减分（基于规则） -->
+        <!-- 快捷加减分（基于规则） - 支持多选学生 -->
         <div class="section">
             <h3>⚡ 快捷加减分（基于规则）</h3>
             <div id="rulesList" style="margin-bottom: 10px; max-height: 200px; overflow-y: auto; border:1px solid #eee; padding: 8px;">
-                <!-- 动态加载规则按钮 -->
                 <p>加载规则中...</p>
             </div>
             <div>
@@ -95,7 +94,7 @@
                 <label>原因：</label>
                 <input type="text" id="quickReason" placeholder="原因（可编辑、追加文字）" style="width: 250px;">
                 <button id="applyQuickBtn" style="background-color:#2196F3; color:white;">✅ 应用到选中学生</button>
-                <p style="font-size:12px; color:#666;">👉 点击上方规则自动填充分数和原因；可手动修改后再应用（需密码验证）。</p>
+                <p style="font-size:12px; color:#666;">👉 点击规则自动填充分数和原因；勾选多名学生（复选框），点击上方按钮批量应用（需密码验证）。</p>
             </div>
         </div>
 
@@ -155,7 +154,7 @@
         let currentRules = [];      // 存储积分规则
         let dataSha = "";
         let reasonsSha = "";
-        let selectedStudentId = null;
+        let selectedStudentId = null; // 仍保留用于增删改查的单选
         let currentSort = { field: 'id', order: 'asc' };
 
         // ========== 编码/解码工具 ==========
@@ -304,7 +303,6 @@
                 const row = tbody.insertRow();
                 row.insertCell(0).innerText = s.id;
                 row.insertCell(1).innerText = s.name;
-                // 积分保留两位小数显示
                 row.insertCell(2).innerText = (typeof s.score === 'number' ? s.score.toFixed(2) : s.score);
                 const chkCell = row.insertCell(3);
                 const chk = document.createElement("input");
@@ -424,42 +422,74 @@
             return true;
         }
 
-        // 应用到选中学生（单个）
-        async function applyToSelected(delta, reason) {
-            if (!selectedStudentId) { alert("请先通过单选按钮选中一名学生"); return false; }
-            if (isNaN(delta) || delta === 0) { alert("请输入有效的分数变化（非0）"); return false; }
-            if (!reason.trim()) { alert("请输入原因"); return false; }
+        // ========== 快捷批量加减分（支持多选学生） ==========
+        async function applyToCheckedStudents() {
+            // 获取所有被勾选的复选框
+            const checkboxes = document.querySelectorAll(".student-checkbox:checked");
+            if (checkboxes.length === 0) {
+                alert("请至少勾选一名学生（点击表格中的复选框）");
+                return;
+            }
 
-            const student = currentStudents.find(s => s.id === selectedStudentId);
-            if (!student) { alert("学生不存在"); return false; }
+            const delta = parseFloat(document.getElementById("quickDelta").value);
+            if (isNaN(delta) || delta === 0) {
+                alert("请输入有效的分数变化（非0）");
+                return;
+            }
+            const reason = document.getElementById("quickReason").value.trim();
+            if (!reason) {
+                alert("请输入原因");
+                return;
+            }
 
-            let newScore = student.score + delta;
-            newScore = Math.min(10000000, Math.max(-10000000, newScore));
-            if (newScore === student.score) { alert("积分无变化（已达上限或下限）"); return false; }
+            // 收集需要更新的学生对象及新分数
+            const updates = [];
+            for (let chk of checkboxes) {
+                const sid = chk.value;
+                const student = currentStudents.find(s => s.id === sid);
+                if (student) {
+                    let newScore = student.score + delta;
+                    newScore = Math.min(10000000, Math.max(-10000000, newScore));
+                    if (newScore !== student.score) {
+                        updates.push({ student, newScore });
+                    }
+                }
+            }
+            if (updates.length === 0) {
+                alert("所选学生积分均无变化（已达上限或下限）");
+                return;
+            }
 
-            if (!(await verifyPassword())) return false;
+            // 密码验证
+            if (!(await verifyPassword())) return;
 
-            student.score = newScore;
+            // 执行积分更新
+            for (let u of updates) {
+                u.student.score = u.newScore;
+            }
             await saveStudents();
 
+            // 生成时间戳
             const now = new Date();
             const timestamp = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
-            currentReasons.push({
+            
+            // 为每个学生添加一条记录
+            const newRecords = updates.map(u => ({
                 timestamp: timestamp,
-                studentId: student.id,
-                studentName: student.name,
+                studentId: u.student.id,
+                studentName: u.student.name,
                 delta: delta,
-                reason: reason.trim()
-            });
+                reason: reason
+            }));
+            currentReasons.push(...newRecords);
             await saveReasons();
 
             renderStudentsTable();
             renderReasonsTable();
-            document.getElementById("adminMsg").innerText = `已为学生 ${student.name} (${student.id}) 调整 ${delta>0?"+":""}${delta} 分，原因：${reason}`;
-            return true;
+            document.getElementById("adminMsg").innerText = `✅ 成功为 ${updates.length} 名学生调整积分 ${delta>0?"+":""}${delta} 分，原因：“${reason}”`;
         }
 
-        // 批量修改（保留原功能，密码已存在）
+        // 原有的批量修改功能（保留，独立）
         async function batchUpdate() {
             if (!(await verifyPassword())) return;
             const checkboxes = document.querySelectorAll(".student-checkbox:checked");
@@ -499,10 +529,10 @@
 
             renderStudentsTable();
             renderReasonsTable();
-            document.getElementById("adminMsg").innerText = `批量修改成功，共 ${updates.length} 名学生`;
+            document.getElementById("adminMsg").innerHTML = `批量修改成功，共 ${updates.length} 名学生`;
         }
 
-        // 增删改查加密码验证
+        // 增删改查加密码验证（与之前相同，保留单选框的 selectedStudentId）
         async function addStudent() {
             if (!(await verifyPassword())) return;
             const id = document.getElementById("stuId").value.trim();
@@ -518,7 +548,7 @@
             document.getElementById("adminMsg").innerText = "添加成功";
         }
         async function updateStudent() {
-            if (!selectedStudentId) { alert("请先选择一个学生"); return; }
+            if (!selectedStudentId) { alert("请先选择一个学生（点选单选按钮）"); return; }
             if (!(await verifyPassword())) return;
             const id = document.getElementById("stuId").value.trim();
             const name = document.getElementById("stuName").value.trim();
@@ -536,7 +566,7 @@
             document.getElementById("adminMsg").innerText = "修改成功";
         }
         async function deleteStudent() {
-            if (!selectedStudentId) { alert("请先选择一个学生"); return; }
+            if (!selectedStudentId) { alert("请先选择一个学生（点选单选按钮）"); return; }
             if (!(await verifyPassword())) return;
             if (!confirm("确定删除吗？")) return;
             currentStudents = currentStudents.filter(s => s.id !== selectedStudentId);
@@ -679,12 +709,8 @@
                 document.getElementById("exportReasonsBtn").onclick = exportReasons;
                 document.getElementById("resetInitialBtn").onclick = resetToInitial;
 
-                // 快捷应用按钮
-                document.getElementById("applyQuickBtn").onclick = async () => {
-                    const delta = parseFloat(document.getElementById("quickDelta").value);
-                    const reason = document.getElementById("quickReason").value.trim();
-                    await applyToSelected(delta, reason);
-                };
+                // 快捷应用按钮（多选批量）
+                document.getElementById("applyQuickBtn").onclick = applyToCheckedStudents;
             } catch (err) {
                 document.getElementById("loginMsg").innerText = "加载数据失败：" + err.message;
             }
