@@ -1440,5 +1440,12 @@
     "studentName": "胡宵",
     "delta": 1,
     "reason": "管理纪律半小时（实验）"
+  },
+  {
+    "timestamp": "2026-05-22 22:44:23",
+    "studentId": "039",
+    "studentName": "胡宵",
+    "delta": -0.5,
+    "reason": "实验程序"
   }
 ]
