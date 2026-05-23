@@ -1489,5 +1489,19 @@
     "studentName": "方晟睿",
     "delta": 1,
     "reason": "参加比赛（固定）"
+  },
+  {
+    "timestamp": "2026-05-23 15:06:05",
+    "studentId": "017",
+    "studentName": "黄智恒",
+    "delta": -2,
+    "reason": "没搬凳子"
+  },
+  {
+    "timestamp": "2026-05-23 15:06:05",
+    "studentId": "035",
+    "studentName": "冯丰硕",
+    "delta": -2,
+    "reason": "没搬凳子"
   }
 ]
