@@ -15,7 +15,6 @@
         .nav-section { background: #e3f2fd; padding: 12px; border-radius: 5px; margin-bottom: 20px; }
         .nav-section a { margin-right: 20px; color: #1565c0; text-decoration: none; font-weight: bold; }
         .nav-section a:hover { text-decoration: underline; }
-        .rule-item { margin: 5px 0; }
         .rule-tag { display: inline-block; background: #eee; padding: 5px 10px; margin: 3px; border-radius: 20px; cursor: pointer; }
         .rule-tag:hover { background: #ddd; }
         .score-add { color: #4CAF50; }
@@ -38,8 +37,8 @@
         <h1>班级积分管理后台</h1>
 
         <div class="nav-section">
-            <a href="show_control.html">📋 管理积分规则</a>
-            <a href="class_control.html">👥 管理班委</a>
+            <a href="show_control.html">管理积分规则</a>
+            <a href="class_control.html">管理班委</a>
         </div>
 
         <div class="section">
@@ -82,39 +81,28 @@
             <button id="swapBtn">交换</button>
         </div>
 
-        <!-- 快捷加减分（基于规则） - 支持多选学生 -->
+        <!-- 合并后的快捷加减分 + 批量修改面板 -->
         <div class="section">
-            <h3>⚡ 快捷加减分（基于规则）</h3>
+            <h3>加减分</h3>
             <div id="rulesList" style="margin-bottom: 10px; max-height: 200px; overflow-y: auto; border:1px solid #eee; padding: 8px;">
                 <p>加载规则中...</p>
+            </div>
+            <div style="margin-bottom: 8px;">
+                <button id="selectAllBtn" style="background-color:#4CAF50;">全选</button>
+                <button id="deselectAllBtn" style="background-color:#f44336;">取消全选</button>
             </div>
             <div>
                 <label>分数变化：</label>
                 <input type="number" id="quickDelta" step="any" placeholder="例如 +3.5 或 -2" value="0">
                 <label>原因：</label>
                 <input type="text" id="quickReason" placeholder="原因（可编辑、追加文字）" style="width: 250px;">
-                <button id="applyQuickBtn" style="background-color:#2196F3; color:white;">✅ 应用到选中学生</button>
-                <p style="font-size:12px; color:#666;">👉 点击规则自动填充分数和原因；勾选多名学生（复选框），点击上方按钮批量应用（需密码验证）。</p>
+                <button id="applyQuickBtn" style="background-color:#2196F3; color:white;">应用到选中学生</button>
+                <p style="font-size:12px; color:#666;">👉 点击规则自动填充分数和原因，点击上方按钮批量应用。</p>
             </div>
         </div>
 
         <div class="section">
-            <h3>批量修改积分（多选或全选）</h3>
-            <div>
-                <button id="selectAllBtn">全选</button>
-                <button id="deselectAllBtn">取消全选</button>
-            </div>
-            <div>
-                <label>分数变化: </label>
-                <input type="number" id="batchDelta" step="any" placeholder="例如 +5.5 或 -2">
-                <label>原因: </label>
-                <input type="text" id="batchReason" placeholder="流动红旗全班+5" style="width: 200px;">
-                <button id="batchUpdateBtn">批量修改</button>
-            </div>
-        </div>
-
-        <div class="section">
-            <h3>加减分原因记录（仅可编辑原因文本）</h3>
+            <h3>加减分原因记录</h3>
             <table id="reasonsTable">
                 <thead>
                     <tr><th>时间</th><th>学号</th><th>姓名</th><th>分数变化</th><th>原因（可编辑）</th><th>操作</th></tr>
@@ -126,7 +114,7 @@
         <p id="adminMsg"></p>
     </div>
 
-    <!-- 密码模态框（复用） -->
+    <!-- 密码模态框 -->
     <div id="passwordModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;">
         <div style="background:white; width:300px; margin:100px auto; padding:20px; border-radius:8px;">
             <h3>请输入管理员密码</h3>
@@ -151,13 +139,12 @@
 
         let currentStudents = [];
         let currentReasons = [];
-        let currentRules = [];      // 存储积分规则
+        let currentRules = [];
         let dataSha = "";
         let reasonsSha = "";
-        let selectedStudentId = null; // 仍保留用于增删改查的单选
+        let selectedStudentId = null;
         let currentSort = { field: 'id', order: 'asc' };
 
-        // ========== 编码/解码工具 ==========
         function decodeToken(obfuscated) {
             try {
                 if (!obfuscated) return "";
@@ -238,7 +225,6 @@
         }
 
         async function loadAllData() {
-            // 加载学生
             const dataRes = await fetchJSON(DATA_URL);
             if (dataRes.content) {
                 currentStudents = (dataRes.content.students || []).map(s => ({ ...s, score: parseFloat(s.score) }));
@@ -247,7 +233,6 @@
                 currentStudents = [];
                 dataSha = null;
             }
-            // 加载原因
             const reasonsRes = await fetchJSON(REASONS_URL);
             if (reasonsRes.content) {
                 currentReasons = reasonsRes.content;
@@ -256,7 +241,6 @@
                 currentReasons = [];
                 reasonsSha = null;
             }
-            // 加载规则 (用于快捷面板)
             const rulesRes = await fetchJSON(RULES_URL);
             if (rulesRes.content && rulesRes.content.rules) {
                 currentRules = rulesRes.content.rules;
@@ -273,7 +257,6 @@
             reasonsSha = await saveJSON(REASONS_URL, currentReasons, reasonsSha, "更新原因记录");
         }
 
-        // 浮点数排序
         function sortStudents(students, field, order) {
             const sorted = [...students];
             sorted.sort((a, b) => {
@@ -349,7 +332,6 @@
             });
         }
 
-        // 渲染规则列表（快捷选择）
         function renderRulesList() {
             const container = document.getElementById("rulesList");
             if (!container) return;
@@ -359,17 +341,16 @@
             }
             const addRules = currentRules.filter(r => r.score > 0);
             const subRules = currentRules.filter(r => r.score < 0);
-            let html = '<div><strong>➕ 加分规则</strong><br/>';
+            let html = '<div><strong>加分</strong><br/>';
             addRules.forEach(r => {
                 html += `<span class="rule-tag" data-score="${r.score}" data-action="${escapeHtml(r.action)}">${escapeHtml(r.action)} +${r.score}</span> `;
             });
-            html += '</div><div style="margin-top:6px;"><strong>➖ 减分规则</strong><br/>';
+            html += '</div><div style="margin-top:6px;"><strong>减分</strong><br/>';
             subRules.forEach(r => {
                 html += `<span class="rule-tag" data-score="${r.score}" data-action="${escapeHtml(r.action)}">${escapeHtml(r.action)} ${r.score}</span> `;
             });
             html += '</div>';
             container.innerHTML = html;
-            // 绑定点击事件
             document.querySelectorAll('.rule-tag').forEach(el => {
                 el.addEventListener('click', () => {
                     const score = parseFloat(el.getAttribute('data-score'));
@@ -389,7 +370,6 @@
             });
         }
 
-        // 通用密码验证模态框
         let modalResolve = null;
         function showPasswordModal() {
             return new Promise((resolve) => {
@@ -409,7 +389,6 @@
             if (modalResolve) modalResolve(null);
         };
 
-        // 密码验证辅助函数
         async function verifyPassword() {
             const pwd = await showPasswordModal();
             if (!pwd) return false;
@@ -422,15 +401,13 @@
             return true;
         }
 
-        // ========== 快捷批量加减分（支持多选学生） ==========
+        // 批量加减分（基于当前选中的复选框）
         async function applyToCheckedStudents() {
-            // 获取所有被勾选的复选框
             const checkboxes = document.querySelectorAll(".student-checkbox:checked");
             if (checkboxes.length === 0) {
-                alert("请至少勾选一名学生（点击表格中的复选框）");
+                alert("请至少勾选一名学生");
                 return;
             }
-
             const delta = parseFloat(document.getElementById("quickDelta").value);
             if (isNaN(delta) || delta === 0) {
                 alert("请输入有效的分数变化（非0）");
@@ -442,63 +419,6 @@
                 return;
             }
 
-            // 收集需要更新的学生对象及新分数
-            const updates = [];
-            for (let chk of checkboxes) {
-                const sid = chk.value;
-                const student = currentStudents.find(s => s.id === sid);
-                if (student) {
-                    let newScore = student.score + delta;
-                    newScore = Math.min(10000000, Math.max(-10000000, newScore));
-                    if (newScore !== student.score) {
-                        updates.push({ student, newScore });
-                    }
-                }
-            }
-            if (updates.length === 0) {
-                alert("所选学生积分均无变化（已达上限或下限）");
-                return;
-            }
-
-            // 密码验证
-            if (!(await verifyPassword())) return;
-
-            // 执行积分更新
-            for (let u of updates) {
-                u.student.score = u.newScore;
-            }
-            await saveStudents();
-
-            // 生成时间戳
-            const now = new Date();
-            const timestamp = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
-            
-            // 为每个学生添加一条记录
-            const newRecords = updates.map(u => ({
-                timestamp: timestamp,
-                studentId: u.student.id,
-                studentName: u.student.name,
-                delta: delta,
-                reason: reason
-            }));
-            currentReasons.push(...newRecords);
-            await saveReasons();
-
-            renderStudentsTable();
-            renderReasonsTable();
-            document.getElementById("adminMsg").innerText = `✅ 成功为 ${updates.length} 名学生调整积分 ${delta>0?"+":""}${delta} 分，原因：“${reason}”`;
-        }
-
-        // 原有的批量修改功能（保留，独立）
-        async function batchUpdate() {
-            if (!(await verifyPassword())) return;
-            const checkboxes = document.querySelectorAll(".student-checkbox:checked");
-            if (checkboxes.length === 0) { alert("请至少选择一个学生"); return; }
-            const delta = parseFloat(document.getElementById("batchDelta").value);
-            if (isNaN(delta)) { alert("请输入有效的分数变化"); return; }
-            const reason = document.getElementById("batchReason").value.trim();
-            if (!reason) { alert("请输入修改原因"); return; }
-
             const updates = [];
             for (let chk of checkboxes) {
                 const sid = chk.value;
@@ -509,8 +429,12 @@
                     if (newScore !== student.score) updates.push({ student, newScore });
                 }
             }
-            if (updates.length === 0) { alert("所选学生积分均无变化（已达上限或下限）"); return; }
-            if (!confirm(`即将修改 ${updates.length} 名学生，积分变化 ${delta>0?"+":""}${delta}，原因：“${reason}”。确认吗？`)) return;
+            if (updates.length === 0) {
+                alert("所选学生积分均无变化（已达上限或下限）");
+                return;
+            }
+
+            if (!(await verifyPassword())) return;
 
             for (let u of updates) u.student.score = u.newScore;
             await saveStudents();
@@ -529,10 +453,10 @@
 
             renderStudentsTable();
             renderReasonsTable();
-            document.getElementById("adminMsg").innerHTML = `批量修改成功，共 ${updates.length} 名学生`;
+            document.getElementById("adminMsg").innerText = `成功为 ${updates.length} 名学生调整积分 ${delta>0?"+":""}${delta} 分，原因：“${reason}”`;
         }
 
-        // 增删改查加密码验证（与之前相同，保留单选框的 selectedStudentId）
+        // 以下为增删改查等原有功能（带密码验证）
         async function addStudent() {
             if (!(await verifyPassword())) return;
             const id = document.getElementById("stuId").value.trim();
@@ -575,7 +499,6 @@
             renderStudentsTable();
             document.getElementById("adminMsg").innerText = "删除成功";
         }
-
         async function swapStudents() {
             const id1 = document.getElementById("swapId1").value.trim();
             const id2 = document.getElementById("swapId2").value.trim();
@@ -596,7 +519,6 @@
             renderReasonsTable();
             document.getElementById("adminMsg").innerText = "学号交换成功，并已同步历史记录";
         }
-
         async function resetToInitial() {
             if (!(await verifyPassword())) return;
             const clearReasons = confirm("将所有人积分重置为0，是否同时清空所有积分变化记录？\n点击“确定”清空记录，点击“取消”保留记录。");
@@ -610,7 +532,6 @@
             renderReasonsTable();
             document.getElementById("adminMsg").innerText = "已将所有学生积分重置为0" + (clearReasons ? "，并清空了记录" : "");
         }
-
         function filterStudents() {
             const searchId = document.getElementById("searchIdAdmin").value.trim();
             if (!searchId) renderStudentsTable();
@@ -640,7 +561,6 @@
                 });
             }
         }
-
         function exportStudents() {
             const wsData = [["学号", "姓名", "积分"]];
             currentStudents.forEach(s => wsData.push([s.id, s.name, s.score]));
@@ -657,7 +577,6 @@
             XLSX.utils.book_append_sheet(wb, ws, "积分变化记录");
             XLSX.writeFile(wb, `积分变化_${new Date().toLocaleString()}.xlsx`);
         }
-
         function bindSortEvents() {
             document.querySelectorAll("#stuTable th").forEach(th => {
                 th.addEventListener("click", () => {
@@ -702,14 +621,15 @@
                 document.getElementById("swapBtn").onclick = swapStudents;
                 document.getElementById("searchAdminBtn").onclick = filterStudents;
                 document.getElementById("resetAdminBtn").onclick = () => { document.getElementById("searchIdAdmin").value = ""; renderStudentsTable(); };
-                document.getElementById("selectAllBtn").onclick = () => { document.querySelectorAll(".student-checkbox").forEach(cb => cb.checked = true); };
-                document.getElementById("deselectAllBtn").onclick = () => { document.querySelectorAll(".student-checkbox").forEach(cb => cb.checked = false); };
-                document.getElementById("batchUpdateBtn").onclick = batchUpdate;
                 document.getElementById("exportStudentsBtn").onclick = exportStudents;
                 document.getElementById("exportReasonsBtn").onclick = exportReasons;
                 document.getElementById("resetInitialBtn").onclick = resetToInitial;
 
-                // 快捷应用按钮（多选批量）
+                // 全选/取消全选
+                document.getElementById("selectAllBtn").onclick = () => { document.querySelectorAll(".student-checkbox").forEach(cb => cb.checked = true); };
+                document.getElementById("deselectAllBtn").onclick = () => { document.querySelectorAll(".student-checkbox").forEach(cb => cb.checked = false); };
+
+                // 批量应用按钮
                 document.getElementById("applyQuickBtn").onclick = applyToCheckedStudents;
             } catch (err) {
                 document.getElementById("loginMsg").innerText = "加载数据失败：" + err.message;
