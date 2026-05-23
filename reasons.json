@@ -1510,5 +1510,12 @@
     "studentName": "胡凯琳",
     "delta": 2,
     "reason": "浇花一周"
+  },
+  {
+    "timestamp": "2026-05-23 16:55:11",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": -3,
+    "reason": "迟到"
   }
 ]
