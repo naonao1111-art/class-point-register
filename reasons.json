@@ -1601,5 +1601,89 @@
     "studentName": "刘昊",
     "delta": 1,
     "reason": "参加比赛（固定）"
+  },
+  {
+    "timestamp": "2026-05-24 17:44:36",
+    "studentId": "001",
+    "studentName": "沈乐妍",
+    "delta": 3,
+    "reason": "参加比赛（进入二轮比赛/三等奖）"
+  },
+  {
+    "timestamp": "2026-05-24 17:44:36",
+    "studentId": "002",
+    "studentName": "胡凯琳",
+    "delta": 3,
+    "reason": "参加比赛（进入二轮比赛/三等奖）"
+  },
+  {
+    "timestamp": "2026-05-24 17:44:36",
+    "studentId": "005",
+    "studentName": "沈姚栎",
+    "delta": 3,
+    "reason": "参加比赛（进入二轮比赛/三等奖）"
+  },
+  {
+    "timestamp": "2026-05-24 17:44:36",
+    "studentId": "006",
+    "studentName": "马伊韩",
+    "delta": 3,
+    "reason": "参加比赛（进入二轮比赛/三等奖）"
+  },
+  {
+    "timestamp": "2026-05-24 17:44:36",
+    "studentId": "009",
+    "studentName": "陆玛俐",
+    "delta": 3,
+    "reason": "参加比赛（进入二轮比赛/三等奖）"
+  },
+  {
+    "timestamp": "2026-05-24 17:44:36",
+    "studentId": "014",
+    "studentName": "姚腾浩",
+    "delta": 3,
+    "reason": "参加比赛（进入二轮比赛/三等奖）"
+  },
+  {
+    "timestamp": "2026-05-24 17:44:36",
+    "studentId": "023",
+    "studentName": "牧周磊",
+    "delta": 3,
+    "reason": "参加比赛（进入二轮比赛/三等奖）"
+  },
+  {
+    "timestamp": "2026-05-24 17:44:36",
+    "studentId": "026",
+    "studentName": "潘烨磊",
+    "delta": 3,
+    "reason": "参加比赛（进入二轮比赛/三等奖）"
+  },
+  {
+    "timestamp": "2026-05-24 17:44:36",
+    "studentId": "033",
+    "studentName": "应扎吉",
+    "delta": 3,
+    "reason": "参加比赛（进入二轮比赛/三等奖）"
+  },
+  {
+    "timestamp": "2026-05-24 17:44:36",
+    "studentId": "035",
+    "studentName": "冯丰硕",
+    "delta": 3,
+    "reason": "参加比赛（进入二轮比赛/三等奖）"
+  },
+  {
+    "timestamp": "2026-05-24 17:44:36",
+    "studentId": "037",
+    "studentName": "陈昀泽",
+    "delta": 3,
+    "reason": "参加比赛（进入二轮比赛/三等奖）"
+  },
+  {
+    "timestamp": "2026-05-24 17:44:36",
+    "studentId": "046",
+    "studentName": "刘昊",
+    "delta": 3,
+    "reason": "参加比赛（进入二轮比赛/三等奖）"
   }
 ]
