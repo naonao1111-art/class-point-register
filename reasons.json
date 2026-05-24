@@ -1692,5 +1692,33 @@
     "studentName": "金鑫璇",
     "delta": 2,
     "reason": "篮球赛 记录员"
+  },
+  {
+    "timestamp": "2026-05-24 19:53:33",
+    "studentId": "022",
+    "studentName": "方晟睿",
+    "delta": 2,
+    "reason": "参加比赛（进入二轮比赛/三等奖）"
+  },
+  {
+    "timestamp": "2026-05-24 19:53:33",
+    "studentId": "001",
+    "studentName": "沈乐妍",
+    "delta": 2,
+    "reason": "参加比赛（进入二轮比赛/三等奖）"
+  },
+  {
+    "timestamp": "2026-05-24 19:53:33",
+    "studentId": "010",
+    "studentName": "陈静怡",
+    "delta": 2,
+    "reason": "参加比赛（进入二轮比赛/三等奖）"
+  },
+  {
+    "timestamp": "2026-05-24 19:53:33",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": 2,
+    "reason": "参加比赛（进入二轮比赛/三等奖）"
   }
 ]
