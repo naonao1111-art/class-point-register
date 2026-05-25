@@ -1741,5 +1741,12 @@
     "studentName": "金鑫璇",
     "delta": 1,
     "reason": "参加比赛（固定）"
+  },
+  {
+    "timestamp": "2026-05-25 22:07:21",
+    "studentId": "007",
+    "studentName": "金鑫璇",
+    "delta": 2,
+    "reason": "参加比赛（进入二轮比赛/三等奖）"
   }
 ]
