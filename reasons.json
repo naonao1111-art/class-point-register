@@ -1734,5 +1734,12 @@
     "studentName": "冯丰硕",
     "delta": -3,
     "reason": "值日不及时"
+  },
+  {
+    "timestamp": "2026-05-25 22:06:56",
+    "studentId": "007",
+    "studentName": "金鑫璇",
+    "delta": 1,
+    "reason": "参加比赛（固定）"
   }
 ]
