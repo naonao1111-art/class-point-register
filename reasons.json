@@ -1797,5 +1797,96 @@
     "studentName": "胡宵",
     "delta": 1,
     "reason": "班委每周固定加分"
+  },
+  {
+    "timestamp": "2026-05-25 22:12:03",
+    "studentId": "001",
+    "studentName": "沈乐妍",
+    "delta": 1,
+    "reason": "组长每2周固定加分（不与班委重复）"
+  },
+  {
+    "timestamp": "2026-05-25 22:12:03",
+    "studentId": "008",
+    "studentName": "王李婧",
+    "delta": 1,
+    "reason": "组长每2周固定加分（不与班委重复）"
+  },
+  {
+    "timestamp": "2026-05-25 22:12:03",
+    "studentId": "009",
+    "studentName": "陆玛俐",
+    "delta": 1,
+    "reason": "组长每2周固定加分（不与班委重复）"
+  },
+  {
+    "timestamp": "2026-05-25 22:12:03",
+    "studentId": "010",
+    "studentName": "陈静怡",
+    "delta": 1,
+    "reason": "组长每2周固定加分（不与班委重复）"
+  },
+  {
+    "timestamp": "2026-05-25 22:12:03",
+    "studentId": "017",
+    "studentName": "黄智恒",
+    "delta": 1,
+    "reason": "组长每2周固定加分（不与班委重复）"
+  },
+  {
+    "timestamp": "2026-05-25 22:12:03",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": 1,
+    "reason": "组长每2周固定加分（不与班委重复）"
+  },
+  {
+    "timestamp": "2026-05-25 22:12:03",
+    "studentId": "023",
+    "studentName": "牧周磊",
+    "delta": 1,
+    "reason": "组长每2周固定加分（不与班委重复）"
+  },
+  {
+    "timestamp": "2026-05-25 22:12:03",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": 1,
+    "reason": "组长每2周固定加分（不与班委重复）"
+  },
+  {
+    "timestamp": "2026-05-25 22:12:03",
+    "studentId": "031",
+    "studentName": "刘博凯",
+    "delta": 1,
+    "reason": "组长每2周固定加分（不与班委重复）"
+  },
+  {
+    "timestamp": "2026-05-25 22:12:03",
+    "studentId": "040",
+    "studentName": "朱熙元",
+    "delta": 1,
+    "reason": "组长每2周固定加分（不与班委重复）"
+  },
+  {
+    "timestamp": "2026-05-25 22:12:03",
+    "studentId": "041",
+    "studentName": "童清扬",
+    "delta": 1,
+    "reason": "组长每2周固定加分（不与班委重复）"
+  },
+  {
+    "timestamp": "2026-05-25 22:12:03",
+    "studentId": "042",
+    "studentName": "闫之诺",
+    "delta": 1,
+    "reason": "组长每2周固定加分（不与班委重复）"
+  },
+  {
+    "timestamp": "2026-05-25 22:12:03",
+    "studentId": "047",
+    "studentName": "曾子轩",
+    "delta": 1,
+    "reason": "组长每2周固定加分（不与班委重复）"
   }
 ]
