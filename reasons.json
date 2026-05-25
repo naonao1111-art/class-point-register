@@ -1727,5 +1727,12 @@
     "studentName": "姚奇胜",
     "delta": 2,
     "reason": "拍照"
+  },
+  {
+    "timestamp": "2026-05-25 22:06:36",
+    "studentId": "035",
+    "studentName": "冯丰硕",
+    "delta": -3,
+    "reason": "值日不及时"
   }
 ]
