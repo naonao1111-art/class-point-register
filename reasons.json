@@ -1972,5 +1972,54 @@
     "studentName": "潘烨磊",
     "delta": -2,
     "reason": "后排桌子放衣服"
+  },
+  {
+    "timestamp": "2026-05-27 22:58:05",
+    "studentId": "008",
+    "studentName": "王李婧",
+    "delta": -4,
+    "reason": "未静班（组员）"
+  },
+  {
+    "timestamp": "2026-05-27 22:58:05",
+    "studentId": "020",
+    "studentName": "姚奇胜",
+    "delta": -4,
+    "reason": "未静班（组员）"
+  },
+  {
+    "timestamp": "2026-05-27 22:58:05",
+    "studentId": "026",
+    "studentName": "潘烨磊",
+    "delta": -4,
+    "reason": "未静班（组员）"
+  },
+  {
+    "timestamp": "2026-05-27 22:58:05",
+    "studentId": "037",
+    "studentName": "陈昀泽",
+    "delta": -4,
+    "reason": "未静班（组员）"
+  },
+  {
+    "timestamp": "2026-05-27 22:58:05",
+    "studentId": "041",
+    "studentName": "童清扬",
+    "delta": -4,
+    "reason": "未静班（组员）"
+  },
+  {
+    "timestamp": "2026-05-27 22:58:05",
+    "studentId": "042",
+    "studentName": "闫之诺",
+    "delta": -4,
+    "reason": "未静班（组员）"
+  },
+  {
+    "timestamp": "2026-05-27 22:58:05",
+    "studentId": "047",
+    "studentName": "曾子轩",
+    "delta": -4,
+    "reason": "未静班（组员）"
   }
 ]
