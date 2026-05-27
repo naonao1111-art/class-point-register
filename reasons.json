@@ -1951,5 +1951,12 @@
     "studentName": "方鸣扬",
     "delta": 3,
     "reason": "值日认真"
+  },
+  {
+    "timestamp": "2026-05-27 22:57:05",
+    "studentId": "001",
+    "studentName": "沈乐妍",
+    "delta": -3,
+    "reason": "迟到"
   }
 ]
