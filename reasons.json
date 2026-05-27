@@ -1958,5 +1958,19 @@
     "studentName": "沈乐妍",
     "delta": -3,
     "reason": "迟到"
+  },
+  {
+    "timestamp": "2026-05-27 22:57:27",
+    "studentId": "014",
+    "studentName": "姚腾浩",
+    "delta": -2,
+    "reason": "后排桌子放衣服"
+  },
+  {
+    "timestamp": "2026-05-27 22:57:27",
+    "studentId": "026",
+    "studentName": "潘烨磊",
+    "delta": -2,
+    "reason": "后排桌子放衣服"
   }
 ]
