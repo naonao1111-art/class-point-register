@@ -2028,5 +2028,12 @@
     "studentName": "顾槿宸",
     "delta": -6,
     "reason": "未静班（组长）"
+  },
+  {
+    "timestamp": "2026-05-28 23:27:15",
+    "studentId": "017",
+    "studentName": "黄智恒",
+    "delta": -3,
+    "reason": "迟到"
   }
 ]
