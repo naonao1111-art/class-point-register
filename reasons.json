@@ -2035,5 +2035,54 @@
     "studentName": "黄智恒",
     "delta": -3,
     "reason": "迟到"
+  },
+  {
+    "timestamp": "2026-05-29 23:26:02",
+    "studentId": "004",
+    "studentName": "叶齐楚",
+    "delta": -4,
+    "reason": "未静班（组员）"
+  },
+  {
+    "timestamp": "2026-05-29 23:26:02",
+    "studentId": "018",
+    "studentName": "苏义涵",
+    "delta": -4,
+    "reason": "未静班（组员）"
+  },
+  {
+    "timestamp": "2026-05-29 23:26:02",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": -4,
+    "reason": "未静班（组员）"
+  },
+  {
+    "timestamp": "2026-05-29 23:26:02",
+    "studentId": "022",
+    "studentName": "方晟睿",
+    "delta": -4,
+    "reason": "未静班（组员）"
+  },
+  {
+    "timestamp": "2026-05-29 23:26:02",
+    "studentId": "033",
+    "studentName": "应扎吉",
+    "delta": -4,
+    "reason": "未静班（组员）"
+  },
+  {
+    "timestamp": "2026-05-29 23:26:02",
+    "studentId": "040",
+    "studentName": "朱熙元",
+    "delta": -4,
+    "reason": "未静班（组员）"
+  },
+  {
+    "timestamp": "2026-05-29 23:26:02",
+    "studentId": "048",
+    "studentName": "杨子鸣",
+    "delta": -4,
+    "reason": "未静班（组员）"
   }
 ]
