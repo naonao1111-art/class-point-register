@@ -2084,5 +2084,12 @@
     "studentName": "杨子鸣",
     "delta": -4,
     "reason": "未静班（组员）"
+  },
+  {
+    "timestamp": "2026-05-29 23:26:13",
+    "studentId": "036",
+    "studentName": "姚竣豪",
+    "delta": -6,
+    "reason": "未静班（组长）"
   }
 ]
