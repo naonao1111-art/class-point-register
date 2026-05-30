@@ -2091,5 +2091,19 @@
     "studentName": "姚竣豪",
     "delta": -6,
     "reason": "未静班（组长）"
+  },
+  {
+    "timestamp": "2026-05-30 15:06:31",
+    "studentId": "019",
+    "studentName": "顾槿宸",
+    "delta": -2,
+    "reason": "没穿校服"
+  },
+  {
+    "timestamp": "2026-05-30 15:06:31",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": -2,
+    "reason": "没穿校服"
   }
 ]
