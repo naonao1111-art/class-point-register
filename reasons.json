@@ -2252,5 +2252,12 @@
     "studentName": "范晟轩",
     "delta": 2.5,
     "reason": "4.29恢复分数"
+  },
+  {
+    "timestamp": "2026-05-31 22:27:34",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": 2.5,
+    "reason": "5.18恢复分数"
   }
 ]
