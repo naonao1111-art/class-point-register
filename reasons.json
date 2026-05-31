@@ -2224,5 +2224,33 @@
     "studentName": "冯丰硕",
     "delta": -5,
     "reason": "多次物理作业没交"
+  },
+  {
+    "timestamp": "2026-05-31 22:26:58",
+    "studentId": "016",
+    "studentName": "徐志翔",
+    "delta": 2.5,
+    "reason": "4.29恢复分数"
+  },
+  {
+    "timestamp": "2026-05-31 22:26:58",
+    "studentId": "017",
+    "studentName": "黄智恒",
+    "delta": 2.5,
+    "reason": "4.29恢复分数"
+  },
+  {
+    "timestamp": "2026-05-31 22:26:58",
+    "studentId": "028",
+    "studentName": "李岩蹊",
+    "delta": 2.5,
+    "reason": "4.29恢复分数"
+  },
+  {
+    "timestamp": "2026-05-31 22:26:58",
+    "studentId": "045",
+    "studentName": "范晟轩",
+    "delta": 2.5,
+    "reason": "4.29恢复分数"
   }
 ]
