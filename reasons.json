@@ -2105,5 +2105,54 @@
     "studentName": "朱晨曦",
     "delta": -2,
     "reason": "没穿校服"
+  },
+  {
+    "timestamp": "2026-05-31 22:21:27",
+    "studentId": "001",
+    "studentName": "沈乐妍",
+    "delta": -3,
+    "reason": "5.31迟到"
+  },
+  {
+    "timestamp": "2026-05-31 22:21:27",
+    "studentId": "004",
+    "studentName": "叶齐楚",
+    "delta": -3,
+    "reason": "5.31迟到"
+  },
+  {
+    "timestamp": "2026-05-31 22:21:27",
+    "studentId": "008",
+    "studentName": "王李婧",
+    "delta": -3,
+    "reason": "5.31迟到"
+  },
+  {
+    "timestamp": "2026-05-31 22:21:27",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": -3,
+    "reason": "5.31迟到"
+  },
+  {
+    "timestamp": "2026-05-31 22:21:27",
+    "studentId": "026",
+    "studentName": "潘烨磊",
+    "delta": -3,
+    "reason": "5.31迟到"
+  },
+  {
+    "timestamp": "2026-05-31 22:21:27",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": -3,
+    "reason": "5.31迟到"
+  },
+  {
+    "timestamp": "2026-05-31 22:21:27",
+    "studentId": "040",
+    "studentName": "朱熙元",
+    "delta": -3,
+    "reason": "5.31迟到"
   }
 ]
