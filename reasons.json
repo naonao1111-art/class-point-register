@@ -2259,5 +2259,68 @@
     "studentName": "朱晨曦",
     "delta": 2.5,
     "reason": "5.18恢复分数"
+  },
+  {
+    "timestamp": "2026-05-31 22:28:49",
+    "studentId": "009",
+    "studentName": "陆玛俐",
+    "delta": 2.5,
+    "reason": "5.19恢复分数"
+  },
+  {
+    "timestamp": "2026-05-31 22:28:49",
+    "studentId": "017",
+    "studentName": "黄智恒",
+    "delta": 2.5,
+    "reason": "5.19恢复分数"
+  },
+  {
+    "timestamp": "2026-05-31 22:28:49",
+    "studentId": "023",
+    "studentName": "牧周磊",
+    "delta": 2.5,
+    "reason": "5.19恢复分数"
+  },
+  {
+    "timestamp": "2026-05-31 22:28:49",
+    "studentId": "024",
+    "studentName": "沈天辰",
+    "delta": 2.5,
+    "reason": "5.19恢复分数"
+  },
+  {
+    "timestamp": "2026-05-31 22:28:49",
+    "studentId": "025",
+    "studentName": "俞齐",
+    "delta": 2.5,
+    "reason": "5.19恢复分数"
+  },
+  {
+    "timestamp": "2026-05-31 22:28:49",
+    "studentId": "027",
+    "studentName": "吕峥程",
+    "delta": 2.5,
+    "reason": "5.19恢复分数"
+  },
+  {
+    "timestamp": "2026-05-31 22:28:49",
+    "studentId": "028",
+    "studentName": "李岩蹊",
+    "delta": 2.5,
+    "reason": "5.19恢复分数"
+  },
+  {
+    "timestamp": "2026-05-31 22:28:49",
+    "studentId": "043",
+    "studentName": "刘德临",
+    "delta": 2.5,
+    "reason": "5.19恢复分数"
+  },
+  {
+    "timestamp": "2026-05-31 22:28:49",
+    "studentId": "046",
+    "studentName": "刘昊",
+    "delta": 2.5,
+    "reason": "5.19恢复分数"
   }
 ]
