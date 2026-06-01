@@ -2497,5 +2497,96 @@
     "studentName": "潘烨磊",
     "delta": -6,
     "reason": "纪律差"
+  },
+  {
+    "timestamp": "2026-06-01 22:17:06",
+    "studentId": "009",
+    "studentName": "陆玛俐",
+    "delta": 2,
+    "reason": "课代表每周加分（不与班委重复）（补充）"
+  },
+  {
+    "timestamp": "2026-06-01 22:17:06",
+    "studentId": "001",
+    "studentName": "沈乐妍",
+    "delta": 2,
+    "reason": "课代表每周加分（不与班委重复）（补充）"
+  },
+  {
+    "timestamp": "2026-06-01 22:17:06",
+    "studentId": "042",
+    "studentName": "闫之诺",
+    "delta": 2,
+    "reason": "课代表每周加分（不与班委重复）（补充）"
+  },
+  {
+    "timestamp": "2026-06-01 22:17:06",
+    "studentId": "023",
+    "studentName": "牧周磊",
+    "delta": 2,
+    "reason": "课代表每周加分（不与班委重复）（补充）"
+  },
+  {
+    "timestamp": "2026-06-01 22:17:06",
+    "studentId": "041",
+    "studentName": "童清扬",
+    "delta": 2,
+    "reason": "课代表每周加分（不与班委重复）（补充）"
+  },
+  {
+    "timestamp": "2026-06-01 22:17:06",
+    "studentId": "008",
+    "studentName": "王李婧",
+    "delta": 2,
+    "reason": "课代表每周加分（不与班委重复）（补充）"
+  },
+  {
+    "timestamp": "2026-06-01 22:17:06",
+    "studentId": "031",
+    "studentName": "刘博凯",
+    "delta": 2,
+    "reason": "课代表每周加分（不与班委重复）（补充）"
+  },
+  {
+    "timestamp": "2026-06-01 22:17:06",
+    "studentId": "047",
+    "studentName": "曾子轩",
+    "delta": 2,
+    "reason": "课代表每周加分（不与班委重复）（补充）"
+  },
+  {
+    "timestamp": "2026-06-01 22:17:06",
+    "studentId": "040",
+    "studentName": "朱熙元",
+    "delta": 2,
+    "reason": "课代表每周加分（不与班委重复）（补充）"
+  },
+  {
+    "timestamp": "2026-06-01 22:17:06",
+    "studentId": "017",
+    "studentName": "黄智恒",
+    "delta": 2,
+    "reason": "课代表每周加分（不与班委重复）（补充）"
+  },
+  {
+    "timestamp": "2026-06-01 22:17:06",
+    "studentId": "036",
+    "studentName": "姚竣豪",
+    "delta": 2,
+    "reason": "课代表每周加分（不与班委重复）（补充）"
+  },
+  {
+    "timestamp": "2026-06-01 22:17:06",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": 4,
+    "reason": "课代表每周加分（不与班委重复）（补充） (双倍加分)"
+  },
+  {
+    "timestamp": "2026-06-01 22:17:06",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": 4,
+    "reason": "课代表每周加分（不与班委重复）（补充） (双倍加分)"
   }
 ]
