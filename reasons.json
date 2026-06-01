@@ -2483,5 +2483,12 @@
     "studentName": "姚奇胜",
     "delta": -3,
     "reason": "纪律差 (减半扣分)"
+  },
+  {
+    "timestamp": "2026-06-01 22:09:31",
+    "studentId": "040",
+    "studentName": "朱熙元",
+    "delta": 2,
+    "reason": "管理纪律半小时*2"
   }
 ]
