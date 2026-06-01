@@ -2595,5 +2595,12 @@
     "studentName": "冯丰硕",
     "delta": 2,
     "reason": "实验网站 (双倍加分)"
+  },
+  {
+    "timestamp": "2026-06-01 22:22:03",
+    "studentId": "035",
+    "studentName": "冯丰硕",
+    "delta": -2,
+    "reason": "实验网站（恢复） (减半扣分)"
   }
 ]
