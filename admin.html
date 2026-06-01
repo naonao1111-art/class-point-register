@@ -1,3 +1,4 @@
+<!-- admin.html - 管理员后台（已添加积分保护机制：低于-30分，扣分减半，加分翻倍） -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -62,13 +63,7 @@
             </div>
             <table id="stuTable">
                 <thead>
-                    <tr>
-                        <th data-sort="id">学号 ▲▼</th>
-                        <th data-sort="name">姓名 ▲▼</th>
-                        <th data-sort="score">积分 ▲▼</th>
-                        <th>选择</th>
-                        <th>操作</th>
-                    </tr>
+                    <tr><th data-sort="id">学号 ▲▼</th><th data-sort="name">姓名 ▲▼</th><th data-sort="score">积分 ▲▼</th><th>选择</th><th>操作</th>
                 </thead>
                 <tbody></tbody>
             </table>
@@ -97,16 +92,15 @@
                 <label>原因：</label>
                 <input type="text" id="quickReason" placeholder="原因（可编辑、追加文字）" style="width: 250px;">
                 <button id="applyQuickBtn" style="background-color:#2196F3; color:white;">应用到选中学生</button>
-                <p style="font-size:12px; color:#666;">👉 点击规则自动填充分数和原因，点击上方按钮批量应用。</p>
+                <p style="font-size:12px; color:#666;">👉 点击规则自动填充分数和原因，点击上方按钮批量应用。<br>
+                ⚠️ 积分保护: 当前积分低于-30分时，扣分减半，加分翻倍，并自动备注(减半扣分)/(双倍加分)。</p>
             </div>
         </div>
 
         <div class="section">
             <h3>加减分原因记录</h3>
             <table id="reasonsTable">
-                <thead>
-                    <tr><th>时间</th><th>学号</th><th>姓名</th><th>分数变化</th><th>原因（可编辑）</th><th>操作</th></tr>
-                </thead>
+                <thead><tr><th>时间</th><th>学号</th><th>姓名</th><th>分数变化</th><th>原因（可编辑）</th><th>操作</th></tr></thead>
                 <tbody></tbody>
             </table>
         </div>
@@ -401,7 +395,7 @@
             return true;
         }
 
-        // 批量加减分（基于当前选中的复选框）
+        // 批量加减分（基于当前选中的复选框）+ 积分保护机制: 低于-30分, 扣分减半、加分翻倍
         async function applyToCheckedStudents() {
             const checkboxes = document.querySelectorAll(".student-checkbox:checked");
             if (checkboxes.length === 0) {
@@ -413,7 +407,7 @@
                 alert("请输入有效的分数变化（非0）");
                 return;
             }
-            const reason = document.getElementById("quickReason").value.trim();
+            let reason = document.getElementById("quickReason").value.trim();
             if (!reason) {
                 alert("请输入原因");
                 return;
@@ -423,12 +417,28 @@
             for (let chk of checkboxes) {
                 const sid = chk.value;
                 const student = currentStudents.find(s => s.id === sid);
-                if (student) {
-                    let newScore = student.score + delta;
-                    newScore = Math.min(10000000, Math.max(-10000000, newScore));
-                    if (newScore !== student.score) updates.push({ student, newScore });
+                if (!student) continue;
+                
+                let actualDelta = delta;           // 实际应用的变化值
+                let extraRemark = "";               // 需要追加的原因备注
+                const currentScore = student.score;
+                
+                // 积分保护逻辑: 当前积分低于 -30 分时（包含 -30 本身？用小于 -30 更合理，严格低于-30）
+                if (currentScore < -30) {
+                    if (delta > 0) {      // 加分翻倍
+                        actualDelta = delta * 2;
+                        extraRemark = " (双倍加分)";
+                    } else if (delta < 0) { // 扣分减半
+                        actualDelta = delta / 2;
+                        extraRemark = " (减半扣分)";
+                    }
                 }
+                
+                let newScore = student.score + actualDelta;
+                newScore = Math.min(10000000, Math.max(-10000000, newScore));
+                if (newScore !== student.score) updates.push({ student, newScore, actualDelta, extraRemark });
             }
+            
             if (updates.length === 0) {
                 alert("所选学生积分均无变化（已达上限或下限）");
                 return;
@@ -436,24 +446,30 @@
 
             if (!(await verifyPassword())) return;
 
+            // 应用积分变更
             for (let u of updates) u.student.score = u.newScore;
             await saveStudents();
 
             const now = new Date();
             const timestamp = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+            
             const newRecords = updates.map(u => ({
                 timestamp: timestamp,
                 studentId: u.student.id,
                 studentName: u.student.name,
-                delta: delta,
-                reason: reason
+                delta: u.actualDelta,
+                reason: reason + u.extraRemark
             }));
+            
             currentReasons.push(...newRecords);
             await saveReasons();
 
             renderStudentsTable();
             renderReasonsTable();
-            document.getElementById("adminMsg").innerText = `成功为 ${updates.length} 名学生调整积分 ${delta>0?"+":""}${delta} 分，原因：“${reason}”`;
+            let protectedCount = updates.filter(u => u.extraRemark !== "").length;
+            let msg = `成功为 ${updates.length} 名学生调整积分。`;
+            if (protectedCount > 0) msg += ` 其中 ${protectedCount} 人触发积分保护（低于-30分，已自动翻倍/减半）。`;
+            document.getElementById("adminMsg").innerText = msg;
         }
 
         // 以下为增删改查等原有功能（带密码验证）
@@ -625,11 +641,8 @@
                 document.getElementById("exportReasonsBtn").onclick = exportReasons;
                 document.getElementById("resetInitialBtn").onclick = resetToInitial;
 
-                // 全选/取消全选
                 document.getElementById("selectAllBtn").onclick = () => { document.querySelectorAll(".student-checkbox").forEach(cb => cb.checked = true); };
                 document.getElementById("deselectAllBtn").onclick = () => { document.querySelectorAll(".student-checkbox").forEach(cb => cb.checked = false); };
-
-                // 批量应用按钮
                 document.getElementById("applyQuickBtn").onclick = applyToCheckedStudents;
             } catch (err) {
                 document.getElementById("loginMsg").innerText = "加载数据失败：" + err.message;

@@ -1,62 +1,159 @@
+<!-- reasonsl.html - 积分变化记录（已添加筛选功能） -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <title>加减分原因记录</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        table { border-collapse: collapse; width: 100%; }
+        body { font-family: Arial, sans-serif; margin: 20px; background: #fafafa; }
+        .container { max-width: 1400px; margin: 0 auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        table { border-collapse: collapse; width: 100%; margin-top: 20px; }
         th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
         th { background-color: #eef; }
+        .back-link { margin-bottom: 20px; display: inline-block; color: #2196F3; text-decoration: none; font-size: 14px; }
+        .back-link:hover { text-decoration: underline; }
+        .filters { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; align-items: flex-end; background: #f5f5f5; padding: 15px; border-radius: 8px; }
+        .filter-group { display: flex; flex-direction: column; gap: 5px; }
+        .filter-group label { font-size: 12px; font-weight: bold; color: #555; }
+        .filter-group input, .filter-group button { padding: 6px 10px; border: 1px solid #ccc; border-radius: 4px; }
+        .filter-group button { background: #2196F3; color: white; border: none; cursor: pointer; }
+        .filter-group button:hover { background: #0b7dda; }
+        .reset-btn { background: #6c757d !important; }
+        .reset-btn:hover { background: #5a6268 !important; }
+        .score-add { color: #4CAF50; font-weight: bold; }
+        .score-sub { color: #f44336; font-weight: bold; }
+        @media (max-width: 768px) { .filters { flex-direction: column; align-items: stretch; } }
     </style>
 </head>
 <body>
+<div class="container">
+    <a href="indexl.html" class="back-link">← 返回积分公示板</a>
     <h1>班级积分加减分记录</h1>
-    <table id="reasonTable">
-        <thead>
+
+    <!-- 筛选区域 -->
+    <div class="filters">
+        <div class="filter-group">
+            <label>学号/姓名关键词</label>
+            <input type="text" id="filterNameId" placeholder="输入学号或姓名" style="width: 160px;">
+        </div>
+        <div class="filter-group">
+            <label>原因关键词</label>
+            <input type="text" id="filterReason" placeholder="原因包含" style="width: 180px;">
+        </div>
+        <div class="filter-group">
+            <label>开始日期</label>
+            <input type="date" id="filterDateStart">
+        </div>
+        <div class="filter-group">
+            <label>结束日期</label>
+            <input type="date" id="filterDateEnd">
+        </div>
+        <div class="filter-group">
+            <button id="applyFilterBtn">查询筛选</button>
+            <button id="resetFilterBtn" class="reset-btn">重置筛选</button>
+        </div>
+    </div>
+
+    <div style="overflow-x: auto;">
+        <table id="reasonTable">
+            <thead>
             <tr><th>时间</th><th>学号</th><th>姓名</th><th>分数变化</th><th>原因</th></tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+</div>
 
-    <script>
-        // ========== 配置（请修改为你的实际信息）==========
-        const REPO_OWNER = "naonao1111-art";      // 替换为你的用户名
-        const REPO_NAME = "class-point-register"; // 替换为你的仓库名
-        const REASONS_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/reasons.json`;
+<script>
+    const REPO_OWNER = "naonao1111-art";
+    const REPO_NAME = "class-point-register";
+    const REASONS_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/reasons.json`;
 
-        // 正确的 base64 解码函数（支持 UTF-8 中文）
-        function base64DecodeToUtf8(base64Str) {
-            const binaryStr = atob(base64Str);
-            const bytes = new Uint8Array(binaryStr.length);
-            for (let i = 0; i < binaryStr.length; i++) {
-                bytes[i] = binaryStr.charCodeAt(i);
-            }
-            return new TextDecoder('utf-8').decode(bytes);
+    let allReasons = [];        // 存储原始所有记录
+    let filteredReasons = [];
+
+    function base64DecodeToUtf8(base64Str) {
+        const binaryStr = atob(base64Str);
+        const bytes = new Uint8Array(binaryStr.length);
+        for (let i = 0; i < binaryStr.length; i++) bytes[i] = binaryStr.charCodeAt(i);
+        return new TextDecoder('utf-8').decode(bytes);
+    }
+
+    // 渲染表格
+    function renderTable(reasonsArray) {
+        const tbody = document.querySelector("#reasonTable tbody");
+        tbody.innerHTML = "";
+        if (!reasonsArray.length) {
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">暂无记录</td></tr>';
+            return;
         }
+        // 按时间倒序（最新的在前）
+        const sorted = [...reasonsArray].sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+        sorted.forEach(r => {
+            const row = tbody.insertRow();
+            row.insertCell(0).innerText = r.timestamp;
+            row.insertCell(1).innerText = r.studentId;
+            row.insertCell(2).innerText = r.studentName;
+            const deltaCell = row.insertCell(3);
+            const deltaVal = parseFloat(r.delta);
+            deltaCell.innerText = (deltaVal > 0 ? "+" : "") + deltaVal.toFixed(2);
+            deltaCell.className = deltaVal > 0 ? "score-add" : "score-sub";
+            row.insertCell(4).innerText = r.reason;
+        });
+    }
 
-        async function loadReasons() {
-            try {
-                const resp = await fetch(REASONS_URL);
-                if (!resp.ok) throw new Error("加载失败");
-                const data = await resp.json();
-                const content = base64DecodeToUtf8(data.content);
-                const reasons = JSON.parse(content);
-                const tbody = document.querySelector("#reasonTable tbody");
-                tbody.innerHTML = "";
-                reasons.forEach(r => {
-                    const row = tbody.insertRow();
-                    row.insertCell(0).innerText = r.timestamp;
-                    row.insertCell(1).innerText = r.studentId;
-                    row.insertCell(2).innerText = r.studentName;
-                    row.insertCell(3).innerText = (r.delta > 0 ? "+" : "") + r.delta;
-                    row.insertCell(4).innerText = r.reason;
-                });
-            } catch (err) {
-                document.body.innerHTML += `<p style="color:red">错误：${err.message}</p>`;
+    // 根据筛选条件过滤
+    function applyFilters() {
+        const keyword = document.getElementById("filterNameId").value.trim().toLowerCase();
+        const reasonKw = document.getElementById("filterReason").value.trim().toLowerCase();
+        const startDate = document.getElementById("filterDateStart").value;
+        const endDate = document.getElementById("filterDateEnd").value;
+
+        filteredReasons = allReasons.filter(r => {
+            // 学号或姓名匹配
+            if (keyword) {
+                const matchId = r.studentId.toLowerCase().includes(keyword);
+                const matchName = r.studentName.toLowerCase().includes(keyword);
+                if (!matchId && !matchName) return false;
             }
+            // 原因关键词匹配
+            if (reasonKw && !r.reason.toLowerCase().includes(reasonKw)) return false;
+            // 日期范围匹配（只比较日期部分 YYYY-MM-DD）
+            const recordDate = r.timestamp.split(" ")[0]; // "2026-05-03"
+            if (startDate && recordDate < startDate) return false;
+            if (endDate && recordDate > endDate) return false;
+            return true;
+        });
+        renderTable(filteredReasons);
+    }
+
+    // 重置所有筛选
+    function resetFilters() {
+        document.getElementById("filterNameId").value = "";
+        document.getElementById("filterReason").value = "";
+        document.getElementById("filterDateStart").value = "";
+        document.getElementById("filterDateEnd").value = "";
+        filteredReasons = [...allReasons];
+        renderTable(filteredReasons);
+    }
+
+    async function loadReasons() {
+        try {
+            const resp = await fetch(REASONS_URL);
+            if (!resp.ok) throw new Error("加载失败");
+            const data = await resp.json();
+            const content = base64DecodeToUtf8(data.content);
+            allReasons = JSON.parse(content);
+            filteredReasons = [...allReasons];
+            renderTable(filteredReasons);
+        } catch (err) {
+            document.querySelector("#reasonTable tbody").innerHTML = `<tr><td colspan="5" style="color:red;">错误：${err.message}</td></tr>`;
         }
-        loadReasons();
-    </script>
+    }
+
+    document.getElementById("applyFilterBtn").addEventListener("click", applyFilters);
+    document.getElementById("resetFilterBtn").addEventListener("click", resetFilters);
+    loadReasons();
+</script>
 </body>
 </html>
