@@ -2462,5 +2462,19 @@
     "studentName": "曾子轩",
     "delta": 1,
     "reason": "课代表每2周固定加分（不与班委重复）（5.17-5.31）"
+  },
+  {
+    "timestamp": "2026-06-01 17:28:05",
+    "studentId": "007",
+    "studentName": "金鑫璇",
+    "delta": 3,
+    "reason": "开班会课"
+  },
+  {
+    "timestamp": "2026-06-01 17:28:05",
+    "studentId": "040",
+    "studentName": "朱熙元",
+    "delta": 3,
+    "reason": "开班会课"
   }
 ]
