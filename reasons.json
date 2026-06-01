@@ -2490,5 +2490,12 @@
     "studentName": "朱熙元",
     "delta": 2,
     "reason": "管理纪律半小时*2"
+  },
+  {
+    "timestamp": "2026-06-01 22:10:01",
+    "studentId": "026",
+    "studentName": "潘烨磊",
+    "delta": -6,
+    "reason": "纪律差"
   }
 ]
