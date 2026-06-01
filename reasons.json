@@ -2476,5 +2476,12 @@
     "studentName": "朱熙元",
     "delta": 3,
     "reason": "开班会课"
+  },
+  {
+    "timestamp": "2026-06-01 22:06:42",
+    "studentId": "020",
+    "studentName": "姚奇胜",
+    "delta": -3,
+    "reason": "纪律差 (减半扣分)"
   }
 ]
