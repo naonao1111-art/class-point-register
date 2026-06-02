@@ -2644,5 +2644,12 @@
     "studentName": "朱晨曦",
     "delta": 8,
     "reason": "管理纪律半小时*4 (双倍加分)"
+  },
+  {
+    "timestamp": "2026-06-02 21:51:20",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": -3,
+    "reason": "未静班 (减半扣分)"
   }
 ]
