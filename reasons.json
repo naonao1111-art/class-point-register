@@ -2686,5 +2686,12 @@
     "studentName": "范晟轩",
     "delta": -3,
     "reason": "6.1电器没关"
+  },
+  {
+    "timestamp": "2026-06-02 21:54:16",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": -3,
+    "reason": "6.2电器多次未关 (减半扣分)"
   }
 ]
