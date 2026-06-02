@@ -2637,5 +2637,12 @@
     "studentName": "濮天昊",
     "delta": -0.25,
     "reason": "不接受任务 (减半扣分)"
+  },
+  {
+    "timestamp": "2026-06-02 21:51:00",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": 8,
+    "reason": "管理纪律半小时*4 (双倍加分)"
   }
 ]
