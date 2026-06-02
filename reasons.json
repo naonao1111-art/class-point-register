@@ -2665,5 +2665,12 @@
     "studentName": "姚奇胜",
     "delta": -0.25,
     "reason": "拒绝任务 (减半扣分)"
+  },
+  {
+    "timestamp": "2026-06-02 21:53:04",
+    "studentId": "041",
+    "studentName": "童清扬",
+    "delta": 1.7,
+    "reason": "管理纪律半小时*1.7"
   }
 ]
