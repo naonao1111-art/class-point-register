@@ -2693,5 +2693,19 @@
     "studentName": "濮天昊",
     "delta": -3,
     "reason": "6.2电器多次未关 (减半扣分)"
+  },
+  {
+    "timestamp": "2026-06-02 21:54:28",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": -1,
+    "reason": "上课睡觉 (减半扣分)"
+  },
+  {
+    "timestamp": "2026-06-02 21:54:28",
+    "studentId": "040",
+    "studentName": "朱熙元",
+    "delta": -2,
+    "reason": "上课睡觉"
   }
 ]
