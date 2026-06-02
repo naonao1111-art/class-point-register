@@ -2602,5 +2602,19 @@
     "studentName": "冯丰硕",
     "delta": -2,
     "reason": "实验网站（恢复） (减半扣分)"
+  },
+  {
+    "timestamp": "2026-06-02 10:24:04",
+    "studentId": "038",
+    "studentName": "方鸣扬",
+    "delta": 2,
+    "reason": "搬书"
+  },
+  {
+    "timestamp": "2026-06-02 10:24:04",
+    "studentId": "047",
+    "studentName": "曾子轩",
+    "delta": 2,
+    "reason": "搬书"
   }
 ]
