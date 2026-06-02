@@ -2616,5 +2616,26 @@
     "studentName": "曾子轩",
     "delta": 2,
     "reason": "搬书"
+  },
+  {
+    "timestamp": "2026-06-02 10:24:35",
+    "studentId": "020",
+    "studentName": "姚奇胜",
+    "delta": -0.25,
+    "reason": "不接受任务 (减半扣分)"
+  },
+  {
+    "timestamp": "2026-06-02 10:24:35",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": -0.25,
+    "reason": "不接受任务 (减半扣分)"
+  },
+  {
+    "timestamp": "2026-06-02 10:24:35",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": -0.25,
+    "reason": "不接受任务 (减半扣分)"
   }
 ]
