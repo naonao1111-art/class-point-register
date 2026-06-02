@@ -2672,5 +2672,12 @@
     "studentName": "童清扬",
     "delta": 1.7,
     "reason": "管理纪律半小时*1.7"
+  },
+  {
+    "timestamp": "2026-06-02 21:53:42",
+    "studentId": "045",
+    "studentName": "范晟轩",
+    "delta": 2,
+    "reason": "浇花一周"
   }
 ]
