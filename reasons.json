@@ -2658,5 +2658,12 @@
     "studentName": "朱晨曦",
     "delta": -0.25,
     "reason": "拒绝任务 (减半扣分)"
+  },
+  {
+    "timestamp": "2026-06-02 21:52:38",
+    "studentId": "020",
+    "studentName": "姚奇胜",
+    "delta": -0.25,
+    "reason": "拒绝任务 (减半扣分)"
   }
 ]
