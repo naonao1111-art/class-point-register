@@ -2707,5 +2707,12 @@
     "studentName": "朱熙元",
     "delta": -2,
     "reason": "上课睡觉"
+  },
+  {
+    "timestamp": "2026-06-03 12:32:23",
+    "studentId": "008",
+    "studentName": "王李婧",
+    "delta": -3,
+    "reason": "迟到"
   }
 ]
