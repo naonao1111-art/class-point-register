@@ -2756,5 +2756,12 @@
     "studentName": "刘德临",
     "delta": -2,
     "reason": "上课睡觉语文"
+  },
+  {
+    "timestamp": "2026-06-03 23:56:02",
+    "studentId": "045",
+    "studentName": "范晟轩",
+    "delta": -3,
+    "reason": "空调"
   }
 ]
