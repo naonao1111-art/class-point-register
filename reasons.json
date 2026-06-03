@@ -2721,5 +2721,33 @@
     "studentName": "冯永昊",
     "delta": -2.5,
     "reason": "作业没交（单次记录）"
+  },
+  {
+    "timestamp": "2026-06-03 23:55:35",
+    "studentId": "013",
+    "studentName": "袁煦泽",
+    "delta": -2.5,
+    "reason": "作业没交（单次记录）"
+  },
+  {
+    "timestamp": "2026-06-03 23:55:35",
+    "studentId": "017",
+    "studentName": "黄智恒",
+    "delta": -2.5,
+    "reason": "作业没交（单次记录）"
+  },
+  {
+    "timestamp": "2026-06-03 23:55:35",
+    "studentId": "023",
+    "studentName": "牧周磊",
+    "delta": -2.5,
+    "reason": "作业没交（单次记录）"
+  },
+  {
+    "timestamp": "2026-06-03 23:55:35",
+    "studentId": "045",
+    "studentName": "范晟轩",
+    "delta": -2.5,
+    "reason": "作业没交（单次记录）"
   }
 ]
