@@ -2714,5 +2714,12 @@
     "studentName": "王李婧",
     "delta": -3,
     "reason": "迟到"
+  },
+  {
+    "timestamp": "2026-06-03 12:32:46",
+    "studentId": "015",
+    "studentName": "冯永昊",
+    "delta": -2.5,
+    "reason": "作业没交（单次记录）"
   }
 ]
