@@ -2833,5 +2833,12 @@
     "studentName": "方鸣扬",
     "delta": 3,
     "reason": "值日认真6.3"
+  },
+  {
+    "timestamp": "2026-06-04 23:06:28",
+    "studentId": "004",
+    "studentName": "叶齐楚",
+    "delta": 12,
+    "reason": "调试程序 (双倍加分)"
   }
 ]
