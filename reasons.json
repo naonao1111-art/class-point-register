@@ -2777,5 +2777,61 @@
     "studentName": "胡凯琳",
     "delta": 3.7,
     "reason": "管理纪律半小时*3.7"
+  },
+  {
+    "timestamp": "2026-06-04 23:05:32",
+    "studentId": "005",
+    "studentName": "沈姚栎",
+    "delta": 3,
+    "reason": "值日认真6.3"
+  },
+  {
+    "timestamp": "2026-06-04 23:05:32",
+    "studentId": "006",
+    "studentName": "马伊韩",
+    "delta": 3,
+    "reason": "值日认真6.3"
+  },
+  {
+    "timestamp": "2026-06-04 23:05:32",
+    "studentId": "016",
+    "studentName": "徐志翔",
+    "delta": 3,
+    "reason": "值日认真6.3"
+  },
+  {
+    "timestamp": "2026-06-04 23:05:32",
+    "studentId": "027",
+    "studentName": "吕峥程",
+    "delta": 3,
+    "reason": "值日认真6.3"
+  },
+  {
+    "timestamp": "2026-06-04 23:05:32",
+    "studentId": "028",
+    "studentName": "李岩蹊",
+    "delta": 3,
+    "reason": "值日认真6.3"
+  },
+  {
+    "timestamp": "2026-06-04 23:05:32",
+    "studentId": "032",
+    "studentName": "程舒远",
+    "delta": 3,
+    "reason": "值日认真6.3"
+  },
+  {
+    "timestamp": "2026-06-04 23:05:32",
+    "studentId": "034",
+    "studentName": "盛睿良",
+    "delta": 3,
+    "reason": "值日认真6.3"
+  },
+  {
+    "timestamp": "2026-06-04 23:05:32",
+    "studentId": "038",
+    "studentName": "方鸣扬",
+    "delta": 3,
+    "reason": "值日认真6.3"
   }
 ]
