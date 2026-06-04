@@ -2840,5 +2840,12 @@
     "studentName": "叶齐楚",
     "delta": 12,
     "reason": "调试程序 (双倍加分)"
+  },
+  {
+    "timestamp": "2026-06-04 23:06:53",
+    "studentId": "004",
+    "studentName": "叶齐楚",
+    "delta": -12,
+    "reason": "调试程序"
   }
 ]
