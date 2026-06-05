@@ -2868,5 +2868,54 @@
     "studentName": "潘烨磊",
     "delta": -3,
     "reason": "6.4学校扣分0.5"
+  },
+  {
+    "timestamp": "2026-06-05 23:18:38",
+    "studentId": "014",
+    "studentName": "姚腾浩",
+    "delta": 2,
+    "reason": "6.5搬书"
+  },
+  {
+    "timestamp": "2026-06-05 23:18:38",
+    "studentId": "017",
+    "studentName": "黄智恒",
+    "delta": 2,
+    "reason": "6.5搬书"
+  },
+  {
+    "timestamp": "2026-06-05 23:18:38",
+    "studentId": "025",
+    "studentName": "俞齐",
+    "delta": 2,
+    "reason": "6.5搬书"
+  },
+  {
+    "timestamp": "2026-06-05 23:18:38",
+    "studentId": "033",
+    "studentName": "应扎吉",
+    "delta": 2,
+    "reason": "6.5搬书"
+  },
+  {
+    "timestamp": "2026-06-05 23:18:38",
+    "studentId": "037",
+    "studentName": "陈昀泽",
+    "delta": 2,
+    "reason": "6.5搬书"
+  },
+  {
+    "timestamp": "2026-06-05 23:18:38",
+    "studentId": "039",
+    "studentName": "胡宵",
+    "delta": 2,
+    "reason": "6.5搬书"
+  },
+  {
+    "timestamp": "2026-06-05 23:18:38",
+    "studentId": "046",
+    "studentName": "刘昊",
+    "delta": 2,
+    "reason": "6.5搬书"
   }
 ]
