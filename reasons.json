@@ -2854,5 +2854,19 @@
     "studentName": "濮天昊",
     "delta": -3,
     "reason": "纪律差 (减半扣分)"
+  },
+  {
+    "timestamp": "2026-06-05 23:17:32",
+    "studentId": "019",
+    "studentName": "顾槿宸",
+    "delta": -3,
+    "reason": "6.4学校扣分0.5"
+  },
+  {
+    "timestamp": "2026-06-05 23:17:32",
+    "studentId": "026",
+    "studentName": "潘烨磊",
+    "delta": -3,
+    "reason": "6.4学校扣分0.5"
   }
 ]
