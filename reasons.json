@@ -2973,5 +2973,12 @@
     "studentName": "朱晨曦",
     "delta": 17,
     "reason": "实验程序 "
+  },
+  {
+    "timestamp": "2026-06-06 17:35:21",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": -12,
+    "reason": "实验程序"
   }
 ]
