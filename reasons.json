@@ -2917,5 +2917,40 @@
     "studentName": "刘昊",
     "delta": 2,
     "reason": "6.5搬书"
+  },
+  {
+    "timestamp": "2026-06-06 17:34:05",
+    "studentId": "009",
+    "studentName": "陆玛俐",
+    "delta": -2,
+    "reason": "6.6没搬凳子"
+  },
+  {
+    "timestamp": "2026-06-06 17:34:05",
+    "studentId": "020",
+    "studentName": "姚奇胜",
+    "delta": -1,
+    "reason": "6.6没搬凳子 (减半扣分)"
+  },
+  {
+    "timestamp": "2026-06-06 17:34:05",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": -1,
+    "reason": "6.6没搬凳子 (减半扣分)"
+  },
+  {
+    "timestamp": "2026-06-06 17:34:05",
+    "studentId": "042",
+    "studentName": "闫之诺",
+    "delta": -2,
+    "reason": "6.6没搬凳子"
+  },
+  {
+    "timestamp": "2026-06-06 17:34:05",
+    "studentId": "045",
+    "studentName": "范晟轩",
+    "delta": -2,
+    "reason": "6.6没搬凳子"
   }
 ]
