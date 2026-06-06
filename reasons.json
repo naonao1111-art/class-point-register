@@ -3148,5 +3148,12 @@
     "studentName": "曾子轩",
     "delta": 1,
     "reason": "课代表每周加分（不与班委重复）"
+  },
+  {
+    "timestamp": "2026-06-06 23:33:12",
+    "studentId": "002",
+    "studentName": "胡凯琳",
+    "delta": 0.5,
+    "reason": "课代表兼班委（课代表）"
   }
 ]
