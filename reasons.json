@@ -2994,5 +2994,12 @@
     "studentName": "朱晨曦",
     "delta": 51.25,
     "reason": "实验程序（2）（低分保护）"
+  },
+  {
+    "timestamp": "2026-06-06 17:40:06",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": -60,
+    "reason": "实验程序（1）（低分保护）"
   }
 ]
