@@ -3008,5 +3008,40 @@
     "studentName": "朱晨曦",
     "delta": 5,
     "reason": "实验程序（0）（低分保护）"
+  },
+  {
+    "timestamp": "2026-06-06 23:30:11",
+    "studentId": "002",
+    "studentName": "胡凯琳",
+    "delta": 1,
+    "reason": "6.6班委每周加分"
+  },
+  {
+    "timestamp": "2026-06-06 23:30:11",
+    "studentId": "006",
+    "studentName": "马伊韩",
+    "delta": 1,
+    "reason": "6.6班委每周加分"
+  },
+  {
+    "timestamp": "2026-06-06 23:30:11",
+    "studentId": "019",
+    "studentName": "顾槿宸",
+    "delta": 1,
+    "reason": "6.6班委每周加分"
+  },
+  {
+    "timestamp": "2026-06-06 23:30:11",
+    "studentId": "022",
+    "studentName": "方晟睿",
+    "delta": 1,
+    "reason": "6.6班委每周加分"
+  },
+  {
+    "timestamp": "2026-06-06 23:30:11",
+    "studentId": "039",
+    "studentName": "胡宵",
+    "delta": 1,
+    "reason": "6.6班委每周加分"
   }
 ]
