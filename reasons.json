@@ -3232,5 +3232,19 @@
     "studentName": "闫之诺",
     "delta": 1,
     "reason": "分试卷"
+  },
+  {
+    "timestamp": "2026-06-07 22:40:52",
+    "studentId": "026",
+    "studentName": "潘烨磊",
+    "delta": -2,
+    "reason": "自习课上厕所"
+  },
+  {
+    "timestamp": "2026-06-07 22:40:52",
+    "studentId": "045",
+    "studentName": "范晟轩",
+    "delta": -2,
+    "reason": "自习课上厕所"
   }
 ]
