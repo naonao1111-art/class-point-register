@@ -3155,5 +3155,54 @@
     "studentName": "胡凯琳",
     "delta": 0.5,
     "reason": "课代表兼班委（课代表）"
+  },
+  {
+    "timestamp": "2026-06-07 22:40:20",
+    "studentId": "018",
+    "studentName": "苏义涵",
+    "delta": -3,
+    "reason": "6.7迟到"
+  },
+  {
+    "timestamp": "2026-06-07 22:40:20",
+    "studentId": "019",
+    "studentName": "顾槿宸",
+    "delta": -3,
+    "reason": "6.7迟到"
+  },
+  {
+    "timestamp": "2026-06-07 22:40:20",
+    "studentId": "023",
+    "studentName": "牧周磊",
+    "delta": -3,
+    "reason": "6.7迟到"
+  },
+  {
+    "timestamp": "2026-06-07 22:40:20",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": -1.5,
+    "reason": "6.7迟到 (减半扣分)"
+  },
+  {
+    "timestamp": "2026-06-07 22:40:20",
+    "studentId": "035",
+    "studentName": "冯丰硕",
+    "delta": -1.5,
+    "reason": "6.7迟到 (减半扣分)"
+  },
+  {
+    "timestamp": "2026-06-07 22:40:20",
+    "studentId": "040",
+    "studentName": "朱熙元",
+    "delta": -3,
+    "reason": "6.7迟到"
+  },
+  {
+    "timestamp": "2026-06-07 22:40:20",
+    "studentId": "042",
+    "studentName": "闫之诺",
+    "delta": -3,
+    "reason": "6.7迟到"
   }
 ]
