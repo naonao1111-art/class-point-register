@@ -3204,5 +3204,33 @@
     "studentName": "闫之诺",
     "delta": -3,
     "reason": "6.7迟到"
+  },
+  {
+    "timestamp": "2026-06-07 22:40:36",
+    "studentId": "012",
+    "studentName": "郑智程",
+    "delta": 1,
+    "reason": "分试卷"
+  },
+  {
+    "timestamp": "2026-06-07 22:40:36",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": 2,
+    "reason": "分试卷 (双倍加分)"
+  },
+  {
+    "timestamp": "2026-06-07 22:40:36",
+    "studentId": "022",
+    "studentName": "方晟睿",
+    "delta": 1,
+    "reason": "分试卷"
+  },
+  {
+    "timestamp": "2026-06-07 22:40:36",
+    "studentId": "042",
+    "studentName": "闫之诺",
+    "delta": 1,
+    "reason": "分试卷"
   }
 ]
