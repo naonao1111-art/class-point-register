@@ -1,4 +1,3 @@
-<!-- admin.html - 管理员后台（已添加积分保护机制：低于-30分，扣分减半，加分翻倍） -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -76,7 +75,6 @@
             <button id="swapBtn">交换</button>
         </div>
 
-        <!-- 合并后的快捷加减分 + 批量修改面板 -->
         <div class="section">
             <h3>加减分</h3>
             <div id="rulesList" style="margin-bottom: 10px; max-height: 200px; overflow-y: auto; border:1px solid #eee; padding: 8px;">
@@ -93,7 +91,7 @@
                 <input type="text" id="quickReason" placeholder="原因（可编辑、追加文字）" style="width: 250px;">
                 <button id="applyQuickBtn" style="background-color:#2196F3; color:white;">应用到选中学生</button>
                 <p style="font-size:12px; color:#666;">👉 点击规则自动填充分数和原因，点击上方按钮批量应用。<br>
-                ⚠️ 积分保护: 当前积分低于-30分时，扣分减半，加分翻倍，并自动备注(减半扣分)/(双倍加分)。</p>
+                ⚠️ 积分保护：低于 -30 分时，扣分超出部分减半，加分低于部分翻倍（跨过 -30 线时精确分段计算）。</p>
             </div>
         </div>
 
@@ -105,10 +103,15 @@
             </table>
         </div>
 
+        <div class="section">
+            <h3>📈 班委履职评价统计</h3>
+            <div id="adminStatsContainer" style="margin-top: 10px;">加载中...</div>
+            <button id="clearAllRatingsBtn" style="background:#f44336; color:white; margin-top:12px;">🗑️ 清空所有评价数据（谨慎）</button>
+        </div>
+
         <p id="adminMsg"></p>
     </div>
 
-    <!-- 密码模态框 -->
     <div id="passwordModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;">
         <div style="background:white; width:300px; margin:100px auto; padding:20px; border-radius:8px;">
             <h3>请输入管理员密码</h3>
@@ -126,9 +129,13 @@
         const DATA_FILE = "data.json";
         const REASONS_FILE = "reasons.json";
         const RULES_FILE = "rules.json";
+        const CLASS_FILE = "class_committee.json";
+        const RATINGS_FILE = "committee_ratings.json";
         const DATA_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_FILE}`;
         const REASONS_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${REASONS_FILE}`;
         const RULES_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${RULES_FILE}`;
+        const CLASS_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CLASS_FILE}`;
+        const RATINGS_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${RATINGS_FILE}`;
         const ADMIN_PASSWORD_HASH = "621afced69a8a7037d5576facd2b9ae488da1988b6f847fb6f6e724f734eb30c";
 
         let currentStudents = [];
@@ -395,7 +402,45 @@
             return true;
         }
 
-        // 批量加减分（基于当前选中的复选框）+ 积分保护机制: 低于-30分, 扣分减半、加分翻倍
+        /**
+         * 计算实际变化值和备注
+         * @param {number} currentScore 当前积分
+         * @param {number} delta 原始变化值（正为加分，负为扣分）
+         * @returns {{ actualDelta: number, remark: string }}
+         */
+        function calculateProtectedDelta(currentScore, delta) {
+            if (delta === 0) return { actualDelta: 0, remark: "" };
+            const THRESHOLD = -30;
+            let actualDelta = delta;
+            let remark = "";
+
+            if (currentScore >= THRESHOLD && currentScore + delta < THRESHOLD) {
+                // 扣分且跨过 -30 线：超出部分减半
+                const normalPart = currentScore - THRESHOLD;      // 正常扣分部分（正数）
+                const overPart = -delta - normalPart;              // 超出部分（正值）
+                actualDelta = -normalPart - (overPart / 2);
+                remark = " (跨越-30线，超出部分减半)";
+            } 
+            else if (currentScore < THRESHOLD && currentScore + delta > THRESHOLD) {
+                // 加分且跨过 -30 线：低于部分翻倍
+                const belowPart = THRESHOLD - currentScore;        // 需要到 -30 的部分（正值）
+                const overPart = delta - belowPart;                // 超出部分（正值）
+                actualDelta = belowPart * 2 + overPart;
+                remark = " (跨越-30线，低于部分翻倍)";
+            }
+            else if (currentScore < THRESHOLD && delta < 0) {
+                // 完全在 -30 以下扣分：整体减半
+                actualDelta = delta / 2;
+                remark = " (减半扣分)";
+            }
+            else if (currentScore < THRESHOLD && delta > 0) {
+                // 完全在 -30 以下加分：整体翻倍
+                actualDelta = delta * 2;
+                remark = " (双倍加分)";
+            }
+            return { actualDelta, remark };
+        }
+
         async function applyToCheckedStudents() {
             const checkboxes = document.querySelectorAll(".student-checkbox:checked");
             if (checkboxes.length === 0) {
@@ -418,61 +463,48 @@
                 const sid = chk.value;
                 const student = currentStudents.find(s => s.id === sid);
                 if (!student) continue;
-                
-                let actualDelta = delta;           // 实际应用的变化值
-                let extraRemark = "";               // 需要追加的原因备注
-                const currentScore = student.score;
-                
-                // 积分保护逻辑: 当前积分低于 -30 分时（包含 -30 本身？用小于 -30 更合理，严格低于-30）
-                if (currentScore < -30) {
-                    if (delta > 0) {      // 加分翻倍
-                        actualDelta = delta * 2;
-                        extraRemark = " (双倍加分)";
-                    } else if (delta < 0) { // 扣分减半
-                        actualDelta = delta / 2;
-                        extraRemark = " (减半扣分)";
-                    }
-                }
-                
+                const { actualDelta, remark } = calculateProtectedDelta(student.score, delta);
+                if (actualDelta === 0) continue;
                 let newScore = student.score + actualDelta;
                 newScore = Math.min(10000000, Math.max(-10000000, newScore));
-                if (newScore !== student.score) updates.push({ student, newScore, actualDelta, extraRemark });
+                if (newScore !== student.score) {
+                    updates.push({ student, newScore, actualDelta, remark });
+                }
             }
-            
+
             if (updates.length === 0) {
-                alert("所选学生积分均无变化（已达上限或下限）");
+                alert("所选学生积分均无变化（已达上限或下限或无需调整）");
                 return;
             }
 
             if (!(await verifyPassword())) return;
 
-            // 应用积分变更
             for (let u of updates) u.student.score = u.newScore;
             await saveStudents();
 
             const now = new Date();
             const timestamp = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
-            
+
             const newRecords = updates.map(u => ({
                 timestamp: timestamp,
                 studentId: u.student.id,
                 studentName: u.student.name,
                 delta: u.actualDelta,
-                reason: reason + u.extraRemark
+                reason: reason + u.remark
             }));
-            
+
             currentReasons.push(...newRecords);
             await saveReasons();
 
             renderStudentsTable();
             renderReasonsTable();
-            let protectedCount = updates.filter(u => u.extraRemark !== "").length;
+            let protectedCount = updates.filter(u => u.remark !== "").length;
             let msg = `成功为 ${updates.length} 名学生调整积分。`;
-            if (protectedCount > 0) msg += ` 其中 ${protectedCount} 人触发积分保护（低于-30分，已自动翻倍/减半）。`;
+            if (protectedCount > 0) msg += ` 其中 ${protectedCount} 人触发积分保护（跨越-30线或完全在保护区内）。`;
             document.getElementById("adminMsg").innerText = msg;
         }
 
-        // 以下为增删改查等原有功能（带密码验证）
+        // 以下为增删改查等原有功能
         async function addStudent() {
             if (!(await verifyPassword())) return;
             const id = document.getElementById("stuId").value.trim();
@@ -609,6 +641,77 @@
             });
         }
 
+        // ========== 班委评价统计相关 ==========
+        async function loadAdminCommitteeStats() {
+            const container = document.getElementById("adminStatsContainer");
+            if (!container) return;
+            const committeePositions = ["班长", "副班长", "团支书", "学习委员", "纪律委员", "体育委员"];
+            let committeeNames = {};
+            try {
+                const classResp = await fetch(CLASS_URL);
+                if (classResp.ok) {
+                    const data = await classResp.json();
+                    const content = base64DecodeToUtf8(data.content);
+                    const members = JSON.parse(content).members || [];
+                    members.forEach(m => { committeeNames[m.position] = m.name; });
+                }
+                const resp = await fetch(RATINGS_URL);
+                if (!resp.ok) throw new Error("无法获取评价数据");
+                const data = await resp.json();
+                const content = base64DecodeToUtf8(data.content);
+                const ratings = JSON.parse(content).ratings || {};
+                const stats = {};
+                committeePositions.forEach(p => { stats[p] = { good: 0, total: 0 }; });
+                for (let sid in ratings) {
+                    for (let p of committeePositions) {
+                        if (ratings[sid][p]) {
+                            stats[p].total++;
+                            if (ratings[sid][p] === "good") stats[p].good++;
+                        }
+                    }
+                }
+                let html = '<table style="width:auto; margin-top:8px;">广泛<th>职务</th><th>姓名</th><th>好评率</th><th>票数详情</th></tr>';
+                committeePositions.forEach(p => {
+                    const total = stats[p].total;
+                    const good = stats[p].good;
+                    const rate = total === 0 ? 0 : (good / total * 100).toFixed(1);
+                    html += `<tr><td>${p}</td><td>${committeeNames[p] || ""}</td><td>${rate}%</td><td>${good}/${total}</td></tr>`;
+                });
+                html += '</table>';
+                container.innerHTML = html;
+            } catch(e) {
+                container.innerHTML = "<span style='color:gray'>暂无评价数据</span>";
+            }
+        }
+
+        async function clearAllRatings() {
+            if (!(await verifyPassword())) return;
+            if (!confirm("⚠️ 确定要清空所有班委评价数据吗？此操作不可恢复！")) return;
+            try {
+                const token = CONFIG.github_token;
+                const resp = await fetch(RATINGS_URL, { headers: { Authorization: `token ${token}` } });
+                let sha = null;
+                if (resp.ok) {
+                    const data = await resp.json();
+                    sha = data.sha;
+                }
+                const emptyData = { ratings: {} };
+                const content = utf8ToBase64(JSON.stringify(emptyData, null, 2));
+                const putResp = await fetch(RATINGS_URL, {
+                    method: "PUT",
+                    headers: { Authorization: `token ${token}`, "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: "清空评价数据", content: content, sha: sha })
+                });
+                if (putResp.ok) {
+                    alert("清空成功！");
+                    await loadAdminCommitteeStats();
+                } else throw new Error("清空失败");
+            } catch(e) {
+                alert("操作失败：" + e.message);
+            }
+        }
+
+        // 登录逻辑
         document.getElementById("loginBtn").onclick = async () => {
             await loadConfig();
             const pwd = document.getElementById("adminPwd").value;
@@ -630,6 +733,7 @@
                 renderReasonsTable();
                 renderRulesList();
                 bindSortEvents();
+                await loadAdminCommitteeStats();
 
                 document.getElementById("addStuBtn").onclick = addStudent;
                 document.getElementById("updateStuBtn").onclick = updateStudent;
@@ -644,6 +748,7 @@
                 document.getElementById("selectAllBtn").onclick = () => { document.querySelectorAll(".student-checkbox").forEach(cb => cb.checked = true); };
                 document.getElementById("deselectAllBtn").onclick = () => { document.querySelectorAll(".student-checkbox").forEach(cb => cb.checked = false); };
                 document.getElementById("applyQuickBtn").onclick = applyToCheckedStudents;
+                document.getElementById("clearAllRatingsBtn").onclick = clearAllRatings;
             } catch (err) {
                 document.getElementById("loginMsg").innerText = "加载数据失败：" + err.message;
             }
