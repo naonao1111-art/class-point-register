@@ -3302,5 +3302,19 @@
     "studentName": "刘昊",
     "delta": 3,
     "reason": "值日认真(*¯︶¯*)"
+  },
+  {
+    "timestamp": "2026-06-08 23:27:24",
+    "studentId": "017",
+    "studentName": "黄智恒",
+    "delta": -2.5,
+    "reason": "作业没交（单次记录）"
+  },
+  {
+    "timestamp": "2026-06-08 23:27:24",
+    "studentId": "028",
+    "studentName": "李岩蹊",
+    "delta": -2.5,
+    "reason": "作业没交（单次记录）"
   }
 ]
