@@ -3365,5 +3365,12 @@
     "studentName": "刘昊",
     "delta": -3,
     "reason": "6.8加分取消"
+  },
+  {
+    "timestamp": "2026-06-09 22:51:18",
+    "studentId": "017",
+    "studentName": "黄智恒",
+    "delta": -3,
+    "reason": "6.8加分取消"
   }
 ]
