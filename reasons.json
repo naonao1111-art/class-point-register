@@ -3372,5 +3372,12 @@
     "studentName": "黄智恒",
     "delta": -3,
     "reason": "6.8加分取消"
+  },
+  {
+    "timestamp": "2026-06-09 22:51:47",
+    "studentId": "040",
+    "studentName": "朱熙元",
+    "delta": -2,
+    "reason": "自习课刚上课上厕所"
   }
 ]
