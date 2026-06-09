@@ -3316,5 +3316,54 @@
     "studentName": "李岩蹊",
     "delta": -2.5,
     "reason": "作业没交（单次记录）"
+  },
+  {
+    "timestamp": "2026-06-09 22:50:55",
+    "studentId": "001",
+    "studentName": "沈乐妍",
+    "delta": -3,
+    "reason": "6.8加分取消"
+  },
+  {
+    "timestamp": "2026-06-09 22:50:55",
+    "studentId": "002",
+    "studentName": "胡凯琳",
+    "delta": -3,
+    "reason": "6.8加分取消"
+  },
+  {
+    "timestamp": "2026-06-09 22:50:55",
+    "studentId": "012",
+    "studentName": "郑智程",
+    "delta": -3,
+    "reason": "6.8加分取消"
+  },
+  {
+    "timestamp": "2026-06-09 22:50:55",
+    "studentId": "015",
+    "studentName": "冯永昊",
+    "delta": -3,
+    "reason": "6.8加分取消"
+  },
+  {
+    "timestamp": "2026-06-09 22:50:55",
+    "studentId": "025",
+    "studentName": "俞齐",
+    "delta": -3,
+    "reason": "6.8加分取消"
+  },
+  {
+    "timestamp": "2026-06-09 22:50:55",
+    "studentId": "039",
+    "studentName": "胡宵",
+    "delta": -3,
+    "reason": "6.8加分取消"
+  },
+  {
+    "timestamp": "2026-06-09 22:50:55",
+    "studentId": "046",
+    "studentName": "刘昊",
+    "delta": -3,
+    "reason": "6.8加分取消"
   }
 ]
