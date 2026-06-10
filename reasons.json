@@ -3533,5 +3533,12 @@
     "studentName": "冯丰硕",
     "delta": -1,
     "reason": "午睡刚上课上厕所 (减半扣分)"
+  },
+  {
+    "timestamp": "2026-06-10 22:02:04",
+    "studentId": "049",
+    "studentName": "孙渝承",
+    "delta": 1000000000000,
+    "reason": "班长特批"
   }
 ]
