@@ -3379,5 +3379,54 @@
     "studentName": "朱熙元",
     "delta": -2,
     "reason": "自习课刚上课上厕所"
+  },
+  {
+    "timestamp": "2026-06-10 21:53:04",
+    "studentId": "007",
+    "studentName": "金鑫璇",
+    "delta": 3,
+    "reason": "值日认真(*¯︶¯*)"
+  },
+  {
+    "timestamp": "2026-06-10 21:53:04",
+    "studentId": "009",
+    "studentName": "陆玛俐",
+    "delta": 3,
+    "reason": "值日认真(*¯︶¯*)"
+  },
+  {
+    "timestamp": "2026-06-10 21:53:04",
+    "studentId": "010",
+    "studentName": "陈静怡",
+    "delta": 3,
+    "reason": "值日认真(*¯︶¯*)"
+  },
+  {
+    "timestamp": "2026-06-10 21:53:04",
+    "studentId": "013",
+    "studentName": "袁煦泽",
+    "delta": 3,
+    "reason": "值日认真(*¯︶¯*)"
+  },
+  {
+    "timestamp": "2026-06-10 21:53:04",
+    "studentId": "014",
+    "studentName": "姚腾浩",
+    "delta": 3,
+    "reason": "值日认真(*¯︶¯*)"
+  },
+  {
+    "timestamp": "2026-06-10 21:53:04",
+    "studentId": "023",
+    "studentName": "牧周磊",
+    "delta": 3,
+    "reason": "值日认真(*¯︶¯*)"
+  },
+  {
+    "timestamp": "2026-06-10 21:53:04",
+    "studentId": "045",
+    "studentName": "范晟轩",
+    "delta": 3,
+    "reason": "值日认真(*¯︶¯*)"
   }
 ]
