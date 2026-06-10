@@ -3477,5 +3477,26 @@
     "studentName": "濮天昊",
     "delta": -3,
     "reason": "未静班（组长）(⋋▂⋌) (减半扣分)"
+  },
+  {
+    "timestamp": "2026-06-10 21:57:14",
+    "studentId": "016",
+    "studentName": "徐志翔",
+    "delta": -2.5,
+    "reason": "作业没交（单次记录）（610物理午写）"
+  },
+  {
+    "timestamp": "2026-06-10 21:57:14",
+    "studentId": "024",
+    "studentName": "沈天辰",
+    "delta": -2.5,
+    "reason": "作业没交（单次记录）（610物理午写）"
+  },
+  {
+    "timestamp": "2026-06-10 21:57:14",
+    "studentId": "040",
+    "studentName": "朱熙元",
+    "delta": -2.5,
+    "reason": "作业没交（单次记录）（610物理午写）"
   }
 ]
