@@ -3519,5 +3519,19 @@
     "studentName": "濮天昊",
     "delta": -1,
     "reason": "自习课刚上课上厕所 (减半扣分)"
+  },
+  {
+    "timestamp": "2026-06-10 21:59:42",
+    "studentId": "017",
+    "studentName": "黄智恒",
+    "delta": -2,
+    "reason": "午睡刚上课上厕所"
+  },
+  {
+    "timestamp": "2026-06-10 21:59:42",
+    "studentId": "035",
+    "studentName": "冯丰硕",
+    "delta": -1,
+    "reason": "午睡刚上课上厕所 (减半扣分)"
   }
 ]
