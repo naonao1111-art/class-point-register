@@ -3540,5 +3540,19 @@
     "studentName": "孙渝承",
     "delta": 1000000000000,
     "reason": "班长特批"
+  },
+  {
+    "timestamp": "2026-06-11 22:31:32",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": -1.5,
+    "reason": "611早上迟到@_@ (减半扣分)"
+  },
+  {
+    "timestamp": "2026-06-11 22:31:32",
+    "studentId": "039",
+    "studentName": "胡宵",
+    "delta": -3,
+    "reason": "611早上迟到@_@"
   }
 ]
