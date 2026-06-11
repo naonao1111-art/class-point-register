@@ -3554,5 +3554,19 @@
     "studentName": "胡宵",
     "delta": -3,
     "reason": "611早上迟到@_@"
+  },
+  {
+    "timestamp": "2026-06-11 22:32:32",
+    "studentId": "020",
+    "studentName": "姚奇胜",
+    "delta": -1,
+    "reason": "610自习课刚上课上厕所 (减半扣分)"
+  },
+  {
+    "timestamp": "2026-06-11 22:32:32",
+    "studentId": "036",
+    "studentName": "姚竣豪",
+    "delta": -2,
+    "reason": "610自习课刚上课上厕所"
   }
 ]
