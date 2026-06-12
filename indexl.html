@@ -79,52 +79,55 @@
                 document.body.innerHTML += `<p class="error">加载失败：${err.message}</p>`;
             }
         }
-    async function loadCommitteeStats() {
-        const statsContainer = document.getElementById("statsContainer");
-        if (!statsContainer) return;
-        const REPO_OWNER = "naonao1111-art";
-        const REPO_NAME = "class-point-register";
-        const RATINGS_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/committee_ratings.json`;
-        const CLASS_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/class_committee.json`;
-        const committeePositions = ["班长", "副班长/纪律委员", "团支书", "学习委员", "卫生委员/宣传委员", "体育委员"];
-        let committeeNames = {};
-        try {
-            const classResp = await fetch(CLASS_URL);
-            if (classResp.ok) {
-                const data = await classResp.json();
-                const content = base64DecodeToUtf8(data.content);
-                const members = JSON.parse(content).members || [];
-                members.forEach(m => { committeeNames[m.position] = m.name; });
-            }
-            committeePositions.forEach(p => { if (!committeeNames[p]) committeeNames[p] = ""; });
-
-            const token = ""; // 公开读取无需token
-            const resp = await fetch(RATINGS_URL);
-            if (!resp.ok) throw new Error("无法获取评价数据");
-            const data = await resp.json();
-            const content = base64DecodeToUtf8(data.content);
-            const ratings = JSON.parse(content).ratings || {};
-            const stats = {};
-            committeePositions.forEach(p => { stats[p] = { good: 0, total: 0 }; });
-            for (let sid in ratings) {
-                for (let p of committeePositions) {
-                    if (ratings[sid][p]) {
-                        stats[p].total++;
-                        if (ratings[sid][p] === "good") stats[p].good++;
+        async function loadCommitteeStats() {
+            const statsContainer = document.getElementById("statsContainer");
+            if (!statsContainer) return;
+            const CLASS_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/class_committee.json`;
+            const RATINGS_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/committee_ratings.json`;
+            const TARGET_POSITIONS = ["班长", "副班长/纪律委员", "团支书", "卫生委员/宣传委员", "学习委员", "体育委员"];
+            let committeeInfo = [];
+            try {
+                const classResp = await fetch(CLASS_URL);
+                if (classResp.ok) {
+                    const data = await classResp.json();
+                    const content = base64DecodeToUtf8(data.content);
+                    const members = JSON.parse(content).members || [];
+                    const posMap = {};
+                    members.forEach(m => { posMap[m.position] = m.name; });
+                    committeeInfo = TARGET_POSITIONS.map(pos => ({ position: pos, name: posMap[pos] || "未设置" }));
+                } else {
+                    committeeInfo = TARGET_POSITIONS.map(pos => ({ position: pos, name: "未设置" }));
+                }
+                const resp = await fetch(RATINGS_URL);
+                let ratings = {};
+                if (resp.ok) {
+                    const data = await resp.json();
+                    const content = base64DecodeToUtf8(data.content);
+                    ratings = JSON.parse(content).ratings || {};
+                }
+                const stats = {};
+                committeeInfo.forEach(c => { stats[c.position] = { good: 0, total: 0 }; });
+                for (let sid in ratings) {
+                    for (let pos in ratings[sid]) {
+                        if (stats[pos]) {
+                            stats[pos].total++;
+                            if (ratings[sid][pos] === "good") stats[pos].good++;
+                        }
                     }
                 }
+                let html = '';
+                committeeInfo.forEach(c => {
+                    const total = stats[c.position].total;
+                    const good = stats[c.position].good;
+                    const rate = total === 0 ? 0 : (good / total * 100).toFixed(1);
+                    html += `<div style="background:#fff; border:1px solid #ddd; padding:5px 10px; border-radius:20px; font-size:14px;">${c.position} ${c.name}: ${rate}% (${good}/${total})</div>`;
+                });
+                statsContainer.innerHTML = html;
+            } catch(e) {
+                statsContainer.innerHTML = `<span style="color:gray">加载失败</span>`;
             }
-            let html = '';
-            committeePositions.forEach(p => {
-                const total = stats[p].total;
-                const good = stats[p].good;
-                const rate = total === 0 ? 0 : (good / total * 100).toFixed(1);
-                html += `<div style="background:#fff; border:1px solid #ddd; padding:5px 10px; border-radius:20px; font-size:14px;">${p} ${committeeNames[p]}: ${rate}% (${good}/${total})</div>`;
-            });
-            statsContainer.innerHTML = html;
-        } catch(e) { statsContainer.innerHTML = `<span style="color:gray">暂无评价数据</span>`; }
-    }
-    loadCommitteeStats();
+        }
+        loadCommitteeStats();
 
         function sortStudents(students, field, order) {
             const sorted = [...students];
@@ -163,6 +166,9 @@
                 if (rank === 1) rankCell.classList.add('rank-1');
                 else if (rank === 2) rankCell.classList.add('rank-2');
                 else if (rank === 3) rankCell.classList.add('rank-3');
+                <!-- indexl.html 中修改分数显示（积分低于-50标红） -->
+                <!-- 在 renderTable 函数中，修改积分单元格的样式 -->
+                row.insertCell(2).innerHTML = `<span style="${s.score < -50 ? 'color:red; font-weight:bold;' : ''}">${s.score.toFixed(2)}</span>`;
             });
         }
 
