@@ -3568,5 +3568,12 @@
     "studentName": "姚竣豪",
     "delta": -2,
     "reason": "610自习课刚上课上厕所"
+  },
+  {
+    "timestamp": "2026-06-12 12:58:41",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": 4,
+    "reason": "晚自习回家 (双倍加分)"
   }
 ]
