@@ -1,4 +1,3 @@
-<!-- reasonsl.html - 积分变化记录（已添加筛选功能） -->
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
@@ -30,7 +29,6 @@
     <a href="indexl.html" class="back-link">← 返回积分公示板</a>
     <h1>班级积分加减分记录</h1>
 
-    <!-- 筛选区域 -->
     <div class="filters">
         <div class="filter-group">
             <label>学号/姓名关键词</label>
@@ -57,7 +55,7 @@
     <div style="overflow-x: auto;">
         <table id="reasonTable">
             <thead>
-            <tr><th>时间</th><th>学号</th><th>姓名</th><th>分数变化</th><th>原因</th></tr>
+            <tr><th>时间</th><th>学号</th><th>姓名</th><th>分数变化</th><th>原因</th>
             </thead>
             <tbody></tbody>
         </table>
@@ -69,7 +67,7 @@
     const REPO_NAME = "class-point-register";
     const REASONS_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/reasons.json`;
 
-    let allReasons = [];        // 存储原始所有记录
+    let allReasons = [];
     let filteredReasons = [];
 
     function base64DecodeToUtf8(base64Str) {
@@ -79,7 +77,27 @@
         return new TextDecoder('utf-8').decode(bytes);
     }
 
-    // 渲染表格
+    // 带缓存破坏的加载
+    async function fetchReasons() {
+        const timestamp = Date.now();
+        const url = `${REASONS_URL}?t=${timestamp}`;
+        const resp = await fetch(url, { cache: 'no-store' });
+        if (!resp.ok) throw new Error("加载失败");
+        const data = await resp.json();
+        const content = base64DecodeToUtf8(data.content);
+        return JSON.parse(content);
+    }
+
+    async function loadReasons() {
+        try {
+            allReasons = await fetchReasons();
+            filteredReasons = [...allReasons];
+            renderTable(filteredReasons);
+        } catch (err) {
+            document.querySelector("#reasonTable tbody").innerHTML = `<tr><td colspan="5" style="color:red;">错误：${err.message}</td></tr>`;
+        }
+    }
+
     function renderTable(reasonsArray) {
         const tbody = document.querySelector("#reasonTable tbody");
         tbody.innerHTML = "";
@@ -87,7 +105,6 @@
             tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">暂无记录</td></tr>';
             return;
         }
-        // 按时间倒序（最新的在前）
         const sorted = [...reasonsArray].sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
         sorted.forEach(r => {
             const row = tbody.insertRow();
@@ -102,7 +119,6 @@
         });
     }
 
-    // 根据筛选条件过滤
     function applyFilters() {
         const keyword = document.getElementById("filterNameId").value.trim().toLowerCase();
         const reasonKw = document.getElementById("filterReason").value.trim().toLowerCase();
@@ -110,16 +126,13 @@
         const endDate = document.getElementById("filterDateEnd").value;
 
         filteredReasons = allReasons.filter(r => {
-            // 学号或姓名匹配
             if (keyword) {
                 const matchId = r.studentId.toLowerCase().includes(keyword);
                 const matchName = r.studentName.toLowerCase().includes(keyword);
                 if (!matchId && !matchName) return false;
             }
-            // 原因关键词匹配
             if (reasonKw && !r.reason.toLowerCase().includes(reasonKw)) return false;
-            // 日期范围匹配（只比较日期部分 YYYY-MM-DD）
-            const recordDate = r.timestamp.split(" ")[0]; // "2026-05-03"
+            const recordDate = r.timestamp.split(" ")[0];
             if (startDate && recordDate < startDate) return false;
             if (endDate && recordDate > endDate) return false;
             return true;
@@ -127,7 +140,6 @@
         renderTable(filteredReasons);
     }
 
-    // 重置所有筛选
     function resetFilters() {
         document.getElementById("filterNameId").value = "";
         document.getElementById("filterReason").value = "";
@@ -137,22 +149,10 @@
         renderTable(filteredReasons);
     }
 
-    async function loadReasons() {
-        try {
-            const resp = await fetch(REASONS_URL);
-            if (!resp.ok) throw new Error("加载失败");
-            const data = await resp.json();
-            const content = base64DecodeToUtf8(data.content);
-            allReasons = JSON.parse(content);
-            filteredReasons = [...allReasons];
-            renderTable(filteredReasons);
-        } catch (err) {
-            document.querySelector("#reasonTable tbody").innerHTML = `<tr><td colspan="5" style="color:red;">错误：${err.message}</td></tr>`;
-        }
-    }
-
     document.getElementById("applyFilterBtn").addEventListener("click", applyFilters);
     document.getElementById("resetFilterBtn").addEventListener("click", resetFilters);
+    
+    // 加载数据，并每30秒自动刷新一次（可选）
     loadReasons();
 </script>
 </body>

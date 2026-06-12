@@ -23,7 +23,7 @@
 <div class="container">
     <a href="admin.html" class="back-link">← 返回管理后台</a>
     <h1>积分变化记录管理</h1>
-    <p>或撤销记录均需要管理员密码。</p>
+    <p>撤销记录均需要管理员密码。操作成功后页面将自动刷新。</p>
     <div class="filter-group">
         <input type="text" id="filterText" placeholder="学号/姓名/原因关键词" style="width: 250px;">
         <button id="filterBtn">筛选</button>
@@ -88,7 +88,9 @@
 
     async function fetchJSON(url) {
         const headers = CONFIG.github_token ? { Authorization: `token ${CONFIG.github_token}` } : {};
-        const resp = await fetch(url, { headers });
+        const timestamp = Date.now();
+        const sep = url.includes('?') ? '&' : '?';
+        const resp = await fetch(url + sep + 't=' + timestamp, { headers, cache: 'no-store' });
         if (resp.status === 404) return null;
         const data = await resp.json();
         return JSON.parse(base64DecodeToUtf8(data.content));
@@ -113,15 +115,20 @@
         currentStudents = (data?.students || []).map(s => ({ ...s, score: parseFloat(s.score) }));
         const reasons = await fetchJSON(REASONS_URL);
         allReasons = reasons || [];
+        // 为每条记录生成唯一 ID（若没有则生成）
+        for (let i = 0; i < allReasons.length; i++) {
+            if (!allReasons[i].id) {
+                allReasons[i].id = `${allReasons[i].timestamp}_${allReasons[i].studentId}_${allReasons[i].delta}`;
+            }
+        }
         filteredReasons = [...allReasons];
     }
 
-    // 渲染表格，每行包含可编辑的原因输入框和保存按钮
     function renderTable() {
         const tbody = document.querySelector("#reasonsManageTable tbody");
         tbody.innerHTML = "";
         const sorted = [...filteredReasons].sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
-        sorted.forEach((r, idx) => {
+        sorted.forEach(r => {
             const row = tbody.insertRow();
             row.insertCell(0).innerText = r.timestamp;
             row.insertCell(1).innerText = r.studentId;
@@ -138,34 +145,41 @@
             const saveBtn = document.createElement("button");
             saveBtn.innerText = "保存原因";
             saveBtn.className = "save-btn";
-            saveBtn.onclick = () => saveReason(idx, inputReason.value);
+            saveBtn.onclick = () => saveReason(r.id, inputReason.value);
             const revokeBtn = document.createElement("button");
             revokeBtn.innerText = "撤销记录";
             revokeBtn.className = "revoke-btn";
-            revokeBtn.onclick = () => confirmRevoke(r, idx);
+            revokeBtn.onclick = () => confirmRevoke(r.id);
             btnCell.appendChild(saveBtn);
             btnCell.appendChild(revokeBtn);
         });
     }
 
     // 保存编辑后的原因
-    async function saveReason(originalIndex, newReason) {
-        // 更新内存中的原因
-        allReasons[originalIndex].reason = newReason;
-        // 重新保存全部原因到 GitHub
+    async function saveReason(recordId, newReason) {
+
+        const record = allReasons.find(r => r.id === recordId);
+        if (!record) {
+            alert("记录不存在");
+            return;
+        }
+        record.reason = newReason;
         try {
             await saveJSON(REASONS_URL, allReasons, "编辑原因");
-            alert("原因已保存");
-            // 刷新显示
-            await loadData();
-            applyFilter();
+            alert("原因已保存，页面将刷新");
+            location.reload();
         } catch(err) {
             alert("保存失败：" + err.message);
         }
     }
 
-    // 撤销记录（恢复分数并删除记录）
-    async function confirmRevoke(record, originalIndex) {
+    // 撤销记录
+    async function confirmRevoke(recordId) {
+        const record = allReasons.find(r => r.id === recordId);
+        if (!record) {
+            alert("记录不存在");
+            return;
+        }
         if (!confirm(`确定撤销此记录吗？\n学生：${record.studentName}(${record.studentId})\n变化：${record.delta>0?"+":""}${record.delta}\n原因：${record.reason}\n撤销后将恢复分数并永久删除该记录。`)) return;
 
         const pwd = prompt("请输入管理员密码");
@@ -185,12 +199,10 @@
         }
 
         // 删除该条原因记录
-        const newReasons = allReasons.filter((_, i) => i !== originalIndex);
+        const newReasons = allReasons.filter(r => r.id !== recordId);
         await saveJSON(REASONS_URL, newReasons, "撤销操作删除记录");
-        alert("撤销成功！");
-        // 重新加载
-        await loadData();
-        applyFilter();
+        alert("撤销成功！页面将刷新");
+        location.reload();
     }
 
     function applyFilter() {
