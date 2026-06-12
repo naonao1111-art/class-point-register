@@ -3568,5 +3568,12 @@
     "studentName": "濮天昊",
     "delta": 4,
     "reason": "晚自习回家 (双倍加分)"
+  },
+  {
+    "timestamp": "2026-06-12 21:17:35",
+    "studentId": "049",
+    "studentName": "孙渝承",
+    "delta": 2222,
+    "reason": "实验程序"
   }
 ]
