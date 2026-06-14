@@ -389,29 +389,71 @@
 
         function calculateProtectedDelta(currentScore, delta) {
             if (delta === 0) return { actualDelta: 0, remark: "" };
-            const THRESHOLD = -30;
+            const THRESHOLD1 = -30;
+            const THRESHOLD2 = -40;
+            const THRESHOLD3 = -45;
             let actualDelta = delta;
             let remark = "";
 
-            if (currentScore >= THRESHOLD && currentScore + delta < THRESHOLD) {
+            if (currentScore >= THRESHOLD3 && currentScore + delta < THRESHOLD3) {
                 const normalPart = currentScore - THRESHOLD;
                 const overPart = -delta - normalPart;
                 actualDelta = -normalPart - (overPart / 2);
-                remark = " (跨越-30线，超出部分减半)";
+                remark = " (跨越-45线，部分减半)";
             }
-            else if (currentScore < THRESHOLD && currentScore + delta > THRESHOLD) {
+            else if (currentScore >= THRESHOLD2 && currentScore + delta < THRESHOLD2) {
+                const normalPart = currentScore - THRESHOLD;
+                const overPart = -delta - normalPart;
+                actualDelta = -normalPart - (overPart / 1.5);
+                remark = " (跨越-40线，部分减少)";
+            }
+            else if (currentScore >= THRESHOLD1 && currentScore + delta < THRESHOLD1) {
+                const normalPart = currentScore - THRESHOLD;
+                const overPart = -delta - normalPart;
+                actualDelta = -normalPart - (overPart / 1.25);
+                remark = " (跨越-30线，部分减少)";
+            }
+            else if (currentScore < THRESHOLD3 && currentScore + delta > THRESHOLD3) {
                 const belowPart = THRESHOLD - currentScore;
                 const overPart = delta - belowPart;
-                actualDelta = belowPart * 2 + overPart;
-                remark = " (跨越-30线，低于部分翻倍)";
+                actualDelta = belowPart * 1.5 + overPart;
+                remark = " (跨越-45线，部分翻倍)";
             }
-            else if (currentScore < THRESHOLD && delta < 0) {
+            else if (currentScore < THRESHOLD2 && currentScore + delta > THRESHOLD2) {
+                const belowPart = THRESHOLD - currentScore;
+                const overPart = delta - belowPart;
+                actualDelta = belowPart * 1.2 + overPart;
+                remark = " (跨越-40线，部分翻倍)";
+            }
+            else if (currentScore < THRESHOLD1 && currentScore + delta > THRESHOLD1) {
+                const belowPart = THRESHOLD - currentScore;
+                const overPart = delta - belowPart;
+                actualDelta = belowPart * 1.1 + overPart;
+                remark = " (跨越-30线，部分翻倍)";
+            }
+            else if (currentScore < THRESHOLD3 && delta < 0) {
                 actualDelta = delta / 2;
-                remark = " (减半扣分)";
+                remark = " (减少扣分)";
             }
-            else if (currentScore < THRESHOLD && delta > 0) {
-                actualDelta = delta * 2;
-                remark = " (双倍加分)";
+            else if (currentScore < THRESHOLD2 && delta < 0) {
+                actualDelta = delta / 1.5;
+                remark = " (减少扣分)";
+            }
+            else if (currentScore < THRESHOLD1 && delta < 0) {
+                actualDelta = delta / 1.25;
+                remark = " (减少扣分)";
+            }
+            else if (currentScore < THRESHOLD3 && delta > 0) {
+                actualDelta = delta * 1.5;
+                remark = " (额外加分)";
+            }
+            else if (currentScore < THRESHOLD2 && delta > 0) {
+                actualDelta = delta * 1.2;
+                remark = " (额外加分)";
+            }
+            else if (currentScore < THRESHOLD1 && delta > 0) {
+                actualDelta = delta * 1.1;
+                remark = " (额外加分)";
             }
             return { actualDelta, remark };
         }
