@@ -92,7 +92,7 @@
                 <input type="text" id="quickReason" placeholder="原因（可编辑、追加文字）" style="width: 250px;">
                 <button id="applyQuickBtn" style="background-color:#2196F3; color:white;">应用到选中学生</button>
                 <p style="font-size:12px; color:#666;">👉 点击规则自动填充分数和原因，点击上方按钮批量应用。<br>
-                ⚠️ 积分保护：低于 -30 分时，扣分超出部分减半，加分低于部分翻倍（跨过 -30 线时精确分段计算）。</p>
+                ⚠️ 积分保护：低于 -30 分时，扣分减半、加分翻倍；低于 -40、-45 时保护力度递增。</p>
             </div>
         </div>
 
@@ -214,17 +214,31 @@
             return { content, sha: data.sha };
         }
 
-        async function saveJSON(url, content, sha, message) {
+        async function saveJSON(url, content, message) {
+            let sha = null;
+            try {
+                const tokenStr = CONFIG.github_token;
+                const headers = tokenStr ? { Authorization: `token ${tokenStr}` } : {};
+                const resp = await fetch(url, { headers });
+                if (resp.ok) {
+                    const data = await resp.json();
+                    sha = data.sha;
+                }
+            } catch(e) {}
             const jsonStr = JSON.stringify(content, null, 2);
             const newContent = utf8ToBase64(jsonStr);
-            const payload = { message, content: newContent, sha };
+            const payload = { message, content: newContent };
+            if (sha) payload.sha = sha;
             const tokenStr = CONFIG.github_token;
             const resp = await fetch(url, {
                 method: "PUT",
                 headers: { Authorization: `token ${tokenStr}`, "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
             });
-            if (!resp.ok) throw new Error(`保存失败 HTTP ${resp.status}`);
+            if (!resp.ok) {
+                const errText = await resp.text();
+                throw new Error(`保存失败 HTTP ${resp.status}: ${errText}`);
+            }
             const result = await resp.json();
             return result.content.sha;
         }
@@ -256,10 +270,10 @@
 
         async function saveStudents() {
             const newData = { students: currentStudents };
-            dataSha = await saveJSON(DATA_URL, newData, dataSha, "更新学生数据");
+            dataSha = await saveJSON(DATA_URL, newData, "更新学生数据");
         }
         async function saveReasons() {
-            reasonsSha = await saveJSON(REASONS_URL, currentReasons, reasonsSha, "更新原因记录");
+            reasonsSha = await saveJSON(REASONS_URL, currentReasons, "更新原因记录");
         }
 
         function sortStudents(students, field, order) {
@@ -383,86 +397,19 @@
             return true;
         }
 
-        // 修正后的积分保护函数（使用正确的阈值变量）
         function calculateProtectedDelta(currentScore, delta) {
             if (delta === 0) return { actualDelta: 0, remark: "" };
-            const THRESHOLD1 = -30;
-            const THRESHOLD2 = -40;
-            const THRESHOLD3 = -45;
+            const T1 = -30, T2 = -40, T3 = -45;
             let actualDelta = delta;
             let remark = "";
-
-            // 扣分跨越 -45 线
-            if (currentScore >= THRESHOLD3 && currentScore + delta < THRESHOLD3) {
-                const normalPart = currentScore - THRESHOLD3;
-                const overPart = -delta - normalPart;
-                actualDelta = -normalPart - (overPart / 2);
-                remark = " (跨越-45线，部分减半)";
-            }
-            // 扣分跨越 -40 线（且未触发 -45 线）
-            else if (currentScore >= THRESHOLD2 && currentScore + delta < THRESHOLD2) {
-                const normalPart = currentScore - THRESHOLD2;
-                const overPart = -delta - normalPart;
-                actualDelta = -normalPart - (overPart / 1.5);
-                remark = " (跨越-40线，部分减少)";
-            }
-            // 扣分跨越 -30 线
-            else if (currentScore >= THRESHOLD1 && currentScore + delta < THRESHOLD1) {
-                const normalPart = currentScore - THRESHOLD1;
-                const overPart = -delta - normalPart;
-                actualDelta = -normalPart - (overPart / 1.25);
-                remark = " (跨越-30线，部分减少)";
-            }
-            // 加分跨越 -45 线
-            else if (currentScore < THRESHOLD3 && currentScore + delta > THRESHOLD3) {
-                const belowPart = THRESHOLD3 - currentScore;
-                const overPart = delta - belowPart;
-                actualDelta = belowPart * 1.5 + overPart;
-                remark = " (跨越-45线，部分翻倍)";
-            }
-            // 加分跨越 -40 线
-            else if (currentScore < THRESHOLD2 && currentScore + delta > THRESHOLD2) {
-                const belowPart = THRESHOLD2 - currentScore;
-                const overPart = delta - belowPart;
-                actualDelta = belowPart * 1.2 + overPart;
-                remark = " (跨越-40线，部分翻倍)";
-            }
-            // 加分跨越 -30 线
-            else if (currentScore < THRESHOLD1 && currentScore + delta > THRESHOLD1) {
-                const belowPart = THRESHOLD1 - currentScore;
-                const overPart = delta - belowPart;
-                actualDelta = belowPart * 1.1 + overPart;
-                remark = " (跨越-30线，部分翻倍)";
-            }
-            // 完全低于 -45 且扣分
-            else if (currentScore < THRESHOLD3 && delta < 0) {
-                actualDelta = delta / 2;
-                remark = " (减半扣分)";
-            }
-            // 完全低于 -40 且扣分（未低于 -45）
-            else if (currentScore < THRESHOLD2 && delta < 0) {
-                actualDelta = delta / 1.5;
-                remark = " (减少扣分)";
-            }
-            // 完全低于 -30 且扣分
-            else if (currentScore < THRESHOLD1 && delta < 0) {
-                actualDelta = delta / 1.25;
-                remark = " (减少扣分)";
-            }
-            // 完全低于 -45 且加分
-            else if (currentScore < THRESHOLD3 && delta > 0) {
-                actualDelta = delta * 1.5;
-                remark = " (额外加分)";
-            }
-            // 完全低于 -40 且加分
-            else if (currentScore < THRESHOLD2 && delta > 0) {
-                actualDelta = delta * 1.2;
-                remark = " (额外加分)";
-            }
-            // 完全低于 -30 且加分
-            else if (currentScore < THRESHOLD1 && delta > 0) {
-                actualDelta = delta * 1.1;
-                remark = " (额外加分)";
+            if (delta > 0) {
+                if (currentScore < T3) { actualDelta = delta * 1.5; remark = " (低于-45，+50%)"; }
+                else if (currentScore < T2) { actualDelta = delta * 1.2; remark = " (低于-40，+20%)"; }
+                else if (currentScore < T1) { actualDelta = delta * 1.1; remark = " (低于-30，+10%)"; }
+            } else if (delta < 0) {
+                if (currentScore < T3) { actualDelta = delta / 2; remark = " (低于-45，扣分减半)"; }
+                else if (currentScore < T2) { actualDelta = delta / 1.5; remark = " (低于-40，扣分减少33%)"; }
+                else if (currentScore < T1) { actualDelta = delta / 1.25; remark = " (低于-30，扣分减少20%)"; }
             }
             return { actualDelta, remark };
         }
@@ -523,7 +470,6 @@
             await saveReasons();
 
             renderStudentsTable();
-            // 不再调用 renderReasonsTable()
             let protectedCount = updates.filter(u => u.remark !== "").length;
             let msg = `成功为 ${updates.length} 名学生调整积分。`;
             if (protectedCount > 0) msg += ` 其中 ${protectedCount} 人触发积分保护。`;
@@ -540,12 +486,18 @@
                     autoTracker = { lastDailyCheck: 0, stopped: false };
                 }
             } catch(e) {
+                console.warn("加载自动补分跟踪失败", e);
                 autoTracker = { lastDailyCheck: 0, stopped: false };
             }
         }
 
         async function saveAutoTracker() {
-            await saveJSON(AUTO_TRACK_URL, autoTracker, null, "更新自动补分追踪");
+            try {
+                await saveJSON(AUTO_TRACK_URL, autoTracker, "更新自动补分追踪");
+            } catch(e) {
+                console.error("保存自动补分跟踪失败", e);
+                alert("保存自动补分状态失败，请检查网络或Token权限");
+            }
         }
 
         async function runAutoIncrement() {
@@ -573,7 +525,7 @@
                             studentId: student.id,
                             studentName: student.name,
                             delta: actualDelta,
-                            reason: "晚自习回家" + (remark ? remark : "")
+                            reason: "晚自习回家" + remark
                         });
                     }
                 }
@@ -593,7 +545,6 @@
                 }
                 await saveReasons();
                 renderStudentsTable();
-                // 不再调用 renderReasonsTable()
                 document.getElementById("adminMsg").innerHTML = `自动补分已执行，${updates.length}名学生获得+2分（可能翻倍）。`;
             }
             autoTracker.lastDailyCheck = now.getTime();
@@ -682,7 +633,6 @@
             await saveStudents();
             await saveReasons();
             renderStudentsTable();
-            // 不再调用 renderReasonsTable()
             document.getElementById("adminMsg").innerText = "学号交换成功，并已同步历史记录";
         }
         async function resetToInitial() {
@@ -695,7 +645,6 @@
                 await saveReasons();
             }
             renderStudentsTable();
-            // 不再调用 renderReasonsTable()
             document.getElementById("adminMsg").innerText = "已将所有学生积分重置为0" + (clearReasons ? "，并清空了记录" : "");
         }
         function filterStudents() {
@@ -793,7 +742,7 @@
                         }
                     }
                 }
-                let html = '<table style="width:auto; margin-top:8px;">反馈<th>职务</th><th>姓名</th><th>好评率</th><th>票数详情</th></tr>';
+                let html = '<table style="width:auto; margin-top:8px;">反馈<th>职务</th><th>姓名</th><th>好评率</th><th>票数详情</th><tr>';
                 committeePositions.forEach(p => {
                     const total = stats[p].total;
                     const good = stats[p].good;
