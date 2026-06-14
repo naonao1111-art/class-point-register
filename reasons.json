@@ -4122,5 +4122,61 @@
     "studentName": "测试人员",
     "delta": -1.3333333333333333,
     "reason": "实验程序 (减少扣分)"
+  },
+  {
+    "timestamp": "2026-06-14 22:24:29",
+    "studentId": "005",
+    "studentName": "沈姚栎",
+    "delta": 3,
+    "reason": "610值日认真(*¯︶¯*)"
+  },
+  {
+    "timestamp": "2026-06-14 22:24:29",
+    "studentId": "006",
+    "studentName": "马伊韩",
+    "delta": 3,
+    "reason": "610值日认真(*¯︶¯*)"
+  },
+  {
+    "timestamp": "2026-06-14 22:24:29",
+    "studentId": "016",
+    "studentName": "徐志翔",
+    "delta": 3,
+    "reason": "610值日认真(*¯︶¯*)"
+  },
+  {
+    "timestamp": "2026-06-14 22:24:29",
+    "studentId": "027",
+    "studentName": "吕峥程",
+    "delta": 3,
+    "reason": "610值日认真(*¯︶¯*)"
+  },
+  {
+    "timestamp": "2026-06-14 22:24:29",
+    "studentId": "028",
+    "studentName": "李岩蹊",
+    "delta": 3,
+    "reason": "610值日认真(*¯︶¯*)"
+  },
+  {
+    "timestamp": "2026-06-14 22:24:29",
+    "studentId": "032",
+    "studentName": "程舒远",
+    "delta": 3,
+    "reason": "610值日认真(*¯︶¯*)"
+  },
+  {
+    "timestamp": "2026-06-14 22:24:29",
+    "studentId": "034",
+    "studentName": "盛睿良",
+    "delta": 3,
+    "reason": "610值日认真(*¯︶¯*)"
+  },
+  {
+    "timestamp": "2026-06-14 22:24:29",
+    "studentId": "038",
+    "studentName": "方鸣扬",
+    "delta": 3,
+    "reason": "610值日认真(*¯︶¯*)"
   }
 ]
