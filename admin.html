@@ -96,14 +96,12 @@
             </div>
         </div>
 
-
         <div class="section">
             <h3>📈 班委履职评价统计</h3>
             <div id="adminStatsContainer" style="margin-top: 10px;">加载中...</div>
             <button id="clearAllRatingsBtn" style="background:#f44336; color:white; margin-top:12px;">🗑️ 清空所有评价数据（谨慎）</button>
         </div>
 
-        <!-- 自动补分控制区域（每日+2分，原因：晚自习回家） -->
         <div class="section">
             <h3>🤖 自动补分控制（低于-50分学生每天+2分）</h3>
             <div id="autoIncStatus">状态加载中...</div>
@@ -260,7 +258,6 @@
             const newData = { students: currentStudents };
             dataSha = await saveJSON(DATA_URL, newData, dataSha, "更新学生数据");
         }
-        // 注意：saveReasons 不再在 admin 中调用（原因修改移至 reason_manager），但保留以备导出等使用
         async function saveReasons() {
             reasonsSha = await saveJSON(REASONS_URL, currentReasons, reasonsSha, "更新原因记录");
         }
@@ -316,7 +313,6 @@
                 actionCell.appendChild(document.createTextNode(" 选中"));
             });
         }
-
 
         function renderRulesList() {
             const container = document.getElementById("rulesList");
@@ -387,6 +383,7 @@
             return true;
         }
 
+        // 修正后的积分保护函数（使用正确的阈值变量）
         function calculateProtectedDelta(currentScore, delta) {
             if (delta === 0) return { actualDelta: 0, remark: "" };
             const THRESHOLD1 = -30;
@@ -395,62 +392,74 @@
             let actualDelta = delta;
             let remark = "";
 
+            // 扣分跨越 -45 线
             if (currentScore >= THRESHOLD3 && currentScore + delta < THRESHOLD3) {
-                const normalPart = currentScore - THRESHOLD;
+                const normalPart = currentScore - THRESHOLD3;
                 const overPart = -delta - normalPart;
                 actualDelta = -normalPart - (overPart / 2);
                 remark = " (跨越-45线，部分减半)";
             }
+            // 扣分跨越 -40 线（且未触发 -45 线）
             else if (currentScore >= THRESHOLD2 && currentScore + delta < THRESHOLD2) {
-                const normalPart = currentScore - THRESHOLD;
+                const normalPart = currentScore - THRESHOLD2;
                 const overPart = -delta - normalPart;
                 actualDelta = -normalPart - (overPart / 1.5);
                 remark = " (跨越-40线，部分减少)";
             }
+            // 扣分跨越 -30 线
             else if (currentScore >= THRESHOLD1 && currentScore + delta < THRESHOLD1) {
-                const normalPart = currentScore - THRESHOLD;
+                const normalPart = currentScore - THRESHOLD1;
                 const overPart = -delta - normalPart;
                 actualDelta = -normalPart - (overPart / 1.25);
                 remark = " (跨越-30线，部分减少)";
             }
+            // 加分跨越 -45 线
             else if (currentScore < THRESHOLD3 && currentScore + delta > THRESHOLD3) {
-                const belowPart = THRESHOLD - currentScore;
+                const belowPart = THRESHOLD3 - currentScore;
                 const overPart = delta - belowPart;
                 actualDelta = belowPart * 1.5 + overPart;
                 remark = " (跨越-45线，部分翻倍)";
             }
+            // 加分跨越 -40 线
             else if (currentScore < THRESHOLD2 && currentScore + delta > THRESHOLD2) {
-                const belowPart = THRESHOLD - currentScore;
+                const belowPart = THRESHOLD2 - currentScore;
                 const overPart = delta - belowPart;
                 actualDelta = belowPart * 1.2 + overPart;
                 remark = " (跨越-40线，部分翻倍)";
             }
+            // 加分跨越 -30 线
             else if (currentScore < THRESHOLD1 && currentScore + delta > THRESHOLD1) {
-                const belowPart = THRESHOLD - currentScore;
+                const belowPart = THRESHOLD1 - currentScore;
                 const overPart = delta - belowPart;
                 actualDelta = belowPart * 1.1 + overPart;
                 remark = " (跨越-30线，部分翻倍)";
             }
+            // 完全低于 -45 且扣分
             else if (currentScore < THRESHOLD3 && delta < 0) {
                 actualDelta = delta / 2;
-                remark = " (减少扣分)";
+                remark = " (减半扣分)";
             }
+            // 完全低于 -40 且扣分（未低于 -45）
             else if (currentScore < THRESHOLD2 && delta < 0) {
                 actualDelta = delta / 1.5;
                 remark = " (减少扣分)";
             }
+            // 完全低于 -30 且扣分
             else if (currentScore < THRESHOLD1 && delta < 0) {
                 actualDelta = delta / 1.25;
                 remark = " (减少扣分)";
             }
+            // 完全低于 -45 且加分
             else if (currentScore < THRESHOLD3 && delta > 0) {
                 actualDelta = delta * 1.5;
                 remark = " (额外加分)";
             }
+            // 完全低于 -40 且加分
             else if (currentScore < THRESHOLD2 && delta > 0) {
                 actualDelta = delta * 1.2;
                 remark = " (额外加分)";
             }
+            // 完全低于 -30 且加分
             else if (currentScore < THRESHOLD1 && delta > 0) {
                 actualDelta = delta * 1.1;
                 remark = " (额外加分)";
@@ -514,7 +523,7 @@
             await saveReasons();
 
             renderStudentsTable();
-            renderReasonsTable();
+            // 不再调用 renderReasonsTable()
             let protectedCount = updates.filter(u => u.remark !== "").length;
             let msg = `成功为 ${updates.length} 名学生调整积分。`;
             if (protectedCount > 0) msg += ` 其中 ${protectedCount} 人触发积分保护。`;
@@ -584,7 +593,7 @@
                 }
                 await saveReasons();
                 renderStudentsTable();
-                renderReasonsTable();
+                // 不再调用 renderReasonsTable()
                 document.getElementById("adminMsg").innerHTML = `自动补分已执行，${updates.length}名学生获得+2分（可能翻倍）。`;
             }
             autoTracker.lastDailyCheck = now.getTime();
@@ -673,7 +682,7 @@
             await saveStudents();
             await saveReasons();
             renderStudentsTable();
-            renderReasonsTable();
+            // 不再调用 renderReasonsTable()
             document.getElementById("adminMsg").innerText = "学号交换成功，并已同步历史记录";
         }
         async function resetToInitial() {
@@ -686,7 +695,7 @@
                 await saveReasons();
             }
             renderStudentsTable();
-            renderReasonsTable();
+            // 不再调用 renderReasonsTable()
             document.getElementById("adminMsg").innerText = "已将所有学生积分重置为0" + (clearReasons ? "，并清空了记录" : "");
         }
         function filterStudents() {
@@ -869,6 +878,7 @@
                 document.getElementById("manualRunAutoIncBtn").onclick = manualRunAutoIncrement;
             } catch (err) {
                 document.getElementById("loginMsg").innerText = "加载数据失败：" + err.message;
+                console.error(err);
             }
         };
     </script>
