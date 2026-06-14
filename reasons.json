@@ -4108,5 +4108,12 @@
     "studentName": "测试人员",
     "delta": 3.75,
     "reason": "实验程序 (额外加分)"
+  },
+  {
+    "timestamp": "2026-06-14 22:03:03",
+    "studentId": "050",
+    "studentName": "测试人员",
+    "delta": 3,
+    "reason": "实验程序 (额外加分)"
   }
 ]
