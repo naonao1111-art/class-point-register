@@ -4269,5 +4269,12 @@
     "studentName": "濮天昊",
     "delta": 4.8,
     "reason": "回家自习 (低于-40，+20%)"
+  },
+  {
+    "timestamp": "2026-06-15 21:58:18",
+    "studentId": "039",
+    "studentName": "胡宵",
+    "delta": 3,
+    "reason": "615开班会课"
   }
 ]
