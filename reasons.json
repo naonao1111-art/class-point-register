@@ -4276,5 +4276,12 @@
     "studentName": "胡宵",
     "delta": 3,
     "reason": "615开班会课"
+  },
+  {
+    "timestamp": "2026-06-15 21:58:56",
+    "studentId": "040",
+    "studentName": "朱熙元",
+    "delta": -2,
+    "reason": "615上课睡觉(ಠ .̫.̫ ಠ)"
   }
 ]
