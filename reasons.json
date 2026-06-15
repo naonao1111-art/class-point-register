@@ -4360,5 +4360,26 @@
     "studentName": "陈静怡",
     "delta": -5,
     "reason": "6.7-6.14多次化学作业没交╰_╯"
+  },
+  {
+    "timestamp": "2026-06-15 22:02:16",
+    "studentId": "006",
+    "studentName": "马伊韩",
+    "delta": 1,
+    "reason": "班委每周加分"
+  },
+  {
+    "timestamp": "2026-06-15 22:02:16",
+    "studentId": "019",
+    "studentName": "顾槿宸",
+    "delta": 1,
+    "reason": "班委每周加分"
+  },
+  {
+    "timestamp": "2026-06-15 22:02:16",
+    "studentId": "022",
+    "studentName": "方晟睿",
+    "delta": 1,
+    "reason": "班委每周加分"
   }
 ]
