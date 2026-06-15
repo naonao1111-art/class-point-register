@@ -4555,5 +4555,12 @@
     "studentName": "刘博凯",
     "delta": -1,
     "reason": "课代表因没有及时统计缺交名单不加分"
+  },
+  {
+    "timestamp": "2026-06-15 22:10:54",
+    "studentId": "040",
+    "studentName": "朱熙元",
+    "delta": -1,
+    "reason": "课代表因未及时收发作业不加分"
   }
 ]
