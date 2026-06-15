@@ -4534,5 +4534,26 @@
     "studentName": "曾子轩",
     "delta": 1,
     "reason": "6.7-6.14课代表每周加分"
+  },
+  {
+    "timestamp": "2026-06-15 22:10:32",
+    "studentId": "002",
+    "studentName": "胡凯琳",
+    "delta": -1,
+    "reason": "课代表因没有及时统计缺交名单不加分"
+  },
+  {
+    "timestamp": "2026-06-15 22:10:32",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": -1,
+    "reason": "课代表因没有及时统计缺交名单不加分"
+  },
+  {
+    "timestamp": "2026-06-15 22:10:32",
+    "studentId": "031",
+    "studentName": "刘博凯",
+    "delta": -1,
+    "reason": "课代表因没有及时统计缺交名单不加分"
   }
 ]
