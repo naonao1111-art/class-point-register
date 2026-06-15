@@ -4290,5 +4290,54 @@
     "studentName": "叶齐楚",
     "delta": 1.33,
     "reason": "管理纪律半小时~(‾⌣‾~)*1.3"
+  },
+  {
+    "timestamp": "2026-06-15 22:01:14",
+    "studentId": "008",
+    "studentName": "王李婧",
+    "delta": -5,
+    "reason": "6.7-6.14多次历史作业没交╰_╯"
+  },
+  {
+    "timestamp": "2026-06-15 22:01:14",
+    "studentId": "005",
+    "studentName": "沈姚栎",
+    "delta": -5,
+    "reason": "6.7-6.14多次历史作业没交╰_╯"
+  },
+  {
+    "timestamp": "2026-06-15 22:01:14",
+    "studentId": "024",
+    "studentName": "沈天辰",
+    "delta": -5,
+    "reason": "6.7-6.14多次历史作业没交╰_╯"
+  },
+  {
+    "timestamp": "2026-06-15 22:01:14",
+    "studentId": "026",
+    "studentName": "潘烨磊",
+    "delta": -5,
+    "reason": "6.7-6.14多次历史作业没交╰_╯"
+  },
+  {
+    "timestamp": "2026-06-15 22:01:14",
+    "studentId": "031",
+    "studentName": "刘博凯",
+    "delta": -5,
+    "reason": "6.7-6.14多次历史作业没交╰_╯"
+  },
+  {
+    "timestamp": "2026-06-15 22:01:14",
+    "studentId": "035",
+    "studentName": "冯丰硕",
+    "delta": -4,
+    "reason": "6.7-6.14多次历史作业没交╰_╯ (低于-30，扣分减少20%)"
+  },
+  {
+    "timestamp": "2026-06-15 22:01:14",
+    "studentId": "032",
+    "studentName": "程舒远",
+    "delta": -5,
+    "reason": "6.7-6.14多次历史作业没交╰_╯"
   }
 ]
