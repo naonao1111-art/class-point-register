@@ -4381,5 +4381,26 @@
     "studentName": "方晟睿",
     "delta": 1,
     "reason": "班委每周加分"
+  },
+  {
+    "timestamp": "2026-06-15 22:05:52",
+    "studentId": "002",
+    "studentName": "胡凯琳",
+    "delta": -0.5,
+    "reason": "课代表因没有统计缺交名单减半加分"
+  },
+  {
+    "timestamp": "2026-06-15 22:05:52",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": -0.5,
+    "reason": "课代表因没有统计缺交名单减半加分"
+  },
+  {
+    "timestamp": "2026-06-15 22:05:52",
+    "studentId": "031",
+    "studentName": "刘博凯",
+    "delta": -0.5,
+    "reason": "课代表因没有统计缺交名单减半加分"
   }
 ]
