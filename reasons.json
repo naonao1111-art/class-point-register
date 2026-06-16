@@ -4562,5 +4562,40 @@
     "studentName": "朱熙元",
     "delta": -1,
     "reason": "课代表因未及时收发作业不加分"
+  },
+  {
+    "timestamp": "2026-06-16 17:31:41",
+    "studentId": "002",
+    "studentName": "胡凯琳",
+    "delta": -5,
+    "reason": "多次地理作业没交╰_╯"
+  },
+  {
+    "timestamp": "2026-06-16 17:31:41",
+    "studentId": "004",
+    "studentName": "叶齐楚",
+    "delta": -5,
+    "reason": "多次地理作业没交╰_╯"
+  },
+  {
+    "timestamp": "2026-06-16 17:31:41",
+    "studentId": "017",
+    "studentName": "黄智恒",
+    "delta": -5,
+    "reason": "多次地理作业没交╰_╯"
+  },
+  {
+    "timestamp": "2026-06-16 17:31:41",
+    "studentId": "028",
+    "studentName": "李岩蹊",
+    "delta": -5,
+    "reason": "多次地理作业没交╰_╯"
+  },
+  {
+    "timestamp": "2026-06-16 17:31:41",
+    "studentId": "040",
+    "studentName": "朱熙元",
+    "delta": -5,
+    "reason": "多次地理作业没交╰_╯"
   }
 ]
