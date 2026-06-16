@@ -4597,5 +4597,12 @@
     "studentName": "朱熙元",
     "delta": -5,
     "reason": "多次地理作业没交╰_╯"
+  },
+  {
+    "timestamp": "2026-06-16 23:15:14",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": 2.2,
+    "reason": "回家 (低于-30，+10%)"
   }
 ]
