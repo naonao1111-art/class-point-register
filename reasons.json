@@ -4632,5 +4632,12 @@
     "studentName": "黄智恒",
     "delta": -3,
     "reason": "615值日不及时"
+  },
+  {
+    "timestamp": "2026-06-17 22:25:18",
+    "studentId": "017",
+    "studentName": "黄智恒",
+    "delta": -2.4,
+    "reason": "迟到@_@ (低于-30，扣分/1.25)"
   }
 ]
