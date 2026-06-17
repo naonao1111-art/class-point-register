@@ -39,7 +39,7 @@
         <div class="nav-section">
             <a href="show_control.html">管理积分规则</a>
             <a href="class_control.html">管理班委</a>
-            <a href="reason_manager.html">📝 管理原因记录（撤销/编辑）</a>
+            <a href="reason_manager.html">管理原因记录（撤销/编辑）</a>
         </div>
 
         <div class="section">
@@ -97,17 +97,17 @@
         </div>
 
         <div class="section">
-            <h3>📈 班委履职评价统计</h3>
+            <h3>班委履职评价统计</h3>
             <div id="adminStatsContainer" style="margin-top: 10px;">加载中...</div>
-            <button id="clearAllRatingsBtn" style="background:#f44336; color:white; margin-top:12px;">🗑️ 清空所有评价数据（谨慎）</button>
+            <button id="clearAllRatingsBtn" style="background:#f44336; color:white; margin-top:12px;">清空所有评价数据</button>
         </div>
 
         <div class="section">
             <h3>🤖 自动补分控制（低于-50分学生每天+2分）</h3>
             <div id="autoIncStatus">状态加载中...</div>
-            <button id="stopAutoIncBtn" style="background:#f44336;">⏸️ 停止自动补分</button>
-            <button id="resumeAutoIncBtn" style="background:#4CAF50;">▶️ 开启自动补分</button>
-            <button id="manualRunAutoIncBtn" style="background:#2196F3;">🔄 立即执行一次补分检查</button>
+            <button id="stopAutoIncBtn" style="background:#f44336;">停止自动补分</button>
+            <button id="resumeAutoIncBtn" style="background:#4CAF50;">开启自动补分</button>
+            <button id="manualRunAutoIncBtn" style="background:#2196F3;">立即执行一次补分检查</button>
         </div>
 
         <p id="adminMsg"></p>
@@ -398,18 +398,47 @@
         }
 
         function calculateProtectedDelta(currentScore, delta) {
-            if (delta === 0) return { actualDelta: 0, remark: "" };
-            const T1 = -30, T2 = -40, T3 = -45;
+            if (delta === 0) return { actualDelta: 0, remark: ""};
+            const T1 = -30, T2 = -38, T3 = -45;
             let actualDelta = delta;
             let remark = "";
+            let temporery3 = currentScore - T3;
+            let temporery2 = currentScore - T2;
+            let temporery1 = currentScore - T1;
             if (delta > 0) {
-                if (currentScore < T3) { actualDelta = delta * 1.5; remark = " (低于-45，+50%)"; }
-                else if (currentScore < T2) { actualDelta = delta * 1.2; remark = " (低于-40，+20%)"; }
-                else if (currentScore < T1) { actualDelta = delta * 1.1; remark = " (低于-30，+10%)"; }
+                if (currentScore <= T3 && currentScore + delta * 1.5 > T3) {
+                    delta = delta - temporery3 * 1.5;
+                    actualDelta = delta * 1.25 + temporery3 * 1.5; remark = "( 分界运算 )"
+                }else if (currentScore <= T3) {
+                    actualDelta = delta * 1.5; remark = " (低于-45，+50%)";
+                }else if (currentScore <= T2 && currentScore + delta * 1.2 > T2) {
+                    delta = delta - temporery2 * 1.2;
+                    actualDelta = delta * 1.1 + temporery2 * 1.2; remark = "( 分界运算 )";
+                }else if (currentScore <= T2) {
+                    actualDelta = delta * 1.2; remark = " (低于-38，+20%)";
+                }else if (currentScore <= T1  && currentScore + delta * 1.1 > T1) {
+                    delta = delta - temporery1 ;
+                    actualDelta = delta + temporery1 * 1.1 ; remark = "( 分界运算 )";
+                }else if (currentScore <= T1) {
+                    actualDelta = delta * 1.1; remark = " (低于-30，+10%)";
+                }
             } else if (delta < 0) {
-                if (currentScore < T3) { actualDelta = delta / 2; remark = " (低于-45，扣分减半)"; }
-                else if (currentScore < T2) { actualDelta = delta / 1.5; remark = " (低于-40，扣分减少33%)"; }
-                else if (currentScore < T1) { actualDelta = delta / 1.25; remark = " (低于-30，扣分减少20%)"; }
+                if (currentScore <= T3) {
+                    actualDelta = delta / 2; remark = " (低于-45，扣分/2)";
+                }else if (currentScore <= T2 && currentScore + delta/ 1.5 <= T3) {
+                    delta = delta + temporery3 / 1.5;
+                    actualDelta = delta / 2 - temporery3 / 1.5; remark = "( 分界运算 )"
+                }else if (currentScore <= T2) {
+                    actualDelta = delta / 1.5; remark = " (低于-38，扣分/1.5)";
+                }else if (currentScore <= T1 && currentScore + delta / 1.25 <= T2) {
+                    delta = delta + temporery2 / 1.25;
+                    actualDelta = delta / 1.5 - temporery2 / 1.25; remark = "( 分界运算 )";
+                }else if (currentScore <= T1) {
+                    actualDelta = delta / 1.25; remark = " (低于-30，扣分/1.25)";
+                }else if (currentScore > T1 && currentScore + delta  <= T1) {
+                    delta = delta + temporery1 ;
+                    actualDelta = delta / 1.25 - temporery1 ; remark = "( 分界运算 )";
+                }
             }
             return { actualDelta, remark };
         }
