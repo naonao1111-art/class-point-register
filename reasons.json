@@ -4639,5 +4639,12 @@
     "studentName": "黄智恒",
     "delta": -2.4,
     "reason": "迟到@_@ (低于-30，扣分/1.25)"
+  },
+  {
+    "timestamp": "2026-06-17 22:27:09",
+    "studentId": "042",
+    "studentName": "闫之诺",
+    "delta": -2,
+    "reason": "早读睡觉(ಠ .̫.̫ ಠ)"
   }
 ]
