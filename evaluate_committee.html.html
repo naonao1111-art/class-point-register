@@ -52,18 +52,18 @@
         <p>你好，<strong><span id="displayStudentId"></span></strong> 同学：</p>
         <div id="committeeList" class="committee-list"></div>
         <div class="submit-area">
-            <button id="submitAllBtn" class="submit-btn">📤 提交我的评价（未选视为弃权）</button>
+            <button id="submitAllBtn" class="submit-btn">提交我的评价（未选视为弃权）</button>
         </div>
         <div id="msgArea" style="margin-top: 20px;"></div>
     </div>
 
     <div id="alreadySubmittedSection" style="display:none;" class="already-submitted">
-        <p>✅ 您已完成本周期班委评价，不可再次提交。</p>
+        <p>您已完成本周期班委评价，不可再次提交。</p>
         <p>感谢您的参与！</p>
     </div>
 
     <div class="stats">
-        <h3>📊 当前班委好评率（实时）</h3>
+        <h3>当前班委好评率</h3>
         <div id="statsContainer" class="stats-container">加载中...</div>
     </div>
 </div>
@@ -193,7 +193,7 @@
         // 统计哪些班委被明确选择（good/bad），弃权的忽略
         const selectedRatings = {};
         for (let [pos, value] of Object.entries(pendingRatings)) {
-            if (value === "good" || value === "bad") {
+            if (value === "verygood" || value === "good" || value === "justsoso" || value === "littlebad" || value === "bad") {
                 selectedRatings[pos] = value;
             }
         }
@@ -251,7 +251,7 @@
             allRatings = newRatings;
             pendingRatings = {};
 
-            document.getElementById("msgArea").innerHTML = '<span class="success">✅ 评价已提交！感谢参与。</span>';
+            document.getElementById("msgArea").innerHTML = '<span class="success">评价已提交！感谢参与。</span>';
             showAlreadySubmitted();
             renderStats();
         } catch(err) {
@@ -268,32 +268,7 @@
     }
 
     // 渲染好评率统计
-    async function renderStats() {
-        const container = document.getElementById("statsContainer");
-        if (!container) return;
-        await loadRatings();
-        const stats = {};
-        committeeInfo.forEach(c => { stats[c.position] = { good: 0, total: 0 }; });
-        for (let sid in allRatings) {
-            const ratings = allRatings[sid];
-            for (let pos in ratings) {
-                if (stats[pos]) {
-                    stats[pos].total++;
-                    if (ratings[pos] === "good") stats[pos].good++;
-                }
-            }
-        }
-        let html = '';
-        committeeInfo.forEach(c => {
-            const total = stats[c.position].total;
-            const good = stats[c.position].good;
-            const rate = total === 0 ? 0 : (good / total * 100).toFixed(1);
-            html += `<div class="stats-card">${c.position} (${c.name}): ${rate}% (${good}/${total})</div>`;
-        });
-        container.innerHTML = html || '<span>暂无评价数据</span>';
-    }
-
-    // 渲染评价界面（增加弃权选项）
+   // 渲染评价界面（修正 value 和绑定逻辑）
     function renderEvaluationInterface() {
         const container = document.getElementById("committeeList");
         if (!container || !currentStudent) return;
@@ -303,19 +278,22 @@
         }
         let html = '';
         committeeInfo.forEach(c => {
-            const selectedValue = pendingRatings[c.position]; // "good", "bad", null 或 undefined
+            const selectedValue = pendingRatings[c.position] || null;
             html += `<div class="committee-card">
                         <div class="committee-title">${c.position}（${c.name}）</div>
                         <div class="rating-options">
-                            <label><input type="radio" name="rating_${c.position.replace(/[\/\s]/g, '_')}" value="good" ${selectedValue === "good" ? "checked" : ""}> 👍 称职</label>
-                            <label><input type="radio" name="rating_${c.position.replace(/[\/\s]/g, '_')}" value="bad" ${selectedValue === "bad" ? "checked" : ""}> 👎 不称职</label>
+                            <label><input type="radio" name="rating_${c.position.replace(/[\/\s]/g, '_')}" value="verygood" ${selectedValue === "verygood" ? "checked" : ""}> 很好⭐⭐</label>
+                            <label><input type="radio" name="rating_${c.position.replace(/[\/\s]/g, '_')}" value="good" ${selectedValue === "good" ? "checked" : ""}> 还好⭐</label>
+                            <label><input type="radio" name="rating_${c.position.replace(/[\/\s]/g, '_')}" value="justsoso" ${selectedValue === "justsoso" ? "checked" : ""}> 也就那样</label>
+                            <label><input type="radio" name="rating_${c.position.replace(/[\/\s]/g, '_')}" value="littlebad" ${selectedValue === "littlebad" ? "checked" : ""}> 咦~</label>
+                            <label><input type="radio" name="rating_${c.position.replace(/[\/\s]/g, '_')}" value="bad" ${selectedValue === "bad" ? "checked" : ""}> 咦咦咦~~~</label>
                             <label><input type="radio" name="rating_${c.position.replace(/[\/\s]/g, '_')}" value="abstain" ${selectedValue === null ? "checked" : ""}> ⚪ 弃权</label>
                         </div>
                      </div>`;
         });
         container.innerHTML = html;
 
-        // 绑定单选框事件：弃权对应 null，称职对应 "good"，不称职对应 "bad"
+        // 绑定 change 事件
         committeeInfo.forEach(c => {
             const radioName = `rating_${c.position.replace(/[\/\s]/g, '_')}`;
             const radios = document.querySelectorAll(`input[name="${radioName}"]`);
@@ -325,15 +303,53 @@
                         const val = e.target.value;
                         if (val === "abstain") {
                             pendingRatings[c.position] = null;
-                        } else if (val === "good") {
-                            pendingRatings[c.position] = "good";
-                        } else if (val === "bad") {
-                            pendingRatings[c.position] = "bad";
+                        } else {
+                            pendingRatings[c.position] = val; // 直接存储 value
                         }
                     }
                 });
             });
         });
+    }
+
+    // 渲染好评率统计（修正权重）
+    async function renderStats() {
+        const container = document.getElementById("statsContainer");
+        if (!container) return;
+        await loadRatings();
+        const stats = {};
+        committeeInfo.forEach(c => {
+            stats[c.position] = { verygood: 0, good: 0, justsoso: 0, littlebad: 0, bad: 0, total: 0 };
+        });
+        for (let sid in allRatings) {
+            const ratings = allRatings[sid];
+            for (let pos in ratings) {
+                if (stats[pos]) {
+                    stats[pos].total++;
+                    if (ratings[pos] === "verygood") stats[pos].verygood++;
+                    else if (ratings[pos] === "good") stats[pos].good++;
+                    else if (ratings[pos] === "justsoso") stats[pos].justsoso++;
+                    else if (ratings[pos] === "littlebad") stats[pos].littlebad++;
+                    else if (ratings[pos] === "bad") stats[pos].bad++;
+                }
+            }
+        }
+        let html = '';
+        committeeInfo.forEach(c => {
+            const total = stats[c.position].total;
+            const verygood = stats[c.position].verygood;
+            const good = stats[c.position].good;
+            const justsoso = stats[c.position].justsoso;
+            const littlebad = stats[c.position].littlebad;
+            const bad = stats[c.position].bad;
+            // 加权平均分（范围 -1 到 1）
+            const weightedSum = (verygood * 1 + good * 0.5 + justsoso * 0 + littlebad * (-0.5) + bad * (-1));
+            const avgScore = total === 0 ? 0 : (weightedSum / total);
+            // 显示为百分比（-100% ~ 100%）
+            const rate = (avgScore * 100).toFixed(1);
+            html += `<div class="stats-card">${c.position} (${c.name}): ${rate}% (${weightedSum}/${total})</div>`;
+        });
+        container.innerHTML = html || '<span>暂无评价数据</span>';
     }
 
     // 学号规范化

@@ -407,18 +407,18 @@
             let temporery1 = currentScore - T1;
             if (delta > 0) {
                 if (currentScore <= T3 && currentScore + delta * 1.5 > T3) {
-                    delta = delta - temporery3 * 1.5;
-                    actualDelta = delta * 1.25 + temporery3 * 1.5; remark = "( 分界运算 )"
+                    delta = delta + temporery3 / 1.5;
+                    actualDelta = delta * 1.25 - temporery3; remark = "( 分界运算 )"
                 }else if (currentScore <= T3) {
                     actualDelta = delta * 1.5; remark = " (低于-45，+50%)";
                 }else if (currentScore <= T2 && currentScore + delta * 1.2 > T2) {
-                    delta = delta - temporery2 * 1.2;
-                    actualDelta = delta * 1.1 + temporery2 * 1.2; remark = "( 分界运算 )";
+                    delta = delta + temporery2 / 1.2;
+                    actualDelta = delta * 1.1 - temporery2 ; remark = "( 分界运算 )";
                 }else if (currentScore <= T2) {
                     actualDelta = delta * 1.2; remark = " (低于-38，+20%)";
                 }else if (currentScore <= T1  && currentScore + delta * 1.1 > T1) {
-                    delta = delta - temporery1 ;
-                    actualDelta = delta + temporery1 * 1.1 ; remark = "( 分界运算 )";
+                    delta = delta + temporery1  / 1.1;
+                    actualDelta = delta - temporery1 ; remark = "( 分界运算 )";
                 }else if (currentScore <= T1) {
                     actualDelta = delta * 1.1; remark = " (低于-30，+10%)";
                 }
@@ -426,13 +426,13 @@
                 if (currentScore <= T3) {
                     actualDelta = delta / 2; remark = " (低于-45，扣分/2)";
                 }else if (currentScore <= T2 && currentScore + delta/ 1.5 <= T3) {
-                    delta = delta + temporery3 / 1.5;
-                    actualDelta = delta / 2 - temporery3 / 1.5; remark = "( 分界运算 )"
+                    delta = delta + temporery3 * 1.5;
+                    actualDelta = delta / 2 - temporery3; remark = "( 分界运算 )"
                 }else if (currentScore <= T2) {
                     actualDelta = delta / 1.5; remark = " (低于-38，扣分/1.5)";
                 }else if (currentScore <= T1 && currentScore + delta / 1.25 <= T2) {
-                    delta = delta + temporery2 / 1.25;
-                    actualDelta = delta / 1.5 - temporery2 / 1.25; remark = "( 分界运算 )";
+                    delta = delta + temporery2 * 1.25;
+                    actualDelta = delta / 1.5 - temporery2; remark = "( 分界运算 )";
                 }else if (currentScore <= T1) {
                     actualDelta = delta / 1.25; remark = " (低于-30，扣分/1.25)";
                 }else if (currentScore > T1 && currentScore + delta  <= T1) {
@@ -610,7 +610,7 @@
             let score = parseFloat(document.getElementById("stuScore").value);
             if (!id || !name) { alert("学号和姓名不能为空"); return; }
             if (isNaN(score)) score = 100;
-            score = Math.min(1000000000, Math.max(-10000000, score));
+            score = Math.min(1000000000, Math.max(-1000000000, score));
             if (currentStudents.find(s => s.id === id)) { alert("学号已存在"); return; }
             currentStudents.push({ id, name, score });
             await saveStudents();
@@ -625,7 +625,7 @@
             let score = parseFloat(document.getElementById("stuScore").value);
             if (!id || !name) { alert("学号和姓名不能为空"); return; }
             if (isNaN(score)) score = 100;
-            score = Math.min(100000000, Math.max(-1000000000, score));
+            score = Math.min(1000000000, Math.max(-10000000000, score));
             const index = currentStudents.findIndex(s => s.id === selectedStudentId);
             if (index === -1) return;
             if (id !== selectedStudentId && currentStudents.some(s => s.id === id)) { alert("新学号已存在"); return; }
@@ -787,7 +787,7 @@
 
         async function clearAllRatings() {
             if (!(await verifyPassword())) return;
-            if (!confirm("⚠️ 确定要清空所有班委评价数据吗？此操作不可恢复！")) return;
+            if (!confirm("确定要清空所有班委评价数据吗？此操作不可恢复！")) return;
             try {
                 const token = CONFIG.github_token;
                 const resp = await fetch(RATINGS_URL, { headers: { Authorization: `token ${token}` } });
