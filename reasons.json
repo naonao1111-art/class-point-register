@@ -4736,5 +4736,19 @@
     "studentName": "李岩蹊",
     "delta": -3,
     "reason": "值日不及时"
+  },
+  {
+    "timestamp": "2026-06-18 21:54:56",
+    "studentId": "026",
+    "studentName": "潘烨磊",
+    "delta": -4,
+    "reason": "618纪律差٩◔̯◔۶ 哼 (低于-38，扣分/1.5)"
+  },
+  {
+    "timestamp": "2026-06-18 21:54:56",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": -4.741666666666667,
+    "reason": "618纪律差٩◔̯◔۶ 哼( 分界运算 )"
   }
 ]
