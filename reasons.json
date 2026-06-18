@@ -4708,5 +4708,26 @@
     "studentName": "潘烨磊",
     "delta": -4.373333333333333,
     "reason": "纪律差٩◔̯◔۶ 哼( 分界运算 )"
+  },
+  {
+    "timestamp": "2026-06-18 21:52:16",
+    "studentId": "001",
+    "studentName": "沈乐妍",
+    "delta": -3,
+    "reason": "618迟到@_@"
+  },
+  {
+    "timestamp": "2026-06-18 21:52:16",
+    "studentId": "004",
+    "studentName": "叶齐楚",
+    "delta": -2.4,
+    "reason": "618迟到@_@ (低于-30，扣分/1.25)"
+  },
+  {
+    "timestamp": "2026-06-18 21:52:16",
+    "studentId": "010",
+    "studentName": "陈静怡",
+    "delta": -3,
+    "reason": "618迟到@_@"
   }
 ]
