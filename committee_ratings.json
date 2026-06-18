@@ -1,3 +1,11 @@
 {
-  "ratings": {}
+  "ratings": {
+    "039": {
+      "班长": "verygood",
+      "副班长/纪律委员": "good",
+      "团支书": "justsoso",
+      "卫生委员/宣传委员": "littlebad",
+      "学习委员": "bad"
+    }
+  }
 }
