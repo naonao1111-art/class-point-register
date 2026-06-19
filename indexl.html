@@ -29,9 +29,11 @@
         <a href="evaluate_committee.html.html">班委评价</a>
     </div>
     <div id="committeeStats" style="margin: 15px 0; background: #f9f9f9; padding: 12px; border-radius: 8px; border: 1px solid #e0e0e0;">
-        <h3 style="margin:0 0 8px 0; font-size: 16px;">班委履职好评率</h3>
-        <div id="statsContainer" style="display: flex; flex-wrap: wrap; gap: 12px;">加载中...</div>
-    </div>
+    <h3 style="margin:0 0 8px 0; font-size: 16px;">本周班委好评率</h3>
+    <div id="statsCurrentWeek" style="display: flex; flex-wrap: wrap; gap: 12px;">加载中...</div>
+    <h3 style="margin:12px 0 8px 0; font-size: 16px;">上周班委好评率</h3>
+    <div id="statsLastWeek" style="display: flex; flex-wrap: wrap; gap: 12px;">加载中...</div>
+</div>
     <div class="search-box">
         <input type="text" id="searchId" placeholder="按学号查询">
         <button id="searchBtn">查询</button>
@@ -79,43 +81,37 @@
             }
         }
 
-        // 修正：使用加权平均计算好评率（与 evaluate_committee.html 一致）
         async function loadCommitteeStats() {
-            const statsContainer = document.getElementById("statsContainer");
-            if (!statsContainer) return;
-            const CLASS_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/class_committee.json`;
+            const currentWeek = getWeekNumber(new Date());
+            const lastWeekDate = new Date();
+            lastWeekDate.setDate(lastWeekDate.getDate() - 7);
+            const lastWeek = getWeekNumber(lastWeekDate);
+
             const RATINGS_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/committee_ratings.json`;
-            const TARGET_POSITIONS = ["班长", "副班长/纪律委员", "团支书", "卫生委员/宣传委员", "学习委员", "体育委员"];
-            let committeeInfo = [];
+            let ratings = {};
             try {
-                const classResp = await fetch(CLASS_URL);
-                if (classResp.ok) {
-                    const data = await classResp.json();
-                    const content = base64DecodeToUtf8(data.content);
-                    const members = JSON.parse(content).members || [];
-                    const posMap = {};
-                    members.forEach(m => { posMap[m.position] = m.name; });
-                    committeeInfo = TARGET_POSITIONS.map(pos => ({ position: pos, name: posMap[pos] || "未设置" }));
-                } else {
-                    committeeInfo = TARGET_POSITIONS.map(pos => ({ position: pos, name: "未设置" }));
-                }
                 const resp = await fetch(RATINGS_URL);
-                let ratings = {};
                 if (resp.ok) {
                     const data = await resp.json();
                     const content = base64DecodeToUtf8(data.content);
                     ratings = JSON.parse(content).ratings || {};
                 }
-                // 统计各等级票数
+            } catch(e) { /* ignore */ }
+
+            // 渲染指定周的评价统计
+            function renderWeekStats(weekKey, containerId) {
+                const container = document.getElementById(containerId);
+                if (!container) return;
+                const weekData = ratings[weekKey] || {};
                 const stats = {};
-                committeeInfo.forEach(c => {
-                    stats[c.position] = { verygood: 0, good: 0, justsoso: 0, littlebad: 0, bad: 0, total: 0 };
-                });
-                for (let sid in ratings) {
-                    for (let pos in ratings[sid]) {
+                // 使用固定的职务列表（与 evaluate_committee 一致）
+                const positions = ["班长", "副班长/纪律委员", "团支书", "卫生委员/宣传委员", "学习委员", "体育委员"];
+                positions.forEach(p => { stats[p] = { verygood:0, good:0, justsoso:0, littlebad:0, bad:0, total:0 }; });
+                for (let sid in weekData) {
+                    for (let pos in weekData[sid]) {
                         if (stats[pos]) {
                             stats[pos].total++;
-                            const val = ratings[sid][pos];
+                            const val = weekData[sid][pos];
                             if (val === "verygood") stats[pos].verygood++;
                             else if (val === "good") stats[pos].good++;
                             else if (val === "justsoso") stats[pos].justsoso++;
@@ -124,24 +120,21 @@
                         }
                     }
                 }
+                // 获取班委姓名映射（从 class_committee.json 获取，简化为直接读取）
+                // 由于此处无法异步加载，可以复用已有的 committeeInfo，但我们简化：仅显示职务
                 let html = '';
-                committeeInfo.forEach(c => {
-                    const total = stats[c.position].total;
-                    const verygood = stats[c.position].verygood;
-                    const good = stats[c.position].good;
-                    const justsoso = stats[c.position].justsoso;
-                    const littlebad = stats[c.position].littlebad;
-                    const bad = stats[c.position].bad;
-                    // 加权平均分（范围 -1 ~ 1）
-                    const weightedSum = verygood * 1 + good * 0.5 + justsoso * 0 + littlebad * (-0.5) + bad * (-1);
+                positions.forEach(p => {
+                    const total = stats[p].total;
+                    const weightedSum = stats[p].verygood * 1 + stats[p].good * 0.5 + stats[p].justsoso * 0 + stats[p].littlebad * (-0.5) + stats[p].bad * (-1);
                     const avg = total === 0 ? 0 : weightedSum / total;
                     const rate = (avg * 100).toFixed(1);
-                    html += `<div style="background:#fff; border:1px solid #ddd; padding:5px 10px; border-radius:20px; font-size:14px;">${c.position} ${c.name}: ${rate}% (${weightedSum}/${total})</div>`;
+                    html += `<div style="background:#fff; border:1px solid #ddd; padding:5px 10px; border-radius:20px; font-size:14px;">${p}: ${rate}% (${weightedSum}/${total})</div>`;
                 });
-                statsContainer.innerHTML = html;
-            } catch(e) {
-                statsContainer.innerHTML = `<span style="color:gray">加载失败</span>`;
+                container.innerHTML = html || '<span style="color:gray">暂无数据</span>';
             }
+
+            renderWeekStats(currentWeek, 'statsCurrentWeek');
+            renderWeekStats(lastWeek, 'statsLastWeek');
         }
 
         function sortStudents(students, field, order) {

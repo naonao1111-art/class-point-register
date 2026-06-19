@@ -161,6 +161,21 @@
                 return "";
             }
         }
+        function getWeekNumber(d) {
+            d = new Date(d);
+            d.setHours(0,0,0,0);
+            const day = d.getDay() || 7;
+            const diff = day - 1;
+            const monday = new Date(d);
+            monday.setDate(d.getDate() - diff);
+            const startOfYear = new Date(monday.getFullYear(), 0, 1);
+            const days = Math.floor((monday - startOfYear) / (24*60*60*1000));
+            const weekNumber = Math.ceil((days + 1) / 7);
+            return monday.getFullYear() + "-W" + String(weekNumber).padStart(2, '0');
+        }
+        function isSunday(d) {
+            return new Date(d).getDay() === 0;
+        }
 
         let CONFIG = { github_token: "" };
         async function loadConfig() {
@@ -512,11 +527,14 @@
                 if (res.content) {
                     autoTracker = res.content;
                 } else {
-                    autoTracker = { lastDailyCheck: 0, stopped: false };
+                    autoTracker = { lastDailyCheck: 0, stopped: false, lastSundayBonus: 0, lowScoreStudents: {} };
                 }
+                // 确保字段完整
+                if (!autoTracker.hasOwnProperty('lastSundayBonus')) autoTracker.lastSundayBonus = 0;
+                if (!autoTracker.hasOwnProperty('lowScoreStudents')) autoTracker.lowScoreStudents = {};
             } catch(e) {
                 console.warn("加载自动补分跟踪失败", e);
-                autoTracker = { lastDailyCheck: 0, stopped: false };
+                autoTracker = { lastDailyCheck: 0, stopped: false, lastSundayBonus: 0, lowScoreStudents: {} };
             }
         }
 
@@ -537,48 +555,103 @@
             const now = new Date();
             const todayDate = now.toISOString().slice(0,10);
             const lastCheckDate = autoTracker.lastDailyCheck ? new Date(autoTracker.lastDailyCheck).toISOString().slice(0,10) : null;
-            if (lastCheckDate === todayDate && !window.forceRun) {
-                document.getElementById("autoIncStatus").innerHTML = `状态：✅ 运行中（今日已补分，下次检查：明天）`;
-                return;
-            }
 
-            let updates = [];
-            for (let student of currentStudents) {
-                if (student.score < -50) {
-                    let delta = 2;
-                    const { actualDelta, remark } = calculateProtectedDelta(student.score, delta);
-                    if (actualDelta !== 0) {
-                        student.score += actualDelta;
-                        student.score = parseFloat(student.score.toFixed(2));
-                        updates.push({
-                            studentId: student.id,
-                            studentName: student.name,
-                            delta: actualDelta,
-                            reason: "晚自习回家" + remark
-                        });
+            // 1. 每日补分（低分持续7天）
+            if (lastCheckDate !== todayDate || window.forceRun) {
+                // 检查低分学生
+                let updates = [];
+                for (let student of currentStudents) {
+                    if (student.score < -50) {
+                        // 检查是否已有追踪
+                        let tracker = autoTracker.lowScoreStudents[student.id];
+                        if (!tracker) {
+                            // 首次低于 -50，记录开始日期
+                            tracker = { startDate: todayDate, daysAdded: 0 };
+                            autoTracker.lowScoreStudents[student.id] = tracker;
+                        }
+                    }// 检查是否已满7天
+                    if (tracker.daysAdded < 7) {
+                        // 加2分（受保护倍率）
+                        const delta = 2;
+                        const { actualDelta, remark } = calculateProtectedDelta(student.score, delta);
+                        if (actualDelta !== 0) {
+                            student.score += actualDelta;
+                            student.score = parseFloat(student.score.toFixed(2));
+                            updates.push({
+                                studentId: student.id,
+                                studentName: student.name,
+                                delta: actualDelta,
+                                reason: "低分持续补分（第" + (tracker.daysAdded + 1) + "天）" + remark
+                            });
+                            tracker.daysAdded++;
+                            // 如果 daysAdded 达到7，可以保留记录以便查看，但不再加分
+                        }
                     }
                 }
-            }
 
-            if (updates.length > 0) {
-                await saveStudents();
-                const timestamp = now.toISOString().slice(0,19).replace('T',' ');
-                for (let u of updates) {
-                    currentReasons.push({
-                        timestamp: timestamp,
-                        studentId: u.studentId,
-                        studentName: u.studentName,
-                        delta: u.delta,
-                        reason: u.reason
-                    });
+                // 2. 周日奖励（给本周提交评价的学生 +0.5）
+                const today = new Date();
+                if (isSunday(today)) {
+                    const lastSundayDate = autoTracker.lastSundayBonus ? new Date(autoTracker.lastSundayBonus).toISOString().slice(0,10) : null;
+                    if (lastSundayDate !== todayDate || window.forceRun) {
+                        // 获取本周评价数据
+                        const currentWeek = getWeekNumber(today);
+                        // 加载评价数据
+                        let ratings = {};
+                        try {
+                            const res = await fetchJSON(RATINGS_URL);
+                            if (res.content) ratings = res.content.ratings || {};
+                        } catch(e) { /* ignore */ }
+                        const weekRatings = ratings[currentWeek] || {};
+                        const participants = Object.keys(weekRatings);
+                        if (participants.length > 0) {
+                            for (let sid of participants) {
+                                const student = currentStudents.find(s => s.id === sid);
+                                if (student) {
+                                    const delta = 0.5;
+                                    const { actualDelta, remark } = calculateProtectedDelta(student.score, delta);
+                                    if (actualDelta !== 0) {
+                                        student.score += actualDelta;
+                                        student.score = parseFloat(student.score.toFixed(2));
+                                        updates.push({
+                                            studentId: student.id,
+                                            studentName: student.name,
+                                            delta: actualDelta,
+                                            reason: "周日评价奖励" + remark
+                                        });
+                                    }
+                                }
+                            }
+                        }
+                        autoTracker.lastSundayBonus = now.getTime();
+                    }
                 }
-                await saveReasons();
-                renderStudentsTable();
-                document.getElementById("adminMsg").innerHTML = `自动补分已执行，${updates.length}名学生获得+2分（可能翻倍）。`;
+
+                // 保存更新
+                if (updates.length > 0) {
+                    await saveStudents();
+                    const timestamp = now.toISOString().slice(0,19).replace('T',' ');
+                    for (let u of updates) {
+                        currentReasons.push({
+                            timestamp: timestamp,
+                            studentId: u.studentId,
+                            studentName: u.studentName,
+                            delta: u.delta,
+                            reason: u.reason
+                        });
+                    }
+                    await saveReasons();
+                    await saveAutoTracker();
+                    renderStudentsTable();
+                    document.getElementById("adminMsg").innerHTML = `自动补分执行，${updates.length}名学生获得积分调整。`;
+                }
+                autoTracker.lastDailyCheck = now.getTime();
+                await saveAutoTracker();
+                document.getElementById("autoIncStatus").innerHTML = `状态：✅ 运行中（上次补分：${now.toLocaleDateString()}）`;
+                window.forceRun = false;
+            } else {
+                document.getElementById("autoIncStatus").innerHTML = `状态：✅ 运行中（今日已补分，下次检查：明天）`;
             }
-            autoTracker.lastDailyCheck = now.getTime();
-            await saveAutoTracker();
-            document.getElementById("autoIncStatus").innerHTML = `状态：✅ 运行中（上次补分：${now.toLocaleDateString()}）`;
         }
 
         async function stopAutoIncrement() {
@@ -747,6 +820,7 @@
             const container = document.getElementById("adminStatsContainer");
             if (!container) return;
             const committeePositions = ["班长", "副班长/纪律委员", "团支书", "卫生委员/宣传委员", "学习委员", "体育委员"];
+            // 加载班委姓名
             let committeeNames = {};
             try {
                 const classResp = await fetch(CLASS_URL);
@@ -756,33 +830,61 @@
                     const members = JSON.parse(content).members || [];
                     members.forEach(m => { committeeNames[m.position] = m.name; });
                 }
+            } catch(e) { /* ignore */ }
+
+            // 加载评价数据
+            let ratings = {};
+            try {
                 const resp = await fetch(RATINGS_URL);
-                if (!resp.ok) throw new Error("无法获取评价数据");
-                const data = await resp.json();
-                const content = base64DecodeToUtf8(data.content);
-                const ratings = JSON.parse(content).ratings || {};
-                const stats = {};
-                committeePositions.forEach(p => { stats[p] = { good: 0, total: 0 }; });
-                for (let sid in ratings) {
-                    for (let p of committeePositions) {
-                        if (ratings[sid][p]) {
-                            stats[p].total++;
-                            if (ratings[sid][p] === "good") stats[p].good++;
+                if (resp.ok) {
+                    const data = await resp.json();
+                    const content = base64DecodeToUtf8(data.content);
+                    ratings = JSON.parse(content).ratings || {};
+                }
+            } catch(e) { /* ignore */ }
+
+            // 遍历所有周（包括 legacy）
+            let html = '<table style="width:auto; margin-top:8px;"><tr><th>周次</th>';
+            committeePositions.forEach(p => { html += `<th>${p}</th>`; });
+            html += '<th>参与人数</th></tr>';
+
+            // 获取所有周键并排序
+            const weekKeys = Object.keys(ratings).sort();
+            if (weekKeys.length === 0) {
+                html += '<tr><td colspan="' + (committeePositions.length + 2) + '">暂无评价数据</td></tr>';
+            } else {
+                for (let week of weekKeys) {
+                    const weekData = ratings[week] || {};
+                    const stats = {};
+                    committeePositions.forEach(p => { stats[p] = { verygood:0, good:0, justsoso:0, littlebad:0, bad:0, total:0 }; });
+                    let participants = 0;
+                    for (let sid in weekData) {
+                        participants++;
+                        for (let pos in weekData[sid]) {
+                            if (stats[pos]) {
+                                stats[pos].total++;
+                                const val = weekData[sid][pos];
+                                if (val === "verygood") stats[pos].verygood++;
+                                else if (val === "good") stats[pos].good++;
+                                else if (val === "justsoso") stats[pos].justsoso++;
+                                else if (val === "littlebad") stats[pos].littlebad++;
+                                else if (val === "bad") stats[pos].bad++;
+                            }
                         }
                     }
+                    html += `<tr><td>${week}</td>`;
+                    committeePositions.forEach(p => {
+                        const total = stats[p].total;
+                        const weightedSum = stats[p].verygood * 1 + stats[p].good * 0.5 + stats[p].justsoso * 0 + stats[p].littlebad * (-0.5) + stats[p].bad * (-1);
+                        const avg = total === 0 ? 0 : weightedSum / total;
+                        const rate = (avg * 100).toFixed(1);
+                        html += `<td>${rate}% (${weightedSum}/${total})</td>`;
+                    });
+                    html += `<td>${participants}</td></tr>`;
                 }
-                let html = '<table style="width:auto; margin-top:8px;">反馈<th>职务</th><th>姓名</th><th>好评率</th><th>票数详情</th><tr>';
-                committeePositions.forEach(p => {
-                    const total = stats[p].total;
-                    const good = stats[p].good;
-                    const rate = total === 0 ? 0 : (good / total * 100).toFixed(1);
-                    html += `<tr><td>${p}</td><td>${committeeNames[p] || ""}</td><td>${rate}%</td><td>${good}/${total}</td></tr>`;
-                });
-                html += '</table>';
-                container.innerHTML = html;
-            } catch(e) {
-                container.innerHTML = "<span style='color:gray'>暂无评价数据</span>";
             }
+            html += '</table>';
+            container.innerHTML = html;
         }
 
         async function clearAllRatings() {

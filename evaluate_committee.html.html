@@ -46,7 +46,7 @@
     <div id="evaluationSection" style="display:none;">
         <div class="notice">
             ⚠️ 请一次性完成对所有班委的评价，未评价的班委将视为弃权。<br>
-            ✅ 提交后不可修改，每人仅有一次评价机会。<br>
+            ✅ 提交后不可修改，每人每周仅有一次评价机会。<br>
             📌 若选择“弃权”，则该班委不计入任何统计。
         </div>
         <p>你好，<strong><span id="displayStudentId"></span></strong> 同学：</p>
@@ -58,7 +58,7 @@
     </div>
 
     <div id="alreadySubmittedSection" style="display:none;" class="already-submitted">
-        <p>您已完成本周期班委评价，不可再次提交。</p>
+        <p>您已完成本周班委评价，不可再次提交。</p>
         <p>感谢您的参与！</p>
     </div>
 
@@ -69,22 +69,23 @@
 </div>
 
 <script>
+    // ===== 配置与工具 =====
     const REPO_OWNER = "naonao1111-art";
     const REPO_NAME = "class-point-register";
     const DATA_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data.json`;
     const CLASS_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/class_committee.json`;
     const RATINGS_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/committee_ratings.json`;
 
-    // 固定评价职务（顺序）
     const TARGET_POSITIONS = ["班长", "副班长/纪律委员", "团支书", "卫生委员/宣传委员", "学习委员", "体育委员"];
-    let committeeInfo = [];          // 存储 { position, name }
-    let allRatings = {};            // 已保存的所有评价
-    let currentStudent = null;      // 当前登录学号
-    let studentIdMap = new Set();    // 有效学号集合
-    let pendingRatings = {};         // 本次未提交的暂存评价 { position: "good"/"bad"/null }，null表示弃权
+    let committeeInfo = [];
+    let allRatings = {};          // 完整数据 { "2026-W25": { studentId: {pos: rating} }, "legacy": {...} }
+    let currentStudent = null;
+    let studentIdMap = new Set();
+    let pendingRatings = {};      // 本次暂存 { position: "verygood"/null }
     let isSubmitting = false;
+    let currentWeek = "";         // 当前周标识
 
-    // 辅助函数
+    // ===== 辅助函数 =====
     function base64DecodeToUtf8(base64Str) {
         const binaryStr = atob(base64Str);
         const bytes = new Uint8Array(binaryStr.length);
@@ -97,6 +98,19 @@
         let binary = '';
         for (let i = 0; i < data.length; i++) binary += String.fromCharCode(data[i]);
         return btoa(binary);
+    }
+
+    function getWeekNumber(d) {
+        d = new Date(d);
+        d.setHours(0, 0, 0, 0);
+        const day = d.getDay() || 7;
+        const diff = day - 1;
+        const monday = new Date(d);
+        monday.setDate(d.getDate() - diff);
+        const startOfYear = new Date(monday.getFullYear(), 0, 1);
+        const days = Math.floor((monday - startOfYear) / (24 * 60 * 60 * 1000));
+        const weekNumber = Math.ceil((days + 1) / 7);
+        return monday.getFullYear() + "-W" + String(weekNumber).padStart(2, '0');
     }
 
     // Token 处理
@@ -117,7 +131,7 @@
         } catch(e) { console.error(e); }
     }
 
-    // 加载学生列表（学号验证）
+    // ===== 加载数据 =====
     async function loadStudentList() {
         try {
             const resp = await fetch(DATA_URL);
@@ -127,12 +141,9 @@
             const students = JSON.parse(content).students || [];
             studentIdMap.clear();
             students.forEach(s => studentIdMap.add(s.id));
-        } catch(e) {
-            console.error("加载学生列表失败", e);
-        }
+        } catch(e) { console.error("加载学生列表失败", e); }
     }
 
-    // 加载班委成员（仅目标职务）
     async function loadCommitteeMembers() {
         try {
             const resp = await fetch(CLASS_URL);
@@ -155,7 +166,6 @@
         }
     }
 
-    // 读取评价数据
     async function loadRatings() {
         try {
             const token = CONFIG.github_token;
@@ -168,14 +178,52 @@
             if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
             const data = await resp.json();
             const content = base64DecodeToUtf8(data.content);
-            allRatings = JSON.parse(content).ratings || {};
+            const parsed = JSON.parse(content).ratings || {};
+
+            // 迁移旧数据（键为学号且非周格式）
+            const newRatings = {};
+            let hasLegacy = false;
+            for (let key in parsed) {
+                // 判断是否为周格式（如 2026-W25）
+                if (/^\d{4}-W\d{2}$/.test(key)) {
+                    newRatings[key] = parsed[key];
+                } else {
+                    // 旧数据：学号作为键，放入 legacy
+                    if (!newRatings.legacy) newRatings.legacy = {};
+                    Object.assign(newRatings.legacy, { [key]: parsed[key] });
+                    hasLegacy = true;
+                }
+            }
+            allRatings = newRatings;
         } catch(e) {
             console.warn("加载评价数据失败", e);
             allRatings = {};
         }
     }
 
-    // 保存评价（一次性提交，弃权项不写入）
+    async function saveAllRatingsToFile() {
+        const token = CONFIG.github_token;
+        if (!token) throw new Error("无Token");
+        let sha = null;
+        try {
+            const resp = await fetch(RATINGS_URL, { headers: { Authorization: `token ${token}` } });
+            if (resp.ok) {
+                const data = await resp.json();
+                sha = data.sha;
+            }
+        } catch(e) {}
+        const payload = { ratings: allRatings };
+        const jsonStr = JSON.stringify(payload, null, 2);
+        const contentBase64 = utf8ToBase64(jsonStr);
+        const putResp = await fetch(RATINGS_URL, {
+            method: "PUT",
+            headers: { Authorization: `token ${token}`, "Content-Type": "application/json" },
+            body: JSON.stringify({ message: "更新评价", content: contentBase64, sha: sha || undefined })
+        });
+        if (!putResp.ok) throw new Error("保存失败");
+    }
+
+    // ===== 提交评价 =====
     async function saveAllRatings() {
         if (isSubmitting) {
             document.getElementById("msgArea").innerHTML = '<span class="error">提交中，请勿重复点击。</span>';
@@ -183,22 +231,22 @@
         }
         if (!currentStudent) return;
 
-        // 检查是否已提交
-        if (allRatings[currentStudent] && Object.keys(allRatings[currentStudent]).length > 0) {
-            document.getElementById("msgArea").innerHTML = '<span class="error">您已经提交过评价，不可再次提交。</span>';
+        // 检查本周是否已提交
+        if (allRatings[currentWeek] && allRatings[currentWeek][currentStudent]) {
+            document.getElementById("msgArea").innerHTML = '<span class="error">您已提交过本周评价，不可再次提交。</span>';
             showAlreadySubmitted();
             return;
         }
 
-        // 统计哪些班委被明确选择（good/bad），弃权的忽略
+        // 收集已选评价（非弃权）
         const selectedRatings = {};
         for (let [pos, value] of Object.entries(pendingRatings)) {
-            if (value === "verygood" || value === "good" || value === "justsoso" || value === "littlebad" || value === "bad") {
+            if (value !== null && value !== "abstain") {
                 selectedRatings[pos] = value;
             }
         }
 
-        // 提示用户确认（显示哪些班委被弃权）
+        // 确认提交
         const positionsWithAbstain = committeeInfo.filter(c => pendingRatings[c.position] === null).map(c => c.position);
         let confirmMsg = "即将提交评价。\n";
         if (Object.keys(selectedRatings).length > 0) {
@@ -219,36 +267,12 @@
         document.getElementById("msgArea").innerHTML = '<span>正在提交，请稍候...</span>';
 
         try {
-            const newRatings = { ...allRatings };
-            if (!newRatings[currentStudent]) newRatings[currentStudent] = {};
-            // 只写入 good/bad 的评价，弃权的不写入
-            for (let [pos, value] of Object.entries(selectedRatings)) {
-                newRatings[currentStudent][pos] = value;
-            }
-            // 如果没有任何 good/bad 评价，但用户仍提交，则 newRatings[currentStudent] 可能为空对象，代表已提交但无有效评价
+            // 确保当前周数据存在
+            if (!allRatings[currentWeek]) allRatings[currentWeek] = {};
+            // 写入当前学生的评价（只写入非弃权项）
+            allRatings[currentWeek][currentStudent] = selectedRatings;
 
-            const token = CONFIG.github_token;
-            if (!token) throw new Error("无Token");
-            let sha = null;
-            try {
-                const resp = await fetch(RATINGS_URL, { headers: { Authorization: `token ${token}` } });
-                if (resp.ok) {
-                    const data = await resp.json();
-                    sha = data.sha;
-                }
-            } catch(e) {}
-            const newContent = { ratings: newRatings };
-            const jsonStr = JSON.stringify(newContent, null, 2);
-            const contentBase64 = utf8ToBase64(jsonStr);
-            const payload = { message: "更新班委评价", content: contentBase64, sha: sha || undefined };
-            const putResp = await fetch(RATINGS_URL, {
-                method: "PUT",
-                headers: { Authorization: `token ${token}`, "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
-            });
-            if (!putResp.ok) throw new Error("保存失败");
-
-            allRatings = newRatings;
+            await saveAllRatingsToFile();
             pendingRatings = {};
 
             document.getElementById("msgArea").innerHTML = '<span class="success">评价已提交！感谢参与。</span>';
@@ -267,15 +291,17 @@
         document.getElementById("alreadySubmittedSection").style.display = "block";
     }
 
-    // 渲染好评率统计
-   // 渲染评价界面（修正 value 和绑定逻辑）
+    // ===== 渲染界面 =====
     function renderEvaluationInterface() {
         const container = document.getElementById("committeeList");
         if (!container || !currentStudent) return;
-        if (allRatings[currentStudent] && Object.keys(allRatings[currentStudent]).length > 0) {
+
+        // 检查本周是否已提交
+        if (allRatings[currentWeek] && allRatings[currentWeek][currentStudent]) {
             showAlreadySubmitted();
             return;
         }
+
         let html = '';
         committeeInfo.forEach(c => {
             const selectedValue = pendingRatings[c.position] || null;
@@ -304,7 +330,7 @@
                         if (val === "abstain") {
                             pendingRatings[c.position] = null;
                         } else {
-                            pendingRatings[c.position] = val; // 直接存储 value
+                            pendingRatings[c.position] = val;
                         }
                     }
                 });
@@ -312,25 +338,27 @@
         });
     }
 
-    // 渲染好评率统计（修正权重）
+    // 统计显示（当前周）
     async function renderStats() {
         const container = document.getElementById("statsContainer");
         if (!container) return;
-        await loadRatings();
+        // 只显示本周数据
+        const weekRatings = allRatings[currentWeek] || {};
         const stats = {};
         committeeInfo.forEach(c => {
             stats[c.position] = { verygood: 0, good: 0, justsoso: 0, littlebad: 0, bad: 0, total: 0 };
         });
-        for (let sid in allRatings) {
-            const ratings = allRatings[sid];
+        for (let sid in weekRatings) {
+            const ratings = weekRatings[sid];
             for (let pos in ratings) {
                 if (stats[pos]) {
                     stats[pos].total++;
-                    if (ratings[pos] === "verygood") stats[pos].verygood++;
-                    else if (ratings[pos] === "good") stats[pos].good++;
-                    else if (ratings[pos] === "justsoso") stats[pos].justsoso++;
-                    else if (ratings[pos] === "littlebad") stats[pos].littlebad++;
-                    else if (ratings[pos] === "bad") stats[pos].bad++;
+                    const val = ratings[pos];
+                    if (val === "verygood") stats[pos].verygood++;
+                    else if (val === "good") stats[pos].good++;
+                    else if (val === "justsoso") stats[pos].justsoso++;
+                    else if (val === "littlebad") stats[pos].littlebad++;
+                    else if (val === "bad") stats[pos].bad++;
                 }
             }
         }
@@ -342,24 +370,21 @@
             const justsoso = stats[c.position].justsoso;
             const littlebad = stats[c.position].littlebad;
             const bad = stats[c.position].bad;
-            // 加权平均分（范围 -1 到 1）
-            const weightedSum = (verygood * 1 + good * 0.5 + justsoso * 0 + littlebad * (-0.5) + bad * (-1));
+            const weightedSum = verygood * 1 + good * 0.5 + justsoso * 0 + littlebad * (-0.5) + bad * (-1);
             const avgScore = total === 0 ? 0 : (weightedSum / total);
-            // 显示为百分比（-100% ~ 100%）
             const rate = (avgScore * 100).toFixed(1);
             html += `<div class="stats-card">${c.position} (${c.name}): ${rate}% (${weightedSum}/${total})</div>`;
         });
-        container.innerHTML = html || '<span>暂无评价数据</span>';
+        container.innerHTML = html || '<span>暂无本周评价数据</span>';
     }
 
-    // 学号规范化
+    // ===== 登录 =====
     function normalizeStudentId(input) {
         let id = input.trim();
         if (/^\d+$/.test(id) && id.length < 3) id = id.padStart(3, '0');
         return id;
     }
 
-    // 登录
     document.getElementById("loginBtn").onclick = async () => {
         let rawId = document.getElementById("studentId").value;
         const normalizedId = normalizeStudentId(rawId);
@@ -373,8 +398,11 @@
             return;
         }
         currentStudent = normalizedId;
+        currentWeek = getWeekNumber(new Date());
         await loadRatings();
-        const hasSubmitted = allRatings[currentStudent] && Object.keys(allRatings[currentStudent]).length > 0;
+
+        // 检查本周是否已提交
+        const hasSubmitted = allRatings[currentWeek] && allRatings[currentWeek][currentStudent];
         if (hasSubmitted) {
             document.getElementById("loginSection").style.display = "none";
             document.getElementById("evaluationSection").style.display = "none";
@@ -383,6 +411,7 @@
             renderStats();
             return;
         }
+
         document.getElementById("displayStudentId").innerText = currentStudent;
         document.getElementById("loginSection").style.display = "none";
         document.getElementById("evaluationSection").style.display = "block";
@@ -402,6 +431,7 @@
         await loadConfig();
         await loadCommitteeMembers();
         await loadStudentList();
+        currentWeek = getWeekNumber(new Date());
         await loadRatings();
         renderStats();
         if (committeeInfo.length === 0) {
