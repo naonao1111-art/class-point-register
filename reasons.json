@@ -4813,5 +4813,12 @@
     "studentName": "应扎吉",
     "delta": -3,
     "reason": "620迟到@_@"
+  },
+  {
+    "timestamp": "2026-06-20 22:05:05",
+    "studentId": "016",
+    "studentName": "徐志翔",
+    "delta": -2,
+    "reason": "自习课上课四十分钟内上厕所"
   }
 ]
