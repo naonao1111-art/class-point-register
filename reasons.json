@@ -4785,5 +4785,33 @@
     "studentName": "冯丰硕",
     "delta": -1,
     "reason": "619没搬凳子（๑' ͜ʖ'๑） ​滚••*～● (低于-45，扣分/2)"
+  },
+  {
+    "timestamp": "2026-06-20 22:03:50",
+    "studentId": "018",
+    "studentName": "苏义涵",
+    "delta": -3,
+    "reason": "620迟到@_@"
+  },
+  {
+    "timestamp": "2026-06-20 22:03:50",
+    "studentId": "019",
+    "studentName": "顾槿宸",
+    "delta": -2.4,
+    "reason": "620迟到@_@ (低于-30，扣分/1.25)"
+  },
+  {
+    "timestamp": "2026-06-20 22:03:50",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": -2,
+    "reason": "620迟到@_@ (低于-38，扣分/1.5)"
+  },
+  {
+    "timestamp": "2026-06-20 22:03:50",
+    "studentId": "033",
+    "studentName": "应扎吉",
+    "delta": -3,
+    "reason": "620迟到@_@"
   }
 ]
