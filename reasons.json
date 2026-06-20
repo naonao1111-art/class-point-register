@@ -4834,5 +4834,54 @@
     "studentName": "顾槿宸",
     "delta": -4.666666666666667,
     "reason": "未静班（组长）(⋋▂⋌)( 分界运算 )"
+  },
+  {
+    "timestamp": "2026-06-20 22:08:05",
+    "studentId": "008",
+    "studentName": "王李婧",
+    "delta": -4,
+    "reason": "未静班（组员）(¬▂¬)"
+  },
+  {
+    "timestamp": "2026-06-20 22:08:05",
+    "studentId": "020",
+    "studentName": "姚奇胜",
+    "delta": -2.625,
+    "reason": "未静班（组员）(¬▂¬)( 分界运算 )"
+  },
+  {
+    "timestamp": "2026-06-20 22:08:05",
+    "studentId": "026",
+    "studentName": "潘烨磊",
+    "delta": -2.6666666666666665,
+    "reason": "未静班（组员）(¬▂¬) (低于-38，扣分/1.5)"
+  },
+  {
+    "timestamp": "2026-06-20 22:08:05",
+    "studentId": "037",
+    "studentName": "陈昀泽",
+    "delta": -4,
+    "reason": "未静班（组员）(¬▂¬)"
+  },
+  {
+    "timestamp": "2026-06-20 22:08:05",
+    "studentId": "041",
+    "studentName": "童清扬",
+    "delta": -4,
+    "reason": "未静班（组员）(¬▂¬)"
+  },
+  {
+    "timestamp": "2026-06-20 22:08:05",
+    "studentId": "042",
+    "studentName": "闫之诺",
+    "delta": -4,
+    "reason": "未静班（组员）(¬▂¬)"
+  },
+  {
+    "timestamp": "2026-06-20 22:08:05",
+    "studentId": "047",
+    "studentName": "曾子轩",
+    "delta": -4,
+    "reason": "未静班（组员）(¬▂¬)"
   }
 ]
