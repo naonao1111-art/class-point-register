@@ -38,6 +38,14 @@
         "卫生委员/宣传委员": "justsoso",
         "学习委员": "verygood",
         "体育委员": "justsoso"
+      },
+      "004": {
+        "班长": "justsoso",
+        "副班长/纪律委员": "justsoso",
+        "团支书": "verygood",
+        "卫生委员/宣传委员": "verygood",
+        "学习委员": "justsoso",
+        "体育委员": "bad"
       }
     }
   }
