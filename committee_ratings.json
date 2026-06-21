@@ -77,6 +77,13 @@
         "卫生委员/宣传委员": "verygood",
         "学习委员": "verygood",
         "体育委员": "verygood"
+      },
+      "017": {
+        "班长": "bad",
+        "副班长/纪律委员": "bad",
+        "团支书": "verygood",
+        "卫生委员/宣传委员": "verygood",
+        "学习委员": "verygood"
       }
     }
   }
