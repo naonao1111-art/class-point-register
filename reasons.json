@@ -4960,5 +4960,103 @@
     "studentName": "方晟睿",
     "delta": 1,
     "reason": "班委每周加分"
+  },
+  {
+    "timestamp": "2026-06-22 22:00:24",
+    "studentId": "001",
+    "studentName": "沈乐妍",
+    "delta": 1,
+    "reason": "课代表每周加分"
+  },
+  {
+    "timestamp": "2026-06-22 22:00:24",
+    "studentId": "002",
+    "studentName": "胡凯琳",
+    "delta": 1,
+    "reason": "课代表每周加分"
+  },
+  {
+    "timestamp": "2026-06-22 22:00:24",
+    "studentId": "008",
+    "studentName": "王李婧",
+    "delta": 1,
+    "reason": "课代表每周加分"
+  },
+  {
+    "timestamp": "2026-06-22 22:00:24",
+    "studentId": "009",
+    "studentName": "陆玛俐",
+    "delta": 1,
+    "reason": "课代表每周加分"
+  },
+  {
+    "timestamp": "2026-06-22 22:00:24",
+    "studentId": "017",
+    "studentName": "黄智恒",
+    "delta": 1.1416666666666666,
+    "reason": "课代表每周加分( 分界运算 )"
+  },
+  {
+    "timestamp": "2026-06-22 22:00:24",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": 1,
+    "reason": "课代表每周加分"
+  },
+  {
+    "timestamp": "2026-06-22 22:00:24",
+    "studentId": "023",
+    "studentName": "牧周磊",
+    "delta": 1,
+    "reason": "课代表每周加分"
+  },
+  {
+    "timestamp": "2026-06-22 22:00:24",
+    "studentId": "026",
+    "studentName": "潘烨磊",
+    "delta": 1.2,
+    "reason": "课代表每周加分 (低于-38，+20%)"
+  },
+  {
+    "timestamp": "2026-06-22 22:00:24",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": 1.2,
+    "reason": "课代表每周加分 (低于-38，+20%)"
+  },
+  {
+    "timestamp": "2026-06-22 22:00:24",
+    "studentId": "031",
+    "studentName": "刘博凯",
+    "delta": 1,
+    "reason": "课代表每周加分"
+  },
+  {
+    "timestamp": "2026-06-22 22:00:24",
+    "studentId": "036",
+    "studentName": "姚竣豪",
+    "delta": 1,
+    "reason": "课代表每周加分"
+  },
+  {
+    "timestamp": "2026-06-22 22:00:24",
+    "studentId": "040",
+    "studentName": "朱熙元",
+    "delta": 1.1,
+    "reason": "课代表每周加分 (低于-30，+10%)"
+  },
+  {
+    "timestamp": "2026-06-22 22:00:24",
+    "studentId": "041",
+    "studentName": "童清扬",
+    "delta": 1,
+    "reason": "课代表每周加分"
+  },
+  {
+    "timestamp": "2026-06-22 22:00:24",
+    "studentId": "042",
+    "studentName": "闫之诺",
+    "delta": 1,
+    "reason": "课代表每周加分"
   }
 ]
