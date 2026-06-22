@@ -5058,5 +5058,12 @@
     "studentName": "闫之诺",
     "delta": 1,
     "reason": "课代表每周加分"
+  },
+  {
+    "timestamp": "2026-06-22 23:15:33",
+    "studentId": "019",
+    "studentName": "顾槿宸",
+    "delta": -5.414814814814815,
+    "reason": "621别班同学来找*4( 分界运算 )"
   }
 ]
