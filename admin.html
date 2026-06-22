@@ -556,47 +556,45 @@
             const todayDate = now.toISOString().slice(0,10);
             const lastCheckDate = autoTracker.lastDailyCheck ? new Date(autoTracker.lastDailyCheck).toISOString().slice(0,10) : null;
 
-            // 1. 每日补分（低分持续7天）
             if (lastCheckDate !== todayDate || window.forceRun) {
-                // 检查低分学生
                 let updates = [];
+
+                // ===== 1. 低分持续补分（连续7天，不受是否回升影响） =====
                 for (let student of currentStudents) {
                     if (student.score < -50) {
-                        // 检查是否已有追踪
                         let tracker = autoTracker.lowScoreStudents[student.id];
                         if (!tracker) {
-                            // 首次低于 -50，记录开始日期
                             tracker = { startDate: todayDate, daysAdded: 0 };
                             autoTracker.lowScoreStudents[student.id] = tracker;
                         }
-                    }// 检查是否已满7天
-                    if (tracker.daysAdded < 7) {
-                        // 加2分（受保护倍率）
-                        const delta = 2;
-                        const { actualDelta, remark } = calculateProtectedDelta(student.score, delta);
-                        if (actualDelta !== 0) {
-                            student.score += actualDelta;
-                            student.score = parseFloat(student.score.toFixed(2));
-                            updates.push({
-                                studentId: student.id,
-                                studentName: student.name,
-                                delta: actualDelta,
-                                reason: "低分持续补分（第" + (tracker.daysAdded + 1) + "天）" + remark
-                            });
-                            tracker.daysAdded++;
-                            // 如果 daysAdded 达到7，可以保留记录以便查看，但不再加分
+                        if (tracker.daysAdded < 7) {
+                            const delta = 2;
+                            const { actualDelta, remark } = calculateProtectedDelta(student.score, delta);
+                            if (actualDelta !== 0) {
+                                student.score += actualDelta;
+                                student.score = parseFloat(student.score.toFixed(2));
+                                updates.push({
+                                    studentId: student.id,
+                                    studentName: student.name,
+                                    delta: actualDelta,
+                                    reason: "低分持续补分（第" + (tracker.daysAdded + 1) + "天）" + remark
+                                });
+                                tracker.daysAdded++;
+                            }
                         }
+                        // 如果 daysAdded >= 7，不再加分，但保留记录（可查看历史）
+                        // 也可以选择在 daysAdded >= 7 时删除记录，但保留不影响逻辑
                     }
+                    // 注意：即使分数 >= -50，也不删除记录，因为我们承诺连续7天
+                    // 但如果记录存在且 daysAdded >= 7，说明已完成周期，可保留或删除
+                    // 这里我们保留，仅当 daysAdded < 7 且分数 >= -50 时仍继续补分（符合需求）
                 }
 
-                // 2. 周日奖励（给本周提交评价的学生 +0.5）
-                const today = new Date();
-                if (isSunday(today)) {
+                // ===== 2. 周日奖励（给本周提交评价的学生 +0.5） =====
+                if (isSunday(now)) {
                     const lastSundayDate = autoTracker.lastSundayBonus ? new Date(autoTracker.lastSundayBonus).toISOString().slice(0,10) : null;
                     if (lastSundayDate !== todayDate || window.forceRun) {
-                        // 获取本周评价数据
-                        const currentWeek = getWeekNumber(today);
-                        // 加载评价数据
+                        const currentWeek = getWeekNumber(now);
                         let ratings = {};
                         try {
                             const res = await fetchJSON(RATINGS_URL);
@@ -645,6 +643,7 @@
                     renderStudentsTable();
                     document.getElementById("adminMsg").innerHTML = `自动补分执行，${updates.length}名学生获得积分调整。`;
                 }
+
                 autoTracker.lastDailyCheck = now.getTime();
                 await saveAutoTracker();
                 document.getElementById("autoIncStatus").innerHTML = `状态：✅ 运行中（上次补分：${now.toLocaleDateString()}）`;
@@ -653,7 +652,6 @@
                 document.getElementById("autoIncStatus").innerHTML = `状态：✅ 运行中（今日已补分，下次检查：明天）`;
             }
         }
-
         async function stopAutoIncrement() {
             if (!(await verifyPassword())) return;
             autoTracker.stopped = true;
