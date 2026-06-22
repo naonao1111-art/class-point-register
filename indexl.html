@@ -48,6 +48,21 @@
         const REPO_NAME = "class-point-register";
         const DATA_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data.json`;
 
+        // ===== 添加周计算函数 =====
+        function getWeekNumber(d) {
+            d = new Date(d);
+            d.setHours(0, 0, 0, 0);
+            const day = d.getDay() || 7;
+            const diff = day - 1;
+            const monday = new Date(d);
+            monday.setDate(d.getDate() - diff);
+            const startOfYear = new Date(monday.getFullYear(), 0, 1);
+            const days = Math.floor((monday - startOfYear) / (24 * 60 * 60 * 1000));
+            const weekNumber = Math.ceil((days + 1) / 7);
+            return monday.getFullYear() + "-W" + String(weekNumber).padStart(2, '0');
+        }
+   
+
         let currentStudents = [];
         let currentSort = { field: 'id', order: 'asc' };
         let scoreRankings = {};
