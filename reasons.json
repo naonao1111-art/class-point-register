@@ -4932,5 +4932,33 @@
     "studentName": "濮天昊",
     "delta": -1.6666666666666667,
     "reason": "信息作业没交（单次记录） (低于-38，扣分/1.5)"
+  },
+  {
+    "timestamp": "2026-06-22 21:59:13",
+    "studentId": "002",
+    "studentName": "胡凯琳",
+    "delta": 1,
+    "reason": "班委每周加分"
+  },
+  {
+    "timestamp": "2026-06-22 21:59:13",
+    "studentId": "006",
+    "studentName": "马伊韩",
+    "delta": 1,
+    "reason": "班委每周加分"
+  },
+  {
+    "timestamp": "2026-06-22 21:59:13",
+    "studentId": "019",
+    "studentName": "顾槿宸",
+    "delta": 1.1555555555555554,
+    "reason": "班委每周加分( 分界运算 )"
+  },
+  {
+    "timestamp": "2026-06-22 21:59:13",
+    "studentId": "022",
+    "studentName": "方晟睿",
+    "delta": 1,
+    "reason": "班委每周加分"
   }
 ]
