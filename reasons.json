@@ -5135,5 +5135,12 @@
     "studentName": "冯丰硕",
     "delta": -1,
     "reason": "自习课上课四十分钟内上厕所 (低于-45，扣分/2)"
+  },
+  {
+    "timestamp": "2026-06-24 17:28:44",
+    "studentId": "027",
+    "studentName": "吕峥程",
+    "delta": -2,
+    "reason": "别班同学来找"
   }
 ]
