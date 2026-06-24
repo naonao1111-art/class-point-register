@@ -5277,5 +5277,54 @@
     "studentName": "胡宵",
     "delta": 1,
     "reason": "对于68值日认真的补充记录"
+  },
+  {
+    "timestamp": "2026-06-25 00:28:23",
+    "studentId": "003",
+    "studentName": "马辰佩",
+    "delta": -3,
+    "reason": "624值日不及时"
+  },
+  {
+    "timestamp": "2026-06-25 00:28:23",
+    "studentId": "024",
+    "studentName": "沈天辰",
+    "delta": -2.4,
+    "reason": "624值日不及时 (低于-30，扣分/1.25)"
+  },
+  {
+    "timestamp": "2026-06-25 00:28:23",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": -2,
+    "reason": "624值日不及时 (低于-38，扣分/1.5)"
+  },
+  {
+    "timestamp": "2026-06-25 00:28:23",
+    "studentId": "031",
+    "studentName": "刘博凯",
+    "delta": -3,
+    "reason": "624值日不及时"
+  },
+  {
+    "timestamp": "2026-06-25 00:28:23",
+    "studentId": "035",
+    "studentName": "冯丰硕",
+    "delta": -1.5,
+    "reason": "624值日不及时 (低于-45，扣分/2)"
+  },
+  {
+    "timestamp": "2026-06-25 00:28:23",
+    "studentId": "043",
+    "studentName": "刘德临",
+    "delta": -3,
+    "reason": "624值日不及时"
+  },
+  {
+    "timestamp": "2026-06-25 00:28:23",
+    "studentId": "044",
+    "studentName": "金智宸",
+    "delta": -3,
+    "reason": "624值日不及时"
   }
 ]
