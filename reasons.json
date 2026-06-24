@@ -5065,5 +5065,61 @@
     "studentName": "顾槿宸",
     "delta": -5.414814814814815,
     "reason": "621别班同学来找*4( 分界运算 )"
+  },
+  {
+    "timestamp": "2026-06-24 09:22:22",
+    "studentId": "049",
+    "studentName": "孙渝承",
+    "delta": 3,
+    "reason": "低分持续补分（第1天） (低于-45，+50%)"
+  },
+  {
+    "timestamp": "2026-06-24 09:22:22",
+    "studentId": "050",
+    "studentName": "测试人员",
+    "delta": 3,
+    "reason": "低分持续补分（第1天） (低于-45，+50%)"
+  },
+  {
+    "timestamp": "2026-06-24 17:23:35",
+    "studentId": "007",
+    "studentName": "金鑫璇",
+    "delta": -4,
+    "reason": "未静班（组员）(¬▂¬)"
+  },
+  {
+    "timestamp": "2026-06-24 17:23:35",
+    "studentId": "009",
+    "studentName": "陆玛俐",
+    "delta": -4,
+    "reason": "未静班（组员）(¬▂¬)"
+  },
+  {
+    "timestamp": "2026-06-24 17:23:35",
+    "studentId": "010",
+    "studentName": "陈静怡",
+    "delta": -4,
+    "reason": "未静班（组员）(¬▂¬)"
+  },
+  {
+    "timestamp": "2026-06-24 17:23:35",
+    "studentId": "013",
+    "studentName": "袁煦泽",
+    "delta": -4,
+    "reason": "未静班（组员）(¬▂¬)"
+  },
+  {
+    "timestamp": "2026-06-24 17:23:35",
+    "studentId": "014",
+    "studentName": "姚腾浩",
+    "delta": -4,
+    "reason": "未静班（组员）(¬▂¬)"
+  },
+  {
+    "timestamp": "2026-06-24 17:23:35",
+    "studentId": "023",
+    "studentName": "牧周磊",
+    "delta": -4,
+    "reason": "未静班（组员）(¬▂¬)"
   }
 ]
