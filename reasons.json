@@ -5403,5 +5403,19 @@
     "studentName": "刘德临",
     "delta": -4,
     "reason": "未静班（组员）(¬▂¬)"
+  },
+  {
+    "timestamp": "2026-06-25 22:04:42",
+    "studentId": "026",
+    "studentName": "潘烨磊",
+    "delta": -1,
+    "reason": "自习课上课四十分钟内上厕所 (低于-45，扣分/2)"
+  },
+  {
+    "timestamp": "2026-06-25 22:04:42",
+    "studentId": "022",
+    "studentName": "方晟睿",
+    "delta": -2,
+    "reason": "自习课上课四十分钟内上厕所"
   }
 ]
