@@ -568,28 +568,20 @@
                             autoTracker.lowScoreStudents[student.id] = tracker;
                         }
                         if (tracker.daysAdded < 7) {
-                            const delta = 2;
-                            const { actualDelta, remark } = calculateProtectedDelta(student.score, delta);
-                            if (actualDelta !== 0) {
-                                student.score += actualDelta;
-                                student.score = parseFloat(student.score.toFixed(2));
-                                updates.push({
-                                    studentId: student.id,
-                                    studentName: student.name,
-                                    delta: actualDelta,
-                                    reason: "低分持续补分（第" + (tracker.daysAdded + 1) + "天）" + remark
-                                });
-                                tracker.daysAdded++;
-                            }
+                            // 直接加2分，不受保护倍率影响
+                            student.score += 2;
+                            student.score = parseFloat(student.score.toFixed(2));
+                            updates.push({
+                                studentId: student.id,
+                                studentName: student.name,
+                                delta: 2,
+                                reason: "低分持续补分（第" + (tracker.daysAdded + 1) + "天）"
+                            });
+                            tracker.daysAdded++;
                         }
-                        // 如果 daysAdded >= 7，不再加分，但保留记录（可查看历史）
-                        // 也可以选择在 daysAdded >= 7 时删除记录，但保留不影响逻辑
+                        // 即使分数 >= -50 也不删除记录，保证连续补7天
                     }
-                    // 注意：即使分数 >= -50，也不删除记录，因为我们承诺连续7天
-                    // 但如果记录存在且 daysAdded >= 7，说明已完成周期，可保留或删除
-                    // 这里我们保留，仅当 daysAdded < 7 且分数 >= -50 时仍继续补分（符合需求）
                 }
-
                 // ===== 2. 周日奖励（给本周提交评价的学生 +0.5） =====
                 if (isSunday(now)) {
                     const lastSundayDate = autoTracker.lastSundayBonus ? new Date(autoTracker.lastSundayBonus).toISOString().slice(0,10) : null;
