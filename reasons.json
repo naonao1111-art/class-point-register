@@ -5333,5 +5333,12 @@
     "studentName": "测试人员",
     "delta": 3,
     "reason": "低分持续补分（第6天） (低于-45，+50%)"
+  },
+  {
+    "timestamp": "2026-06-25 21:59:35",
+    "studentId": "027",
+    "studentName": "吕峥程",
+    "delta": 2,
+    "reason": "帮助值日"
   }
 ]
