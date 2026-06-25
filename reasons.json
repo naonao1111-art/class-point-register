@@ -5354,5 +5354,19 @@
     "studentName": "胡凯琳",
     "delta": 6,
     "reason": "恢复分数"
+  },
+  {
+    "timestamp": "2026-06-25 22:01:54",
+    "studentId": "016",
+    "studentName": "徐志翔",
+    "delta": -6,
+    "reason": "纪律差٩◔̯◔۶ 哼"
+  },
+  {
+    "timestamp": "2026-06-25 22:01:54",
+    "studentId": "019",
+    "studentName": "顾槿宸",
+    "delta": -3,
+    "reason": "纪律差٩◔̯◔۶ 哼 (低于-45，扣分/2)"
   }
 ]
