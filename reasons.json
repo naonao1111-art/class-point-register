@@ -5326,5 +5326,12 @@
     "studentName": "金智宸",
     "delta": -3,
     "reason": "624值日不及时"
+  },
+  {
+    "timestamp": "2026-06-25 13:59:12",
+    "studentId": "050",
+    "studentName": "测试人员",
+    "delta": 3,
+    "reason": "低分持续补分（第6天） (低于-45，+50%)"
   }
 ]
