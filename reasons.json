@@ -5347,5 +5347,12 @@
     "studentName": "胡凯琳",
     "delta": -6,
     "reason": "未静班（班委）(⋋▂⋌)"
+  },
+  {
+    "timestamp": "2026-06-25 22:00:24",
+    "studentId": "002",
+    "studentName": "胡凯琳",
+    "delta": 6,
+    "reason": "恢复分数"
   }
 ]
