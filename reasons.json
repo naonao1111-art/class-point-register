@@ -5368,5 +5368,40 @@
     "studentName": "顾槿宸",
     "delta": -3,
     "reason": "纪律差٩◔̯◔۶ 哼 (低于-45，扣分/2)"
+  },
+  {
+    "timestamp": "2026-06-25 22:03:38",
+    "studentId": "003",
+    "studentName": "马辰佩",
+    "delta": -4,
+    "reason": "未静班（组员）(¬▂¬)"
+  },
+  {
+    "timestamp": "2026-06-25 22:03:38",
+    "studentId": "024",
+    "studentName": "沈天辰",
+    "delta": -3.2,
+    "reason": "未静班（组员）(¬▂¬) (低于-30，扣分/1.25)"
+  },
+  {
+    "timestamp": "2026-06-25 22:03:38",
+    "studentId": "031",
+    "studentName": "刘博凯",
+    "delta": -3.6,
+    "reason": "未静班（组员）(¬▂¬)( 分界运算 )"
+  },
+  {
+    "timestamp": "2026-06-25 22:03:38",
+    "studentId": "035",
+    "studentName": "冯丰硕",
+    "delta": -2,
+    "reason": "未静班（组员）(¬▂¬) (低于-45，扣分/2)"
+  },
+  {
+    "timestamp": "2026-06-25 22:03:38",
+    "studentId": "043",
+    "studentName": "刘德临",
+    "delta": -4,
+    "reason": "未静班（组员）(¬▂¬)"
   }
 ]
