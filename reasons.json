@@ -5340,5 +5340,12 @@
     "studentName": "吕峥程",
     "delta": 2,
     "reason": "帮助值日"
+  },
+  {
+    "timestamp": "2026-06-25 22:00:04",
+    "studentId": "002",
+    "studentName": "胡凯琳",
+    "delta": -6,
+    "reason": "未静班（班委）(⋋▂⋌)"
   }
 ]
