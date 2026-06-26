@@ -5474,5 +5474,19 @@
     "studentName": "闫之诺",
     "delta": -2,
     "reason": "上课睡觉(ಠ .̫.̫ ಠ)"
+  },
+  {
+    "timestamp": "2026-06-26 21:57:25",
+    "studentId": "024",
+    "studentName": "沈天辰",
+    "delta": -1.6,
+    "reason": "书太高 (低于-30，扣分/1.25)"
+  },
+  {
+    "timestamp": "2026-06-26 21:57:25",
+    "studentId": "028",
+    "studentName": "李岩蹊",
+    "delta": -2,
+    "reason": "书太高"
   }
 ]
