@@ -5417,5 +5417,12 @@
     "studentName": "方晟睿",
     "delta": -2,
     "reason": "自习课上课四十分钟内上厕所"
+  },
+  {
+    "timestamp": "2026-06-26 13:48:37",
+    "studentId": "035",
+    "studentName": "冯丰硕",
+    "delta": 2,
+    "reason": "低分持续补分（第1天）"
   }
 ]
