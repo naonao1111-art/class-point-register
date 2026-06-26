@@ -5488,5 +5488,19 @@
     "studentName": "李岩蹊",
     "delta": -2,
     "reason": "书太高"
+  },
+  {
+    "timestamp": "2026-06-26 21:57:59",
+    "studentId": "014",
+    "studentName": "姚腾浩",
+    "delta": -3,
+    "reason": "迟到@_@"
+  },
+  {
+    "timestamp": "2026-06-26 21:57:59",
+    "studentId": "017",
+    "studentName": "黄智恒",
+    "delta": -2,
+    "reason": "迟到@_@ (低于-38，扣分/1.5)"
   }
 ]
