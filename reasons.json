@@ -5539,5 +5539,12 @@
     "studentName": "孙渝承",
     "delta": -5,
     "reason": "修改积分为 9995"
+  },
+  {
+    "timestamp": "2026-06-28 11:49:05",
+    "studentId": "039",
+    "studentName": "胡宵",
+    "delta": 10003,
+    "reason": "修改积分为 10000"
   }
 ]
