@@ -5532,5 +5532,12 @@
     "studentName": "顾槿宸",
     "delta": 3,
     "reason": "管理纪律半小时~(‾⌣‾~)2 (低于-45，+50%)"
+  },
+  {
+    "timestamp": "2026-06-28 11:44:37",
+    "studentId": "049",
+    "studentName": "孙渝承",
+    "delta": -5,
+    "reason": "修改积分为 9995"
   }
 ]
