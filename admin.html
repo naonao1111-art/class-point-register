@@ -92,7 +92,7 @@
                 <input type="text" id="quickReason" placeholder="原因（可编辑、追加文字）" style="width: 250px;">
                 <button id="applyQuickBtn" style="background-color:#2196F3; color:white;">应用到选中学生</button>
                 <p style="font-size:12px; color:#666;">👉 点击规则自动填充分数和原因，点击上方按钮批量应用。<br>
-                ⚠️ 积分保护：低于 -30 分时，扣分减半、加分翻倍；低于 -40、-45 时保护力度递增。</p>
+                </p>
             </div>
         </div>
 
@@ -103,7 +103,7 @@
         </div>
 
         <div class="section">
-            <h3>🤖 自动补分控制（低于-50分学生每天+2分）</h3>
+            <h3>🤖 自动补分控制</h3>
             <div id="autoIncStatus">状态加载中...</div>
             <button id="stopAutoIncBtn" style="background:#f44336;">停止自动补分</button>
             <button id="resumeAutoIncBtn" style="background:#4CAF50;">开启自动补分</button>
@@ -125,6 +125,9 @@
     </div>
 
     <script>
+        // ============================================================
+        // 1. 配置与常量
+        // ============================================================
         const REPO_OWNER = "naonao1111-art";
         const REPO_NAME = "class-point-register";
         const DATA_FILE = "data.json";
@@ -150,6 +153,9 @@
         let currentSort = { field: 'id', order: 'asc' };
         let autoTracker = { lastDailyCheck: 0, stopped: false };
 
+        // ============================================================
+        // 2. 工具函数
+        // ============================================================
         function decodeToken(obfuscated) {
             try {
                 if (!obfuscated) return "";
@@ -161,6 +167,7 @@
                 return "";
             }
         }
+
         function getWeekNumber(d) {
             d = new Date(d);
             d.setHours(0,0,0,0);
@@ -173,10 +180,40 @@
             const weekNumber = Math.ceil((days + 1) / 7);
             return monday.getFullYear() + "-W" + String(weekNumber).padStart(2, '0');
         }
-        function isSunday(d) {
-            return new Date(d).getDay() === 0;
+
+        // 北京时间相关
+        function getBeijingNow() {
+            const now = new Date();
+            const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+            return new Date(utc + 8 * 3600000);
+        }
+        function getBeijingDateStr(d) {
+            d = d || getBeijingNow();
+            return d.toISOString().slice(0,10);
+        }
+        function getBeijingWeekday(d) {
+            d = d || getBeijingNow();
+            return d.getDay(); // 0=周日
         }
 
+        // 计算低分补分开始日期
+        function calculateStartDate(modifyBeijingDate) {
+            const hour = modifyBeijingDate.getHours();
+            const minute = modifyBeijingDate.getMinutes();
+            const totalMinutes = hour * 60 + minute;
+            const start = new Date(modifyBeijingDate);
+            if (totalMinutes <= 21 * 60) { // 21:00之前
+                start.setDate(start.getDate() + 1);
+            } else {
+                start.setDate(start.getDate() + 2);
+            }
+            start.setHours(0,0,0,0);
+            return start.toISOString().slice(0,10);
+        }
+
+        // ============================================================
+        // 3. 网络请求与认证
+        // ============================================================
         let CONFIG = { github_token: "" };
         async function loadConfig() {
             try {
@@ -258,6 +295,9 @@
             return result.content.sha;
         }
 
+        // ============================================================
+        // 4. 数据加载与保存
+        // ============================================================
         async function loadAllData() {
             const dataRes = await fetchJSON(DATA_URL);
             if (dataRes.content) {
@@ -291,6 +331,9 @@
             reasonsSha = await saveJSON(REASONS_URL, currentReasons, "更新原因记录");
         }
 
+        // ============================================================
+        // 5. 界面渲染
+        // ============================================================
         function sortStudents(students, field, order) {
             const sorted = [...students];
             sorted.sort((a, b) => {
@@ -381,6 +424,9 @@
             });
         }
 
+        // ============================================================
+        // 6. 密码验证弹窗
+        // ============================================================
         let modalResolve = null;
         function showPasswordModal() {
             return new Promise((resolve) => {
@@ -412,6 +458,9 @@
             return true;
         }
 
+        // ============================================================
+        // 7. 积分保护计算（保持不变）
+        // ============================================================
         function calculateProtectedDelta(currentScore, delta) {
             if (delta === 0) return { actualDelta: 0, remark: ""};
             const T1 = -30, T2 = -38, T3 = -45;
@@ -421,11 +470,11 @@
             let temporery2 = currentScore - T2;
             let temporery1 = currentScore - T1;
             if (delta > 0) {
-                if (currentScore <= T3 && currentScore + delta * 1.5 > T3) {
-                    delta = delta + temporery3 / 1.5;
+                if (currentScore <= T3 && currentScore + delta * 1.35 > T3) {
+                    delta = delta + temporery3 / 1.35;
                     actualDelta = delta * 1.25 - temporery3; remark = "( 分界运算 )"
                 }else if (currentScore <= T3) {
-                    actualDelta = delta * 1.5; remark = " (低于-45，+50%)";
+                    actualDelta = delta * 1.35; remark = " (低于-45，+35%)";
                 }else if (currentScore <= T2 && currentScore + delta * 1.2 > T2) {
                     delta = delta + temporery2 / 1.2;
                     actualDelta = delta * 1.1 - temporery2 ; remark = "( 分界运算 )";
@@ -439,25 +488,28 @@
                 }
             } else if (delta < 0) {
                 if (currentScore <= T3) {
-                    actualDelta = delta / 2; remark = " (低于-45，扣分/2)";
-                }else if (currentScore <= T2 && currentScore + delta/ 1.5 <= T3) {
-                    delta = delta + temporery3 * 1.5;
-                    actualDelta = delta / 2 - temporery3; remark = "( 分界运算 )"
+                    actualDelta = delta / 1.5; remark = " (低于-45，扣分/1.5)";
+                }else if (currentScore <= T2 && currentScore + delta/ 1.25 <= T3) {
+                    delta = delta + temporery3 * 1.25;
+                    actualDelta = delta / 1.5 - temporery3; remark = "( 分界运算 )"
                 }else if (currentScore <= T2) {
-                    actualDelta = delta / 1.5; remark = " (低于-38，扣分/1.5)";
-                }else if (currentScore <= T1 && currentScore + delta / 1.25 <= T2) {
-                    delta = delta + temporery2 * 1.25;
-                    actualDelta = delta / 1.5 - temporery2; remark = "( 分界运算 )";
+                    actualDelta = delta / 1.25; remark = " (低于-38，扣分/1.25)";
+                }else if (currentScore <= T1 && currentScore + delta / 1.12 <= T2) {
+                    delta = delta + temporery2 * 1.12;
+                    actualDelta = delta / 1.25 - temporery2; remark = "( 分界运算 )";
                 }else if (currentScore <= T1) {
-                    actualDelta = delta / 1.25; remark = " (低于-30，扣分/1.25)";
+                    actualDelta = delta / 1.12; remark = " (低于-30，扣分/1.12)";
                 }else if (currentScore > T1 && currentScore + delta  <= T1) {
                     delta = delta + temporery1 ;
-                    actualDelta = delta / 1.25 - temporery1 ; remark = "( 分界运算 )";
+                    actualDelta = delta / 1.12 - temporery1 ; remark = "( 分界运算 )";
                 }
             }
             return { actualDelta, remark };
         }
 
+        // ============================================================
+        // 8. 应用积分到选中学生（批量加减分）
+        // ============================================================
         async function applyToCheckedStudents() {
             const checkboxes = document.querySelectorAll(".student-checkbox:checked");
             if (checkboxes.length === 0) {
@@ -480,12 +532,13 @@
                 const sid = chk.value;
                 const student = currentStudents.find(s => s.id === sid);
                 if (!student) continue;
+                const oldScore = student.score;
                 const { actualDelta, remark } = calculateProtectedDelta(student.score, delta);
                 if (actualDelta === 0) continue;
                 let newScore = student.score + actualDelta;
                 newScore = Math.min(10000000, Math.max(-10000000, newScore));
                 if (newScore !== student.score) {
-                    updates.push({ student, newScore, actualDelta, remark });
+                    updates.push({ student, newScore, actualDelta, remark, oldScore });
                 }
             }
 
@@ -513,14 +566,37 @@
             currentReasons.push(...newRecords);
             await saveReasons();
 
+            // 检查是否触发低分补分（从 >=-50 变为 <-50）
+            const beijingNow = getBeijingNow();
+            let lowScoreTriggered = false;
+            for (let u of updates) {
+                if (u.oldScore >= -50 && u.newScore < -50) {
+                    const startDate = calculateStartDate(beijingNow);
+                    if (!autoTracker.lowScoreStudents[u.student.id]) {
+                        autoTracker.lowScoreStudents[u.student.id] = { startDate: startDate, daysAdded: 0 };
+                    } else {
+                        // 重新触发，重置开始日期和天数
+                        autoTracker.lowScoreStudents[u.student.id].startDate = startDate;
+                        autoTracker.lowScoreStudents[u.student.id].daysAdded = 0;
+                    }
+                    lowScoreTriggered = true;
+                }
+            }
+            if (lowScoreTriggered) {
+                await saveAutoTracker();
+            }
+
             renderStudentsTable();
             let protectedCount = updates.filter(u => u.remark !== "").length;
             let msg = `成功为 ${updates.length} 名学生调整积分。`;
             if (protectedCount > 0) msg += ` 其中 ${protectedCount} 人触发积分保护。`;
+            if (lowScoreTriggered) msg += " 有学生触发低分补分机制。";
             document.getElementById("adminMsg").innerText = msg;
         }
 
-        // 自动补分
+        // ============================================================
+        // 9. 自动补分（低分持续补分 + 周日奖励）
+        // ============================================================
         async function loadAutoTracker() {
             try {
                 const res = await fetchJSON(AUTO_TRACK_URL);
@@ -529,7 +605,6 @@
                 } else {
                     autoTracker = { lastDailyCheck: 0, stopped: false, lastSundayBonus: 0, lowScoreStudents: {} };
                 }
-                // 确保字段完整
                 if (!autoTracker.hasOwnProperty('lastSundayBonus')) autoTracker.lastSundayBonus = 0;
                 if (!autoTracker.hasOwnProperty('lowScoreStudents')) autoTracker.lowScoreStudents = {};
             } catch(e) {
@@ -552,23 +627,25 @@
                 document.getElementById("autoIncStatus").innerHTML = "状态：⏸️ 已停止";
                 return;
             }
-            const now = new Date();
-            const todayDate = now.toISOString().slice(0,10);
-            const lastCheckDate = autoTracker.lastDailyCheck ? new Date(autoTracker.lastDailyCheck).toISOString().slice(0,10) : null;
+            const beijingNow = getBeijingNow();
+            const todayDate = getBeijingDateStr(beijingNow);
+            const lastCheckDate = autoTracker.lastDailyCheck ? getBeijingDateStr(new Date(autoTracker.lastDailyCheck)) : null;
 
             if (lastCheckDate !== todayDate || window.forceRun) {
                 let updates = [];
 
-                // ===== 1. 低分持续补分（连续7天，不受是否回升影响） =====
+                // ---- 1. 低分持续补分（每天+2，连续7天，不受倍率，北京时间） ----
                 for (let student of currentStudents) {
                     if (student.score < -50) {
                         let tracker = autoTracker.lowScoreStudents[student.id];
                         if (!tracker) {
-                            tracker = { startDate: todayDate, daysAdded: 0 };
-                            autoTracker.lowScoreStudents[student.id] = tracker;
+                            // 如果不存在，说明可能未正确触发，但可以补建一个，但开始日期无法确定，跳过
+                            continue;
                         }
+                        // 检查是否到了开始日期
+                        if (todayDate < tracker.startDate) continue;
                         if (tracker.daysAdded < 7) {
-                            // 直接加2分，不受保护倍率影响
+                            // 直接加2分
                             student.score += 2;
                             student.score = parseFloat(student.score.toFixed(2));
                             updates.push({
@@ -579,14 +656,14 @@
                             });
                             tracker.daysAdded++;
                         }
-                        // 即使分数 >= -50 也不删除记录，保证连续补7天
                     }
                 }
-                // ===== 2. 周日奖励（给本周提交评价的学生 +0.5） =====
-                if (isSunday(now)) {
-                    const lastSundayDate = autoTracker.lastSundayBonus ? new Date(autoTracker.lastSundayBonus).toISOString().slice(0,10) : null;
+
+                // ---- 2. 周日奖励（北京时间周日0点以后执行） ----
+                if (getBeijingWeekday(beijingNow) === 0) { // 周日
+                    const lastSundayDate = autoTracker.lastSundayBonus ? getBeijingDateStr(new Date(autoTracker.lastSundayBonus)) : null;
                     if (lastSundayDate !== todayDate || window.forceRun) {
-                        const currentWeek = getWeekNumber(now);
+                        const currentWeek = getWeekNumber(beijingNow);
                         let ratings = {};
                         try {
                             const res = await fetchJSON(RATINGS_URL);
@@ -613,14 +690,14 @@
                                 }
                             }
                         }
-                        autoTracker.lastSundayBonus = now.getTime();
+                        autoTracker.lastSundayBonus = beijingNow.getTime();
                     }
                 }
 
                 // 保存更新
                 if (updates.length > 0) {
                     await saveStudents();
-                    const timestamp = now.toISOString().slice(0,19).replace('T',' ');
+                    const timestamp = beijingNow.toISOString().slice(0,19).replace('T',' ');
                     for (let u of updates) {
                         currentReasons.push({
                             timestamp: timestamp,
@@ -636,14 +713,15 @@
                     document.getElementById("adminMsg").innerHTML = `自动补分执行，${updates.length}名学生获得积分调整。`;
                 }
 
-                autoTracker.lastDailyCheck = now.getTime();
+                autoTracker.lastDailyCheck = beijingNow.getTime();
                 await saveAutoTracker();
-                document.getElementById("autoIncStatus").innerHTML = `状态：✅ 运行中（上次补分：${now.toLocaleDateString()}）`;
+                document.getElementById("autoIncStatus").innerHTML = `状态：✅ 运行中（上次补分：${beijingNow.toLocaleDateString('zh-CN')}）`;
                 window.forceRun = false;
             } else {
                 document.getElementById("autoIncStatus").innerHTML = `状态：✅ 运行中（今日已补分，下次检查：明天）`;
             }
         }
+
         async function stopAutoIncrement() {
             if (!(await verifyPassword())) return;
             autoTracker.stopped = true;
@@ -665,7 +743,9 @@
             window.forceRun = false;
         }
 
-        // 学生管理功能
+        // ============================================================
+        // 10. 学生管理功能
+        // ============================================================
         async function addStudent() {
             if (!(await verifyPassword())) return;
             const id = document.getElementById("stuId").value.trim();
@@ -680,6 +760,7 @@
             renderStudentsTable();
             document.getElementById("adminMsg").innerText = "添加成功";
         }
+
         async function updateStudent() {
             if (!selectedStudentId) { alert("请先选择一个学生（点选单选按钮）"); return; }
             if (!(await verifyPassword())) return;
@@ -692,12 +773,46 @@
             const index = currentStudents.findIndex(s => s.id === selectedStudentId);
             if (index === -1) return;
             if (id !== selectedStudentId && currentStudents.some(s => s.id === id)) { alert("新学号已存在"); return; }
+
+            const oldScore = currentStudents[index].score;
+            const oldName = currentStudents[index].name;
+            // 更新
             currentStudents[index] = { id, name, score };
             await saveStudents();
+
+            // 记录修改积分的原因（如果积分变化）
+            if (oldScore !== score) {
+                const delta = score - oldScore;
+                const now = new Date();
+                const timestamp = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+                currentReasons.push({
+                    timestamp: timestamp,
+                    studentId: id,
+                    studentName: name,
+                    delta: delta,
+                    reason: `修改积分为 ${score}`
+                });
+                await saveReasons();
+
+                // 检查是否触发低分补分
+                if (oldScore >= -50 && score < -50) {
+                    const beijingNow = getBeijingNow();
+                    const startDate = calculateStartDate(beijingNow);
+                    if (!autoTracker.lowScoreStudents[id]) {
+                        autoTracker.lowScoreStudents[id] = { startDate: startDate, daysAdded: 0 };
+                    } else {
+                        autoTracker.lowScoreStudents[id].startDate = startDate;
+                        autoTracker.lowScoreStudents[id].daysAdded = 0;
+                    }
+                    await saveAutoTracker();
+                }
+            }
+
             selectedStudentId = id;
             renderStudentsTable();
             document.getElementById("adminMsg").innerText = "修改成功";
         }
+
         async function deleteStudent() {
             if (!selectedStudentId) { alert("请先选择一个学生（点选单选按钮）"); return; }
             if (!(await verifyPassword())) return;
@@ -708,6 +823,7 @@
             renderStudentsTable();
             document.getElementById("adminMsg").innerText = "删除成功";
         }
+
         async function swapStudents() {
             const id1 = document.getElementById("swapId1").value.trim();
             const id2 = document.getElementById("swapId2").value.trim();
@@ -727,6 +843,7 @@
             renderStudentsTable();
             document.getElementById("adminMsg").innerText = "学号交换成功，并已同步历史记录";
         }
+
         async function resetToInitial() {
             if (!(await verifyPassword())) return;
             const clearReasons = confirm("将所有人积分重置为0，是否同时清空所有积分变化记录？\n点击“确定”清空记录，点击“取消”保留记录。");
@@ -739,6 +856,7 @@
             renderStudentsTable();
             document.getElementById("adminMsg").innerText = "已将所有学生积分重置为0" + (clearReasons ? "，并清空了记录" : "");
         }
+
         function filterStudents() {
             const searchId = document.getElementById("searchIdAdmin").value.trim();
             if (!searchId) renderStudentsTable();
@@ -773,6 +891,7 @@
                 });
             }
         }
+
         function exportStudents() {
             const wsData = [["学号", "姓名", "积分"]];
             currentStudents.forEach(s => wsData.push([s.id, s.name, s.score]));
@@ -781,6 +900,7 @@
             XLSX.utils.book_append_sheet(wb, ws, "学生积分");
             XLSX.writeFile(wb, `学生积分_${new Date().toLocaleString()}.xlsx`);
         }
+
         function exportReasons() {
             const wsData = [["时间", "学号", "姓名", "分数变化", "原因"]];
             currentReasons.forEach(r => wsData.push([r.timestamp, r.studentId, r.studentName, (r.delta>0?"+":"")+r.delta, r.reason]));
@@ -789,6 +909,7 @@
             XLSX.utils.book_append_sheet(wb, ws, "积分变化记录");
             XLSX.writeFile(wb, `积分变化_${new Date().toLocaleString()}.xlsx`);
         }
+
         function bindSortEvents() {
             document.querySelectorAll("#stuTable th").forEach(th => {
                 th.addEventListener("click", () => {
@@ -805,12 +926,13 @@
             });
         }
 
-        // 班委评价统计
+        // ============================================================
+        // 11. 班委评价统计
+        // ============================================================
         async function loadAdminCommitteeStats() {
             const container = document.getElementById("adminStatsContainer");
             if (!container) return;
             const committeePositions = ["班长", "副班长/纪律委员", "团支书", "卫生委员/宣传委员", "学习委员", "体育委员"];
-            // 加载班委姓名
             let committeeNames = {};
             try {
                 const classResp = await fetch(CLASS_URL);
@@ -822,7 +944,6 @@
                 }
             } catch(e) { /* ignore */ }
 
-            // 加载评价数据
             let ratings = {};
             try {
                 const resp = await fetch(RATINGS_URL);
@@ -833,12 +954,10 @@
                 }
             } catch(e) { /* ignore */ }
 
-            // 遍历所有周（包括 legacy）
             let html = '<table style="width:auto; margin-top:8px;"><tr><th>周次</th>';
             committeePositions.forEach(p => { html += `<th>${p}</th>`; });
             html += '<th>参与人数</th></tr>';
 
-            // 获取所有周键并排序
             const weekKeys = Object.keys(ratings).sort();
             if (weekKeys.length === 0) {
                 html += '<tr><td colspan="' + (committeePositions.length + 2) + '">暂无评价数据</td></tr>';
@@ -904,7 +1023,9 @@
             }
         }
 
-        // 登录初始化
+        // ============================================================
+        // 12. 登录初始化
+        // ============================================================
         document.getElementById("loginBtn").onclick = async () => {
             await loadConfig();
             const pwd = document.getElementById("adminPwd").value;
