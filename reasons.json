@@ -5590,5 +5590,33 @@
     "studentName": "顾槿宸",
     "delta": -4,
     "reason": "未静班（组长）(⋋▂⋌) (低于-45，扣分/1.5)"
+  },
+  {
+    "timestamp": "2026-06-28 14:03:07",
+    "studentId": "019",
+    "studentName": "顾槿宸",
+    "delta": 2,
+    "reason": "低分持续补分（第1天）"
+  },
+  {
+    "timestamp": "2026-06-28 14:03:07",
+    "studentId": "039",
+    "studentName": "胡宵",
+    "delta": 0.5,
+    "reason": "周日评价奖励"
+  },
+  {
+    "timestamp": "2026-06-28 14:03:07",
+    "studentId": "002",
+    "studentName": "胡凯琳",
+    "delta": 0.5,
+    "reason": "周日评价奖励"
+  },
+  {
+    "timestamp": "2026-06-28 14:03:07",
+    "studentId": "038",
+    "studentName": "方鸣扬",
+    "delta": 0.5,
+    "reason": "周日评价奖励"
   }
 ]
