@@ -28,7 +28,9 @@
         <input type="text" id="filterText" placeholder="学号/姓名/原因关键词" style="width: 250px;">
         <button id="filterBtn">筛选</button>
         <button id="resetFilterBtn">重置</button>
+        <button id="revokeSelectedBtn" style="background:#f44336; color:white; margin-left:10px;">撤销选中记录</button>
     </div>
+
     <div style="overflow-x:auto;">
         <table id="reasonsManageTable">
             <thead>
@@ -110,6 +112,27 @@
         if (!resp.ok) throw new Error("保存失败");
     }
 
+    function mergeReasons(reasons) {
+        const groups = {};
+        reasons.forEach(r => {
+            const key = `${r.timestamp}|${r.delta}|${r.reason}`;
+            if (!groups[key]) groups[key] = [];
+            groups[key].push(r);
+        });
+        const merged = [];
+        for (let key in groups) {
+            const items = groups[key];
+            merged.push({
+                ids: items.map(r => r.studentId),
+                names: items.map(r => r.studentName),
+                delta: items[0].delta,
+                reason: items[0].reason,
+                timestamp: items[0].timestamp,
+                records: items  // 保留原始记录，供后续可能使用
+            });
+        }
+        return merged;
+    }
     async function loadData() {
         const data = await fetchJSON(DATA_URL);
         currentStudents = (data?.students || []).map(s => ({ ...s, score: parseFloat(s.score) }));
@@ -124,37 +147,58 @@
         filteredReasons = [...allReasons];
     }
 
+    let mergedGroups = []; // 存储当前显示的合并组
+
     function renderTable() {
         const tbody = document.querySelector("#reasonsManageTable tbody");
         tbody.innerHTML = "";
-        const sorted = [...filteredReasons].sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
-        sorted.forEach(r => {
+        // 先合并 filteredReasons
+        mergedGroups = mergeReasons(filteredReasons);
+        const sorted = mergedGroups.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+        sorted.forEach(g => {
             const row = tbody.insertRow();
-            row.insertCell(0).innerText = r.timestamp;
-            row.insertCell(1).innerText = r.studentId;
-            row.insertCell(2).innerText = r.studentName;
-            row.insertCell(3).innerText = (r.delta>0?"+":"") + r.delta.toFixed(2);
+            row.insertCell(0).innerText = g.timestamp;
+            row.insertCell(1).innerText = g.ids.join('、');
+            row.insertCell(2).innerText = g.names.join('、');
+            row.insertCell(3).innerText = (g.delta>0?"+":"") + g.delta.toFixed(2);
             const reasonCell = row.insertCell(4);
             const inputReason = document.createElement("input");
             inputReason.type = "text";
-            inputReason.value = r.reason;
-            inputReason.style.width = "250px";
+            inputReason.value = g.reason;
+            inputReason.style.width = "200px";
             inputReason.className = "edit-input";
             reasonCell.appendChild(inputReason);
+            // 操作列：编辑按钮、撤销按钮（单条）、复选框
             const btnCell = row.insertCell(5);
+            // 保留编辑单个原因的功能（编辑该组所有记录的原因？用户可能只想编辑一条，但合并后编辑会改所有，我们可保留单个记录编辑，但最好也支持批量，此处简单处理：点击保存时修改该组所有记录的 reason）
             const saveBtn = document.createElement("button");
             saveBtn.innerText = "保存原因";
             saveBtn.className = "save-btn";
-            saveBtn.onclick = () => saveReason(r.id, inputReason.value);
-            const revokeBtn = document.createElement("button");
-            revokeBtn.innerText = "撤销记录";
-            revokeBtn.className = "revoke-btn";
-            revokeBtn.onclick = () => confirmRevoke(r.id);
+            saveBtn.onclick = () => saveGroupReason(g, inputReason.value);
             btnCell.appendChild(saveBtn);
-            btnCell.appendChild(revokeBtn);
+            // 复选框
+            const chk = document.createElement("input");
+            chk.type = "checkbox";
+            chk.className = "group-checkbox";
+            chk.dataset.ids = JSON.stringify(g.records.map(r => r.id));
+            btnCell.appendChild(chk);
+            btnCell.appendChild(document.createTextNode("选择"));
         });
     }
 
+    // 保存组原因：修改该组所有记录的原因
+    async function saveGroupReason(group, newReason) {
+        for (let r of group.records) {
+            r.reason = newReason;
+        }
+        try {
+            await saveJSON(REASONS_URL, allReasons, "编辑原因（批量）");
+            alert("原因已保存，页面将刷新");
+            location.reload();
+        } catch(err) {
+            alert("保存失败：" + err.message);
+        }
+    }
     // 保存编辑后的原因
     async function saveReason(recordId, newReason) {
 
@@ -218,11 +262,45 @@
         renderTable();
     }
 
-    document.getElementById("filterBtn").onclick = applyFilter;
-    document.getElementById("resetFilterBtn").onclick = () => {
-        document.getElementById("filterText").value = "";
-        filteredReasons = [...allReasons];
-        renderTable();
+    document.getElementById("revokeSelectedBtn").onclick = async () => {
+        const checkboxes = document.querySelectorAll(".group-checkbox:checked");
+        if (checkboxes.length === 0) {
+            alert("请至少选择一条记录");
+            return;
+        }
+        let allIds = [];
+        checkboxes.forEach(cb => {
+            const ids = JSON.parse(cb.dataset.ids);
+            allIds = allIds.concat(ids);
+        });
+        if (allIds.length === 0) return;
+        if (!confirm(`确定撤销选中的 ${allIds.length} 条记录吗？`)) return;
+
+        const pwd = prompt("请输入管理员密码");
+        if (!pwd) return;
+        const pwdHash = await sha256(pwd);
+        if (pwdHash !== ADMIN_PASSWORD_HASH) {
+            alert("密码错误，操作取消");
+            return;
+        }
+
+        // 先恢复所有分数
+        for (let id of allIds) {
+            const record = allReasons.find(r => r.id === id);
+            if (!record) continue;
+            const student = currentStudents.find(s => s.id === record.studentId);
+            if (student) {
+                student.score -= record.delta;
+                student.score = parseFloat(student.score.toFixed(2));
+            }
+        }
+        // 再统一删除记录
+        allReasons = allReasons.filter(r => !allIds.includes(r.id));
+
+        await saveJSON(DATA_URL, { students: currentStudents }, "撤销操作恢复分数");
+        await saveJSON(REASONS_URL, allReasons, "撤销操作删除记录");
+        alert("撤销成功！页面将刷新");
+        location.reload();
     };
 
     (async () => {

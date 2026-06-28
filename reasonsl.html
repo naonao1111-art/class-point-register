@@ -88,6 +88,28 @@
         return JSON.parse(content);
     }
 
+    function mergeReasons(reasons) {
+        const groups = {};
+        reasons.forEach(r => {
+            const key = `${r.timestamp}|${r.delta}|${r.reason}`;
+            if (!groups[key]) groups[key] = [];
+            groups[key].push(r);
+        });
+        const merged = [];
+        for (let key in groups) {
+            const items = groups[key];
+            merged.push({
+                ids: items.map(r => r.studentId),
+                names: items.map(r => r.studentName),
+                delta: items[0].delta,
+                reason: items[0].reason,
+                timestamp: items[0].timestamp,
+                records: items  // 保留原始记录，供后续可能使用
+            });
+        }
+        return merged;
+    }
+
     async function loadReasons() {
         try {
             allReasons = await fetchReasons();
@@ -105,17 +127,19 @@
             tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">暂无记录</td></tr>';
             return;
         }
-        const sorted = [...reasonsArray].sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
-        sorted.forEach(r => {
+        // 先合并
+        const merged = mergeReasons(reasonsArray);
+        const sorted = merged.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
+        sorted.forEach(g => {
             const row = tbody.insertRow();
-            row.insertCell(0).innerText = r.timestamp;
-            row.insertCell(1).innerText = r.studentId;
-            row.insertCell(2).innerText = r.studentName;
+            row.insertCell(0).innerText = g.timestamp;
+            row.insertCell(1).innerText = g.ids.join('、');
+            row.insertCell(2).innerText = g.names.join('、');
             const deltaCell = row.insertCell(3);
-            const deltaVal = parseFloat(r.delta);
+            const deltaVal = parseFloat(g.delta);
             deltaCell.innerText = (deltaVal > 0 ? "+" : "") + deltaVal.toFixed(2);
             deltaCell.className = deltaVal > 0 ? "score-add" : "score-sub";
-            row.insertCell(4).innerText = r.reason;
+            row.insertCell(4).innerText = g.reason;
         });
     }
 
@@ -125,7 +149,8 @@
         const startDate = document.getElementById("filterDateStart").value;
         const endDate = document.getElementById("filterDateEnd").value;
 
-        filteredReasons = allReasons.filter(r => {
+        // 先筛选原始数据
+        let filteredRaw = allReasons.filter(r => {
             if (keyword) {
                 const matchId = r.studentId.toLowerCase().includes(keyword);
                 const matchName = r.studentName.toLowerCase().includes(keyword);
@@ -137,9 +162,9 @@
             if (endDate && recordDate > endDate) return false;
             return true;
         });
-        renderTable(filteredReasons);
+        // 然后合并渲染
+        renderTable(filteredRaw);
     }
-
     function resetFilters() {
         document.getElementById("filterNameId").value = "";
         document.getElementById("filterReason").value = "";
