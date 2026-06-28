@@ -5534,5 +5534,54 @@
     "delta": 3,
     "reason": "管理纪律半小时~(‾⌣‾~)2 (低于-45，+50%)",
     "id": "2026-06-26 22:06:14_019_3"
+  },
+  {
+    "timestamp": "2026-06-28 22:01:24",
+    "studentId": "008",
+    "studentName": "王李婧",
+    "delta": -4,
+    "reason": "未静班（组员）(¬▂¬)"
+  },
+  {
+    "timestamp": "2026-06-28 22:01:24",
+    "studentId": "020",
+    "studentName": "姚奇胜",
+    "delta": -2.6666666666666665,
+    "reason": "未静班（组员）(¬▂¬) (低于-45，扣分/1.5)"
+  },
+  {
+    "timestamp": "2026-06-28 22:01:24",
+    "studentId": "026",
+    "studentName": "潘烨磊",
+    "delta": -2.6666666666666665,
+    "reason": "未静班（组员）(¬▂¬) (低于-45，扣分/1.5)"
+  },
+  {
+    "timestamp": "2026-06-28 22:01:24",
+    "studentId": "037",
+    "studentName": "陈昀泽",
+    "delta": -4,
+    "reason": "未静班（组员）(¬▂¬)"
+  },
+  {
+    "timestamp": "2026-06-28 22:01:24",
+    "studentId": "041",
+    "studentName": "童清扬",
+    "delta": -4,
+    "reason": "未静班（组员）(¬▂¬)"
+  },
+  {
+    "timestamp": "2026-06-28 22:01:24",
+    "studentId": "042",
+    "studentName": "闫之诺",
+    "delta": -4,
+    "reason": "未静班（组员）(¬▂¬)"
+  },
+  {
+    "timestamp": "2026-06-28 22:01:24",
+    "studentId": "047",
+    "studentName": "曾子轩",
+    "delta": -4,
+    "reason": "未静班（组员）(¬▂¬)"
   }
 ]
