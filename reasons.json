@@ -5667,5 +5667,19 @@
     "studentName": "朱熙元",
     "delta": -2.504,
     "reason": "628迟到@_@( 分界运算 )"
+  },
+  {
+    "timestamp": "2026-06-30 21:53:00",
+    "studentId": "001",
+    "studentName": "沈乐妍",
+    "delta": -3,
+    "reason": "629迟到@_@"
+  },
+  {
+    "timestamp": "2026-06-30 21:53:00",
+    "studentId": "017",
+    "studentName": "黄智恒",
+    "delta": -2.4,
+    "reason": "629迟到@_@ (低于-38，扣分/1.25)"
   }
 ]
