@@ -5758,5 +5758,40 @@
     "studentName": "胡凯琳",
     "delta": 1,
     "reason": "管理纪律半小时~(‾⌣‾~)"
+  },
+  {
+    "timestamp": "2026-07-01 21:50:20",
+    "studentId": "002",
+    "studentName": "胡凯琳",
+    "delta": -6,
+    "reason": "纪律差٩◔̯◔۶ 哼"
+  },
+  {
+    "timestamp": "2026-07-01 21:50:20",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": -4,
+    "reason": "纪律差٩◔̯◔۶ 哼 (低于-45，扣分/1.5)"
+  },
+  {
+    "timestamp": "2026-07-01 21:50:20",
+    "studentId": "033",
+    "studentName": "应扎吉",
+    "delta": -6,
+    "reason": "纪律差٩◔̯◔۶ 哼"
+  },
+  {
+    "timestamp": "2026-07-01 21:50:20",
+    "studentId": "035",
+    "studentName": "冯丰硕",
+    "delta": -4,
+    "reason": "纪律差٩◔̯◔۶ 哼 (低于-45，扣分/1.5)"
+  },
+  {
+    "timestamp": "2026-07-01 21:50:20",
+    "studentId": "037",
+    "studentName": "陈昀泽",
+    "delta": -6,
+    "reason": "纪律差٩◔̯◔۶ 哼"
   }
 ]
