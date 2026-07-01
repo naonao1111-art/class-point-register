@@ -1,5 +1,5 @@
 {
-  "lastDailyCheck": 1782827415434,
+  "lastDailyCheck": 1782913767847,
   "stopped": false,
   "lastSundayBonus": 1782655387485,
   "lowScoreStudents": {
@@ -13,15 +13,15 @@
     },
     "035": {
       "startDate": "2026-07-01",
-      "daysAdded": 0
+      "daysAdded": 1
     },
     "019": {
       "startDate": "2026-07-01",
-      "daysAdded": 0
+      "daysAdded": 1
     },
     "029": {
       "startDate": "2026-07-01",
-      "daysAdded": 0
+      "daysAdded": 1
     }
   }
 }
