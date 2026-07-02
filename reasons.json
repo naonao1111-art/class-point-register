@@ -5940,5 +5940,68 @@
     "studentName": "刘博凯",
     "delta": -10.2656,
     "reason": "打牌或五子棋( 分界运算 )"
+  },
+  {
+    "timestamp": "2026-07-02 22:03:06",
+    "studentId": "014",
+    "studentName": "姚腾浩",
+    "delta": 3,
+    "reason": "参与学校拍摄"
+  },
+  {
+    "timestamp": "2026-07-02 22:03:06",
+    "studentId": "017",
+    "studentName": "黄智恒",
+    "delta": 3.9117283950617288,
+    "reason": "参与学校拍摄( 分界运算 )"
+  },
+  {
+    "timestamp": "2026-07-02 22:03:06",
+    "studentId": "024",
+    "studentName": "沈天辰",
+    "delta": 3.922681481481482,
+    "reason": "参与学校拍摄( 分界运算 )"
+  },
+  {
+    "timestamp": "2026-07-02 22:03:06",
+    "studentId": "025",
+    "studentName": "俞齐",
+    "delta": 3,
+    "reason": "参与学校拍摄"
+  },
+  {
+    "timestamp": "2026-07-02 22:03:06",
+    "studentId": "027",
+    "studentName": "吕峥程",
+    "delta": 3,
+    "reason": "参与学校拍摄"
+  },
+  {
+    "timestamp": "2026-07-02 22:03:06",
+    "studentId": "038",
+    "studentName": "方鸣扬",
+    "delta": 3,
+    "reason": "参与学校拍摄"
+  },
+  {
+    "timestamp": "2026-07-02 22:03:06",
+    "studentId": "039",
+    "studentName": "胡宵",
+    "delta": 3,
+    "reason": "参与学校拍摄"
+  },
+  {
+    "timestamp": "2026-07-02 22:03:06",
+    "studentId": "045",
+    "studentName": "范晟轩",
+    "delta": 3,
+    "reason": "参与学校拍摄"
+  },
+  {
+    "timestamp": "2026-07-02 22:03:06",
+    "studentId": "047",
+    "studentName": "曾子轩",
+    "delta": 3,
+    "reason": "参与学校拍摄"
   }
 ]
