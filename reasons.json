@@ -5891,5 +5891,12 @@
     "studentName": "陈静怡",
     "delta": -5,
     "reason": "玩电子手表"
+  },
+  {
+    "timestamp": "2026-07-02 21:59:05",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": -2,
+    "reason": "吃零食 (低于-45，扣分/1.5)"
   }
 ]
