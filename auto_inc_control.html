@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>自动补分单独控制</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f7fa; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        h1 { color: #2c3e50; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+        th { background: #eef; }
+        .back-link { display: inline-block; margin-bottom: 15px; color: #2196F3; text-decoration: none; }
+        .back-link:hover { text-decoration: underline; }
+        .btn { padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; }
+        .btn-save { background: #4CAF50; color: white; }
+        .btn-save:hover { background: #45a049; }
+        .status-active { color: green; font-weight: bold; }
+        .status-disabled { color: red; }
+        .error { color: red; }
+        .success { color: green; }
+        .login-area { background: #f0f2f5; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
+        .login-area input { padding: 8px; font-size: 16px; border: 1px solid #ccc; border-radius: 6px; width: 200px; }
+        .login-area button { padding: 6px 12px; background: #2196F3; color: white; border: none; border-radius: 6px; cursor: pointer; }
+        .filter-group { margin: 10px 0; }
+        .filter-group input { padding: 5px; width: 200px; }
+        input[type="number"] { width: 60px; padding: 4px; }
+        input[type="checkbox"] { transform: scale(1.2); }
+    </style>
+</head>
+<body>
+<div class="container" id="loginPanel">
+    <h2>管理员登录</h2>
+    <div class="login-area">
+        <label>后台密码: </label>
+        <input type="password" id="adminPwd" placeholder="密码">
+        <button id="loginBtn">登录</button>
+        <p id="loginMsg" class="error"></p>
+    </div>
+</div>
+
+<div class="container" id="mainPanel" style="display:none;">
+    <a href="admin.html" class="back-link">← 返回管理后台</a>
+    <h1>🤖 低分补分单独控制</h1>
+    <p>可单独启用/禁用每个学生的补分，并手动调整已补天数。</p>
+    <div style="margin: 10px 0;">
+        <button id="saveAllBtn" class="btn btn-save">保存所有更改</button>
+        <span id="saveMsg" style="margin-left: 10px;"></span>
+    </div>
+    <table id="trackTable">
+        <thead>
+            <tr>
+                <th>学号</th>
+                <th>姓名</th>
+                <th>当前积分</th>
+                <th>开始日期</th>
+                <th>已补天数</th>
+                <th>启用补分</th>
+                <th>状态</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<script>
+    // ========== 配置与工具 ==========
+    const REPO_OWNER = "naonao1111-art";
+    const REPO_NAME = "class-point-register";
+    const DATA_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data.json`;
+    const AUTO_TRACK_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/auto_increment_tracker.json`;
+    const ADMIN_PASSWORD_HASH = "5c3eb3d2447712b1867351e3b3cbedb4ac010a1f834b5fe38b7e26f22dcda386";
+
+    let CONFIG = { github_token: "" };
+    let currentStudents = [];
+    let autoTracker = { lowScoreStudents: {} };
+    let trackerCopy = {}; // 用于编辑的副本
+
+    function decodeToken(obfuscated) {
+        if (!obfuscated) return "";
+        const reversed = obfuscated.split('').reverse().join('');
+        const shifted = atob(reversed);
+        return shifted.split('').map(c => String.fromCharCode(c.charCodeAt(0) - 1)).join('');
+    }
+
+    function base64DecodeToUtf8(base64Str) {
+        const binaryStr = atob(base64Str);
+        const bytes = new Uint8Array(binaryStr.length);
+        for (let i = 0; i < binaryStr.length; i++) bytes[i] = binaryStr.charCodeAt(i);
+        return new TextDecoder('utf-8').decode(bytes);
+    }
+    function utf8ToBase64(str) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(str);
+        let binary = '';
+        for (let i = 0; i < data.length; i++) binary += String.fromCharCode(data[i]);
+        return btoa(binary);
+    }
+
+    async function sha256(message) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(message);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    }
+
+    async function loadConfig() {
+        try {
+            const resp = await fetch(
+                "https://naonao1111-art.github.io/class-point-register/config_encoded.json?t=" + Date.now(),
+                { cache: "no-store" }
+            );
+            if (resp.ok) {
+                const config = await resp.json();
+                CONFIG.github_token = decodeToken(config.github_token_obfuscated || "");
+            }
+        } catch(e) { console.error(e); }
+    }
+
+    async function fetchJSON(url) {
+        const token = CONFIG.github_token;
+        const headers = token ? { Authorization: `token ${token}` } : {};
+        const resp = await fetch(url, { headers, cache: 'no-store' });
+        if (resp.status === 404) return null;
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data = await resp.json();
+        return JSON.parse(base64DecodeToUtf8(data.content));
+    }
+
+    async function saveJSON(url, content, message) {
+        let sha = null;
+        try {
+            const res = await fetch(url, { headers: { Authorization: `token ${CONFIG.github_token}` } });
+            if (res.ok) sha = (await res.json()).sha;
+        } catch(e) {}
+        const payload = {
+            message: message,
+            content: utf8ToBase64(JSON.stringify(content, null, 2)),
+            sha: sha
+        };
+        const resp = await fetch(url, {
+            method: "PUT",
+            headers: { Authorization: `token ${CONFIG.github_token}`, "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+        if (!resp.ok) throw new Error("保存失败");
+    }
+
+    async function loadData() {
+        const data = await fetchJSON(DATA_URL);
+        currentStudents = (data?.students || []).map(s => ({ ...s, score: parseFloat(s.score) }));
+        const tracker = await fetchJSON(AUTO_TRACK_URL);
+        if (tracker) {
+            autoTracker = tracker;
+            if (!autoTracker.lowScoreStudents) autoTracker.lowScoreStudents = {};
+        } else {
+            autoTracker = { lowScoreStudents: {} };
+        }
+        // 复制一份用于编辑
+        trackerCopy = JSON.parse(JSON.stringify(autoTracker.lowScoreStudents));
+    }
+
+    function renderTable() {
+        const tbody = document.querySelector("#trackTable tbody");
+        tbody.innerHTML = "";
+        const studentMap = {};
+        currentStudents.forEach(s => studentMap[s.id] = s);
+
+        for (let sid in trackerCopy) {
+            const info = trackerCopy[sid];
+            const student = studentMap[sid];
+            const name = student ? student.name : '(已删除)';
+            const score = student ? student.score.toFixed(2) : 'N/A';
+            const startDate = info.startDate || '未知';
+            const daysAdded = info.daysAdded || 0;
+            const enabled = info.enabled !== false; // 默认为 true
+
+            const row = tbody.insertRow();
+            row.insertCell(0).innerText = sid;
+            row.insertCell(1).innerText = name;
+            row.insertCell(2).innerText = score;
+            row.insertCell(3).innerText = startDate;
+            // 天数输入
+            const daysCell = row.insertCell(4);
+            const inputDays = document.createElement('input');
+            inputDays.type = 'number';
+            inputDays.min = 0;
+            inputDays.max = 7;
+            inputDays.value = daysAdded;
+            inputDays.style.width = '60px';
+            inputDays.dataset.sid = sid;
+            inputDays.addEventListener('change', () => {
+                const val = parseInt(inputDays.value);
+                if (isNaN(val) || val < 0) inputDays.value = 0;
+                if (val > 7) inputDays.value = 7;
+                trackerCopy[sid].daysAdded = parseInt(inputDays.value);
+            });
+            daysCell.appendChild(inputDays);
+
+            // 启用复选框
+            const chkCell = row.insertCell(5);
+            const chk = document.createElement('input');
+            chk.type = 'checkbox';
+            chk.checked = enabled;
+            chk.dataset.sid = sid;
+            chk.addEventListener('change', () => {
+                trackerCopy[sid].enabled = chk.checked;
+            });
+            chkCell.appendChild(chk);
+
+            // 状态
+            const statusCell = row.insertCell(6);
+            const statusText = enabled ? (daysAdded < 7 ? '补分中' : '已完成') : '已禁用';
+            const color = enabled ? (daysAdded < 7 ? 'green' : 'orange') : 'red';
+            statusCell.innerHTML = `<span style="color:${color};font-weight:bold;">${statusText}</span>`;
+        }
+        if (Object.keys(trackerCopy).length === 0) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#999;">暂无低分补分追踪记录</td></tr>';
+        }
+    }
+
+    async function saveAllChanges() {
+        try {
+            // 将编辑后的 trackerCopy 写回 autoTracker
+            autoTracker.lowScoreStudents = trackerCopy;
+            await saveJSON(AUTO_TRACK_URL, autoTracker, "更新低分补分单独控制");
+            document.getElementById("saveMsg").innerText = "保存成功！";
+            document.getElementById("saveMsg").className = "success";
+            // 重新加载数据以反映最新
+            await loadData();
+            renderTable();
+        } catch(err) {
+            document.getElementById("saveMsg").innerText = "保存失败：" + err.message;
+            document.getElementById("saveMsg").className = "error";
+        }
+    }
+
+    // ========== 登录 ==========
+    document.getElementById("loginBtn").onclick = async () => {
+        await loadConfig();
+        const pwd = document.getElementById("adminPwd").value;
+        const pwdHash = await sha256(pwd);
+        if (pwdHash !== ADMIN_PASSWORD_HASH) {
+            document.getElementById("loginMsg").innerText = "密码错误";
+            return;
+        }
+        if (!CONFIG.github_token) {
+            document.getElementById("loginMsg").innerText = "无法读取Token，请检查配置";
+            return;
+        }
+        try {
+            await loadData();
+            document.getElementById("loginPanel").style.display = "none";
+            document.getElementById("mainPanel").style.display = "block";
+            renderTable();
+            document.getElementById("saveAllBtn").onclick = saveAllChanges;
+        } catch(err) {
+            document.getElementById("loginMsg").innerText = "加载数据失败：" + err.message;
+        }
+    };
+</script>
+</body>
+</html>
