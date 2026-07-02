@@ -6003,5 +6003,12 @@
     "studentName": "曾子轩",
     "delta": 3,
     "reason": "参与学校拍摄"
+  },
+  {
+    "timestamp": "2026-07-02 22:03:25",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": 6.75,
+    "reason": "管理晚自习2.5个小时 (低于-45，+35%)"
   }
 ]
