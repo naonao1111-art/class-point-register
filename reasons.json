@@ -6080,5 +6080,12 @@
     "studentName": "刘昊",
     "delta": -2,
     "reason": "晚自习随意进出"
+  },
+  {
+    "timestamp": "2026-07-02 22:10:33",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": -2,
+    "reason": "电器没关ε-(≖д≖﹆) (低于-45，扣分/1.5)"
   }
 ]
