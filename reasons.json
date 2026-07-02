@@ -5905,5 +5905,40 @@
     "studentName": "姚竣豪",
     "delta": -36.67857142857143,
     "reason": "打牌*2，玩五子棋*2，自习课聊天*2，别班同学来找*2( 分界运算 )"
+  },
+  {
+    "timestamp": "2026-07-02 22:01:33",
+    "studentId": "012",
+    "studentName": "郑智程",
+    "delta": -12,
+    "reason": "打牌或五子棋"
+  },
+  {
+    "timestamp": "2026-07-02 22:01:33",
+    "studentId": "018",
+    "studentName": "苏义涵",
+    "delta": -12,
+    "reason": "打牌或五子棋"
+  },
+  {
+    "timestamp": "2026-07-02 22:01:33",
+    "studentId": "024",
+    "studentName": "沈天辰",
+    "delta": -9.6312,
+    "reason": "打牌或五子棋( 分界运算 )"
+  },
+  {
+    "timestamp": "2026-07-02 22:01:33",
+    "studentId": "026",
+    "studentName": "潘烨磊",
+    "delta": -8,
+    "reason": "打牌或五子棋 (低于-45，扣分/1.5)"
+  },
+  {
+    "timestamp": "2026-07-02 22:01:33",
+    "studentId": "031",
+    "studentName": "刘博凯",
+    "delta": -10.2656,
+    "reason": "打牌或五子棋( 分界运算 )"
   }
 ]
