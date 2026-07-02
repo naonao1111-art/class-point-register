@@ -5852,5 +5852,12 @@
     "studentName": "濮天昊",
     "delta": 2,
     "reason": "低分持续补分（第2天）"
+  },
+  {
+    "timestamp": "2026-07-02 21:52:41",
+    "studentId": "035",
+    "studentName": "冯丰硕",
+    "delta": -4,
+    "reason": "修改积分为 -53.88"
   }
 ]
