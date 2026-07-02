@@ -6052,5 +6052,33 @@
     "studentName": "朱熙元",
     "delta": -8.649333333333335,
     "reason": "纪律差٩◔̯◔۶ 哼*2( 分界运算 )"
+  },
+  {
+    "timestamp": "2026-07-02 22:09:53",
+    "studentId": "017",
+    "studentName": "黄智恒",
+    "delta": -1.6,
+    "reason": "晚自习随意进出 (低于-38，扣分/1.25)"
+  },
+  {
+    "timestamp": "2026-07-02 22:09:53",
+    "studentId": "020",
+    "studentName": "姚奇胜",
+    "delta": -1.3333333333333333,
+    "reason": "晚自习随意进出 (低于-45，扣分/1.5)"
+  },
+  {
+    "timestamp": "2026-07-02 22:09:53",
+    "studentId": "025",
+    "studentName": "俞齐",
+    "delta": -2,
+    "reason": "晚自习随意进出"
+  },
+  {
+    "timestamp": "2026-07-02 22:09:53",
+    "studentId": "046",
+    "studentName": "刘昊",
+    "delta": -2,
+    "reason": "晚自习随意进出"
   }
 ]
