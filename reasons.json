@@ -5859,5 +5859,12 @@
     "studentName": "冯丰硕",
     "delta": -4,
     "reason": "修改积分为 -53.88"
+  },
+  {
+    "timestamp": "2026-07-02 21:52:59",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": -4,
+    "reason": "修改积分为 -53.32"
   }
 ]
