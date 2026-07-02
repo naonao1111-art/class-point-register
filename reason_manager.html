@@ -17,18 +17,40 @@
         .filter-group { margin: 10px 0; }
         .error { color: red; }
         .success { color: green; }
+        .login-area { background: #f0f2f5; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
+        .login-area input { padding: 8px; font-size: 16px; border: 1px solid #ccc; border-radius: 6px; width: 200px; }
+        .login-area button { padding: 6px 12px; background: #2196F3; color: white; border: none; border-radius: 6px; cursor: pointer; }
     </style>
 </head>
 <body>
-<div class="container">
+<div class="container" id="loginPanel">
+    <h2>管理员登录</h2>
+    <div class="login-area">
+        <label>后台密码: </label>
+        <input type="password" id="adminPwd" placeholder="密码">
+        <button id="loginBtn">登录</button>
+        <p id="loginMsg" class="error"></p>
+    </div>
+</div>
+
+<div class="container" id="mainPanel" style="display:none;">
     <a href="admin.html" class="back-link">← 返回管理后台</a>
     <h1>积分变化记录管理</h1>
     <p>撤销记录均需要管理员密码。操作成功后页面将自动刷新。</p>
+
     <div class="filter-group">
         <input type="text" id="filterText" placeholder="学号/姓名/原因关键词" style="width: 250px;">
         <button id="filterBtn">筛选</button>
         <button id="resetFilterBtn">重置</button>
         <button id="revokeSelectedBtn" style="background:#f44336; color:white; margin-left:10px;">撤销选中记录</button>
+    </div>
+
+    <div style="margin: 15px 0; background: #f9f9f9; padding: 10px; border-radius: 5px;">
+        <strong>批量替换原因关键词：</strong>
+        <input type="text" id="findText" placeholder="查找文本" style="width: 150px; padding: 5px;">
+        <input type="text" id="replaceText" placeholder="替换为" style="width: 150px; padding: 5px;">
+        <button id="replaceBtn" style="background: #ff9800; color: white; border: none; padding: 5px 15px; border-radius: 4px; cursor: pointer;">替换</button>
+        <span id="replaceMsg" style="margin-left: 10px;"></span>
     </div>
 
     <div style="overflow-x:auto;">
@@ -42,6 +64,7 @@
 </div>
 
 <script>
+    // ========== 配置与常量 ==========
     const REPO_OWNER = "naonao1111-art";
     const REPO_NAME = "class-point-register";
     const DATA_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data.json`;
@@ -51,7 +74,9 @@
     let allReasons = [];
     let currentStudents = [];
     let filteredReasons = [];
+    let CONFIG = { github_token: "" };
 
+    // ========== 工具函数 ==========
     function base64DecodeToUtf8(base64Str) {
         const binaryStr = atob(base64Str);
         const bytes = new Uint8Array(binaryStr.length);
@@ -70,16 +95,16 @@
         const data = encoder.encode(message);
         const hashBuffer = await crypto.subtle.digest('SHA-256', data);
         const hashArray = Array.from(new Uint8Array(hashBuffer));
-        return hashArray.map(b => b.toString(16).padStart(2,'0')).join('');
+        return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     }
 
-    let CONFIG = { github_token: "" };
     function decodeToken(obf) {
         if (!obf) return "";
         const reversed = obf.split('').reverse().join('');
         const shifted = atob(reversed);
         return shifted.split('').map(c => String.fromCharCode(c.charCodeAt(0)-1)).join('');
     }
+
     async function loadConfig() {
         const resp = await fetch("https://naonao1111-art.github.io/class-point-register/config_encoded.json?t="+Date.now());
         if (resp.ok) {
@@ -112,6 +137,21 @@
         if (!resp.ok) throw new Error("保存失败");
     }
 
+    // ========== 数据加载 ==========
+    async function loadData() {
+        const data = await fetchJSON(DATA_URL);
+        currentStudents = (data?.students || []).map(s => ({ ...s, score: parseFloat(s.score) }));
+        const reasons = await fetchJSON(REASONS_URL);
+        allReasons = reasons || [];
+        for (let i = 0; i < allReasons.length; i++) {
+            if (!allReasons[i].id) {
+                allReasons[i].id = `${allReasons[i].timestamp}_${allReasons[i].studentId}_${allReasons[i].delta}`;
+            }
+        }
+        filteredReasons = [...allReasons];
+    }
+
+    // ========== 合并与渲染 ==========
     function mergeReasons(reasons) {
         const groups = {};
         reasons.forEach(r => {
@@ -128,31 +168,17 @@
                 delta: items[0].delta,
                 reason: items[0].reason,
                 timestamp: items[0].timestamp,
-                records: items  // 保留原始记录，供后续可能使用
+                records: items
             });
         }
         return merged;
     }
-    async function loadData() {
-        const data = await fetchJSON(DATA_URL);
-        currentStudents = (data?.students || []).map(s => ({ ...s, score: parseFloat(s.score) }));
-        const reasons = await fetchJSON(REASONS_URL);
-        allReasons = reasons || [];
-        // 为每条记录生成唯一 ID（若没有则生成）
-        for (let i = 0; i < allReasons.length; i++) {
-            if (!allReasons[i].id) {
-                allReasons[i].id = `${allReasons[i].timestamp}_${allReasons[i].studentId}_${allReasons[i].delta}`;
-            }
-        }
-        filteredReasons = [...allReasons];
-    }
 
-    let mergedGroups = []; // 存储当前显示的合并组
+    let mergedGroups = [];
 
     function renderTable() {
         const tbody = document.querySelector("#reasonsManageTable tbody");
         tbody.innerHTML = "";
-        // 先合并 filteredReasons
         mergedGroups = mergeReasons(filteredReasons);
         const sorted = mergedGroups.sort((a,b) => new Date(b.timestamp) - new Date(a.timestamp));
         sorted.forEach(g => {
@@ -168,15 +194,12 @@
             inputReason.style.width = "200px";
             inputReason.className = "edit-input";
             reasonCell.appendChild(inputReason);
-            // 操作列：编辑按钮、撤销按钮（单条）、复选框
             const btnCell = row.insertCell(5);
-            // 保留编辑单个原因的功能（编辑该组所有记录的原因？用户可能只想编辑一条，但合并后编辑会改所有，我们可保留单个记录编辑，但最好也支持批量，此处简单处理：点击保存时修改该组所有记录的 reason）
             const saveBtn = document.createElement("button");
             saveBtn.innerText = "保存原因";
             saveBtn.className = "save-btn";
             saveBtn.onclick = () => saveGroupReason(g, inputReason.value);
             btnCell.appendChild(saveBtn);
-            // 复选框
             const chk = document.createElement("input");
             chk.type = "checkbox";
             chk.className = "group-checkbox";
@@ -186,7 +209,6 @@
         });
     }
 
-    // 保存组原因：修改该组所有记录的原因
     async function saveGroupReason(group, newReason) {
         for (let r of group.records) {
             r.reason = newReason;
@@ -199,61 +221,13 @@
             alert("保存失败：" + err.message);
         }
     }
-    // 保存编辑后的原因
-    async function saveReason(recordId, newReason) {
 
-        const record = allReasons.find(r => r.id === recordId);
-        if (!record) {
-            alert("记录不存在");
-            return;
-        }
-        record.reason = newReason;
-        try {
-            await saveJSON(REASONS_URL, allReasons, "编辑原因");
-            alert("原因已保存，页面将刷新");
-            location.reload();
-        } catch(err) {
-            alert("保存失败：" + err.message);
-        }
-    }
-
-    // 撤销记录
-    async function confirmRevoke(recordId) {
-        const record = allReasons.find(r => r.id === recordId);
-        if (!record) {
-            alert("记录不存在");
-            return;
-        }
-        if (!confirm(`确定撤销此记录吗？\n学生：${record.studentName}(${record.studentId})\n变化：${record.delta>0?"+":""}${record.delta}\n原因：${record.reason}\n撤销后将恢复分数并永久删除该记录。`)) return;
-
-        const pwd = prompt("请输入管理员密码");
-        if (!pwd) return;
-        const pwdHash = await sha256(pwd);
-        if (pwdHash !== ADMIN_PASSWORD_HASH) {
-            alert("密码错误，操作取消");
-            return;
-        }
-
-        // 恢复学生分数
-        const student = currentStudents.find(s => s.id === record.studentId);
-        if (student) {
-            student.score -= record.delta;
-            student.score = parseFloat(student.score.toFixed(2));
-            await saveJSON(DATA_URL, { students: currentStudents }, "撤销操作恢复分数");
-        }
-
-        // 删除该条原因记录
-        const newReasons = allReasons.filter(r => r.id !== recordId);
-        await saveJSON(REASONS_URL, newReasons, "撤销操作删除记录");
-        alert("撤销成功！页面将刷新");
-        location.reload();
-    }
-
+    // ========== 筛选 ==========
     function applyFilter() {
         const keyword = document.getElementById("filterText").value.trim().toLowerCase();
         if (!keyword) filteredReasons = [...allReasons];
         else {
-            filteredReasons = allReasons.filter(r => 
+            filteredReasons = allReasons.filter(r =>
                 r.studentId.toLowerCase().includes(keyword) ||
                 r.studentName.toLowerCase().includes(keyword) ||
                 r.reason.toLowerCase().includes(keyword)
@@ -262,6 +236,7 @@
         renderTable();
     }
 
+    // ========== 批量撤销 ==========
     document.getElementById("revokeSelectedBtn").onclick = async () => {
         const checkboxes = document.querySelectorAll(".group-checkbox:checked");
         if (checkboxes.length === 0) {
@@ -284,7 +259,6 @@
             return;
         }
 
-        // 先恢复所有分数
         for (let id of allIds) {
             const record = allReasons.find(r => r.id === id);
             if (!record) continue;
@@ -294,7 +268,6 @@
                 student.score = parseFloat(student.score.toFixed(2));
             }
         }
-        // 再统一删除记录
         allReasons = allReasons.filter(r => !allIds.includes(r.id));
 
         await saveJSON(DATA_URL, { students: currentStudents }, "撤销操作恢复分数");
@@ -303,11 +276,67 @@
         location.reload();
     };
 
-    (async () => {
+    // ========== 批量替换原因 ==========
+    document.getElementById("replaceBtn").onclick = async () => {
+        const find = document.getElementById("findText").value.trim();
+        const replace = document.getElementById("replaceText").value;
+        if (!find) { alert("请输入要查找的文本"); return; }
+        if (!confirm(`确定要将所有原因中的 "${find}" 替换为 "${replace}" 吗？`)) return;
+        const pwd = prompt("请输入管理员密码");
+        if (!pwd) return;
+        const pwdHash = await sha256(pwd);
+        if (pwdHash !== ADMIN_PASSWORD_HASH) {
+            alert("密码错误，操作取消");
+            return;
+        }
+        let count = 0;
+        for (let r of allReasons) {
+            if (r.reason.includes(find)) {
+                r.reason = r.reason.replaceAll(find, replace);
+                count++;
+            }
+        }
+        if (count === 0) {
+            document.getElementById("replaceMsg").innerText = "未找到匹配项";
+            return;
+        }
+        try {
+            await saveJSON(REASONS_URL, allReasons, "批量替换原因关键词");
+            document.getElementById("replaceMsg").innerText = `成功替换 ${count} 条记录，页面刷新中...`;
+            location.reload();
+        } catch(err) {
+            alert("保存失败：" + err.message);
+        }
+    };
+
+    // ========== 登录 ==========
+    document.getElementById("loginBtn").onclick = async () => {
         await loadConfig();
-        await loadData();
-        renderTable();
-    })();
+        const pwd = document.getElementById("adminPwd").value;
+        const pwdHash = await sha256(pwd);
+        if (pwdHash !== ADMIN_PASSWORD_HASH) {
+            document.getElementById("loginMsg").innerText = "密码错误";
+            return;
+        }
+        if (!CONFIG.github_token) {
+            document.getElementById("loginMsg").innerText = "无法读取Token，请检查配置";
+            return;
+        }
+        try {
+            await loadData();
+            document.getElementById("loginPanel").style.display = "none";
+            document.getElementById("mainPanel").style.display = "block";
+            renderTable();
+            document.getElementById("filterBtn").onclick = applyFilter;
+            document.getElementById("resetFilterBtn").onclick = () => {
+                document.getElementById("filterText").value = "";
+                filteredReasons = [...allReasons];
+                renderTable();
+            };
+        } catch(err) {
+            document.getElementById("loginMsg").innerText = "加载数据失败：" + err.message;
+        }
+    };
 </script>
 </body>
 </html>

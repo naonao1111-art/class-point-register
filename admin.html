@@ -40,6 +40,7 @@
             <a href="show_control.html">管理积分规则</a>
             <a href="class_control.html">管理班委</a>
             <a href="reason_manager.html">管理原因记录（撤销/编辑）</a>
+            <a href="auto_inc_control.html">自动补分控制</a>
         </div>
 
         <div class="section">
@@ -166,6 +167,16 @@
                 console.error("Token 解码失败", e);
                 return "";
             }
+        }
+
+        function formatBeijingTime(d) {
+            const y = d.getFullYear();
+            const m = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            const h = String(d.getHours()).padStart(2, '0');
+            const min = String(d.getMinutes()).padStart(2, '0');
+            const s = String(d.getSeconds()).padStart(2, '0');
+            return `${y}-${m}-${day} ${h}:${min}:${s}`;
         }
 
         function getWeekNumber(d) {
@@ -459,7 +470,7 @@
         }
 
         // ============================================================
-        // 7. 积分保护计算（保持不变）
+        // 7. 积分保护计算
         // ============================================================
         function calculateProtectedDelta(currentScore, delta) {
             if (delta === 0) return { actualDelta: 0, remark: ""};
@@ -474,31 +485,31 @@
                     delta = delta + temporery3 / 1.35;
                     actualDelta = delta * 1.25 - temporery3; remark = "( 分界运算 )"
                 }else if (currentScore <= T3) {
-                    actualDelta = delta * 1.35; remark = " (低于-45，+35%)";
+                    actualDelta = delta * 1.35; remark = " (低于-45)";
                 }else if (currentScore <= T2 && currentScore + delta * 1.2 > T2) {
                     delta = delta + temporery2 / 1.2;
                     actualDelta = delta * 1.1 - temporery2 ; remark = "( 分界运算 )";
                 }else if (currentScore <= T2) {
-                    actualDelta = delta * 1.2; remark = " (低于-38，+20%)";
+                    actualDelta = delta * 1.2; remark = " (低于-38)";
                 }else if (currentScore <= T1  && currentScore + delta * 1.1 > T1) {
                     delta = delta + temporery1  / 1.1;
                     actualDelta = delta - temporery1 ; remark = "( 分界运算 )";
                 }else if (currentScore <= T1) {
-                    actualDelta = delta * 1.1; remark = " (低于-30，+10%)";
+                    actualDelta = delta * 1.1; remark = " (低于-30)";
                 }
             } else if (delta < 0) {
                 if (currentScore <= T3) {
-                    actualDelta = delta / 1.5; remark = " (低于-45，扣分/1.5)";
+                    actualDelta = delta / 1.5; remark = " (低于-45)";
                 }else if (currentScore <= T2 && currentScore + delta/ 1.25 <= T3) {
                     delta = delta + temporery3 * 1.25;
                     actualDelta = delta / 1.5 - temporery3; remark = "( 分界运算 )"
                 }else if (currentScore <= T2) {
-                    actualDelta = delta / 1.25; remark = " (低于-38，扣分/1.25)";
+                    actualDelta = delta / 1.25; remark = " (低于-38)";
                 }else if (currentScore <= T1 && currentScore + delta / 1.12 <= T2) {
                     delta = delta + temporery2 * 1.12;
                     actualDelta = delta / 1.25 - temporery2; remark = "( 分界运算 )";
                 }else if (currentScore <= T1) {
-                    actualDelta = delta / 1.12; remark = " (低于-30，扣分/1.12)";
+                    actualDelta = delta / 1.12; remark = " (低于-30)";
                 }else if (currentScore > T1 && currentScore + delta  <= T1) {
                     delta = delta + temporery1 ;
                     actualDelta = delta / 1.12 - temporery1 ; remark = "( 分界运算 )";
@@ -552,8 +563,9 @@
             for (let u of updates) u.student.score = u.newScore;
             await saveStudents();
 
-            const now = new Date();
-            const timestamp = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+            // 使用北京时间
+            const beijingNow = getBeijingNow();
+            const timestamp = formatBeijingTime(beijingNow);
 
             const newRecords = updates.map(u => ({
                 timestamp: timestamp,
@@ -567,7 +579,6 @@
             await saveReasons();
 
             // 检查是否触发低分补分（从 >=-50 变为 <-50）
-            const beijingNow = getBeijingNow();
             let lowScoreTriggered = false;
             for (let u of updates) {
                 if (u.oldScore >= -50 && u.newScore < -50) {
@@ -627,77 +638,89 @@
                 document.getElementById("autoIncStatus").innerHTML = "状态：⏸️ 已停止";
                 return;
             }
+
             const beijingNow = getBeijingNow();
             const todayDate = getBeijingDateStr(beijingNow);
             const lastCheckDate = autoTracker.lastDailyCheck ? getBeijingDateStr(new Date(autoTracker.lastDailyCheck)) : null;
 
-            if (lastCheckDate !== todayDate || window.forceRun) {
-                let updates = [];
+            // 如果今天已经执行过且不是强制运行，则跳过
+            if (lastCheckDate === todayDate && !window.forceRun) {
+                document.getElementById("autoIncStatus").innerHTML = `状态：✅ 运行中（今日已补分，下次检查：明天）`;
+                return;
+            }
 
-                // ---- 1. 低分持续补分（每天+2，连续7天，不受倍率，北京时间） ----
-                for (let student of currentStudents) {
-                    if (student.score < -50) {
-                        let tracker = autoTracker.lowScoreStudents[student.id];
-                        if (!tracker) {
-                            // 如果不存在，说明可能未正确触发，但可以补建一个，但开始日期无法确定，跳过
-                            continue;
-                        }
-                        // 检查是否到了开始日期
-                        if (todayDate < tracker.startDate) continue;
-                        if (tracker.daysAdded < 7) {
-                            // 直接加2分
-                            student.score += 2;
-                            student.score = parseFloat(student.score.toFixed(2));
-                            updates.push({
-                                studentId: student.id,
-                                studentName: student.name,
-                                delta: 2,
-                                reason: "低分持续补分（第" + (tracker.daysAdded + 1) + "天）"
-                            });
-                            tracker.daysAdded++;
-                        }
+            // ---------- 开始执行补分 ----------
+            let updates = [];
+
+            // ---- 1. 低分持续补分（每天+2，连续7天，不受倍率） ----
+            for (let student of currentStudents) {
+                if (student.score < -50) {
+                    let tracker = autoTracker.lowScoreStudents[student.id];
+                    if (!tracker) {
+                        // 如果未初始化，跳过（理论上不应发生）
+                        continue;
+                    }
+                    // 检查开始日期是否已到
+                    if (todayDate < tracker.startDate) continue;
+                    if (tracker.daysAdded < 7) {
+                        // 直接加2分
+                        const oldScore = student.score;
+                        student.score += 2;
+                        student.score = parseFloat(student.score.toFixed(2));
+                        updates.push({
+                            studentId: student.id,
+                            studentName: student.name,
+                            delta: 2,
+                            reason: "低分持续补分（第" + (tracker.daysAdded + 1) + "天）"
+                        });
+                        tracker.daysAdded++;
+                        console.log(`[补分] ${student.id} ${student.name} 第${tracker.daysAdded}天: ${oldScore} -> ${student.score}`);
                     }
                 }
+            }
 
-                // ---- 2. 周日奖励（北京时间周日0点以后执行） ----
-                if (getBeijingWeekday(beijingNow) === 0) { // 周日
-                    const lastSundayDate = autoTracker.lastSundayBonus ? getBeijingDateStr(new Date(autoTracker.lastSundayBonus)) : null;
-                    if (lastSundayDate !== todayDate || window.forceRun) {
-                        const currentWeek = getWeekNumber(beijingNow);
-                        let ratings = {};
-                        try {
-                            const res = await fetchJSON(RATINGS_URL);
-                            if (res.content) ratings = res.content.ratings || {};
-                        } catch(e) { /* ignore */ }
-                        const weekRatings = ratings[currentWeek] || {};
-                        const participants = Object.keys(weekRatings);
-                        if (participants.length > 0) {
-                            for (let sid of participants) {
-                                const student = currentStudents.find(s => s.id === sid);
-                                if (student) {
-                                    const delta = 0.5;
-                                    const { actualDelta, remark } = calculateProtectedDelta(student.score, delta);
-                                    if (actualDelta !== 0) {
-                                        student.score += actualDelta;
-                                        student.score = parseFloat(student.score.toFixed(2));
-                                        updates.push({
-                                            studentId: student.id,
-                                            studentName: student.name,
-                                            delta: actualDelta,
-                                            reason: "周日评价奖励" + remark
-                                        });
-                                    }
+            // ---- 2. 周日奖励（北京时间周日0点以后执行） ----
+            if (getBeijingWeekday(beijingNow) === 0) {
+                const lastSundayDate = autoTracker.lastSundayBonus ? getBeijingDateStr(new Date(autoTracker.lastSundayBonus)) : null;
+                if (lastSundayDate !== todayDate || window.forceRun) {
+                    const currentWeek = getWeekNumber(beijingNow);
+                    let ratings = {};
+                    try {
+                        const res = await fetchJSON(RATINGS_URL);
+                        if (res.content) ratings = res.content.ratings || {};
+                    } catch(e) { /* ignore */ }
+                    const weekRatings = ratings[currentWeek] || {};
+                    const participants = Object.keys(weekRatings);
+                    if (participants.length > 0) {
+                        for (let sid of participants) {
+                            const student = currentStudents.find(s => s.id === sid);
+                            if (student) {
+                                const delta = 0.5;
+                                const { actualDelta, remark } = calculateProtectedDelta(student.score, delta);
+                                if (actualDelta !== 0) {
+                                    student.score += actualDelta;
+                                    student.score = parseFloat(student.score.toFixed(2));
+                                    updates.push({
+                                        studentId: student.id,
+                                        studentName: student.name,
+                                        delta: actualDelta,
+                                        reason: "周日评价奖励" + remark
+                                    });
                                 }
                             }
                         }
-                        autoTracker.lastSundayBonus = beijingNow.getTime();
                     }
+                    autoTracker.lastSundayBonus = beijingNow.getTime();
                 }
+            }
 
-                // 保存更新
-                if (updates.length > 0) {
+            // ---- 保存更新 ----
+            if (updates.length > 0) {
+                try {
+                    // 1. 保存学生积分
                     await saveStudents();
-                    const timestamp = beijingNow.toISOString().slice(0,19).replace('T',' ');
+                    // 2. 保存原因记录（使用北京时间）
+                    const timestamp = formatBeijingTime(beijingNow);
                     for (let u of updates) {
                         currentReasons.push({
                             timestamp: timestamp,
@@ -708,18 +731,24 @@
                         });
                     }
                     await saveReasons();
+                    // 3. 保存 autoTracker（包含 daysAdded 更新）
                     await saveAutoTracker();
                     renderStudentsTable();
                     document.getElementById("adminMsg").innerHTML = `自动补分执行，${updates.length}名学生获得积分调整。`;
+                } catch (err) {
+                    console.error("补分保存失败", err);
+                    document.getElementById("adminMsg").innerHTML = `补分保存失败：${err.message}`;
                 }
-
-                autoTracker.lastDailyCheck = beijingNow.getTime();
-                await saveAutoTracker();
-                document.getElementById("autoIncStatus").innerHTML = `状态：✅ 运行中（上次补分：${beijingNow.toLocaleDateString('zh-CN')}）`;
-                window.forceRun = false;
             } else {
-                document.getElementById("autoIncStatus").innerHTML = `状态：✅ 运行中（今日已补分，下次检查：明天）`;
+                // 即使无更新，也要更新 lastDailyCheck，避免每天重复检查
+                console.log("今日无补分操作");
             }
+
+            // 更新最后检查日期（北京时间）
+            autoTracker.lastDailyCheck = beijingNow.getTime();
+            await saveAutoTracker();
+            document.getElementById("autoIncStatus").innerHTML = `状态：✅ 运行中（上次补分：${beijingNow.toLocaleDateString('zh-CN')}）`;
+            window.forceRun = false;
         }
 
         async function stopAutoIncrement() {
@@ -775,7 +804,6 @@
             if (id !== selectedStudentId && currentStudents.some(s => s.id === id)) { alert("新学号已存在"); return; }
 
             const oldScore = currentStudents[index].score;
-            const oldName = currentStudents[index].name;
             // 更新
             currentStudents[index] = { id, name, score };
             await saveStudents();
@@ -783,8 +811,8 @@
             // 记录修改积分的原因（如果积分变化）
             if (oldScore !== score) {
                 const delta = score - oldScore;
-                const now = new Date();
-                const timestamp = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}:${String(now.getSeconds()).padStart(2,'0')}`;
+                const beijingNow = getBeijingNow();
+                const timestamp = formatBeijingTime(beijingNow);
                 currentReasons.push({
                     timestamp: timestamp,
                     studentId: id,
