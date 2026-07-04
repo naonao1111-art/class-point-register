@@ -6260,5 +6260,47 @@
     "studentName": "胡宵",
     "delta": -6,
     "reason": "未静班（班委）(⋋▂⋌)"
+  },
+  {
+    "timestamp": "2026-07-04 21:59:07",
+    "studentId": "004",
+    "studentName": "叶齐楚",
+    "delta": -5.05272,
+    "reason": "未静班（班委）(⋋▂⋌)( 分界运算 )"
+  },
+  {
+    "timestamp": "2026-07-04 21:59:07",
+    "studentId": "005",
+    "studentName": "沈姚栎",
+    "delta": -6,
+    "reason": "未静班（班委）(⋋▂⋌)"
+  },
+  {
+    "timestamp": "2026-07-04 21:59:07",
+    "studentId": "010",
+    "studentName": "陈静怡",
+    "delta": -6,
+    "reason": "未静班（班委）(⋋▂⋌)"
+  },
+  {
+    "timestamp": "2026-07-04 21:59:07",
+    "studentId": "035",
+    "studentName": "冯丰硕",
+    "delta": -4,
+    "reason": "未静班（班委）(⋋▂⋌) (低于-45)"
+  },
+  {
+    "timestamp": "2026-07-04 21:59:07",
+    "studentId": "045",
+    "studentName": "范晟轩",
+    "delta": -6,
+    "reason": "未静班（班委）(⋋▂⋌)"
+  },
+  {
+    "timestamp": "2026-07-04 21:59:07",
+    "studentId": "046",
+    "studentName": "刘昊",
+    "delta": -6,
+    "reason": "未静班（班委）(⋋▂⋌)"
   }
 ]
