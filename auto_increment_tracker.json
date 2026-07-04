@@ -37,6 +37,10 @@
       "startDate": "2026-07-03",
       "daysAdded": 0,
       "enabled": false
+    },
+    "040": {
+      "startDate": "2026-07-05",
+      "daysAdded": 0
     }
   }
 }
