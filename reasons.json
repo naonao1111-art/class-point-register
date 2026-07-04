@@ -6204,5 +6204,54 @@
     "studentName": "童清扬",
     "delta": 3,
     "reason": "管理纪律半小时~(‾⌣‾~)*3"
+  },
+  {
+    "timestamp": "2026-07-04 21:58:00",
+    "studentId": "008",
+    "studentName": "王李婧",
+    "delta": -4,
+    "reason": "未静班（组员）(¬▂¬)"
+  },
+  {
+    "timestamp": "2026-07-04 21:58:00",
+    "studentId": "020",
+    "studentName": "姚奇胜",
+    "delta": -2.6884516460905346,
+    "reason": "未静班（组员）(¬▂¬)( 分界运算 )"
+  },
+  {
+    "timestamp": "2026-07-04 21:58:00",
+    "studentId": "026",
+    "studentName": "潘烨磊",
+    "delta": -2.6666666666666665,
+    "reason": "未静班（组员）(¬▂¬) (低于-45)"
+  },
+  {
+    "timestamp": "2026-07-04 21:58:00",
+    "studentId": "037",
+    "studentName": "陈昀泽",
+    "delta": -4,
+    "reason": "未静班（组员）(¬▂¬)"
+  },
+  {
+    "timestamp": "2026-07-04 21:58:00",
+    "studentId": "041",
+    "studentName": "童清扬",
+    "delta": -4,
+    "reason": "未静班（组员）(¬▂¬)"
+  },
+  {
+    "timestamp": "2026-07-04 21:58:00",
+    "studentId": "042",
+    "studentName": "闫之诺",
+    "delta": -4,
+    "reason": "未静班（组员）(¬▂¬)"
+  },
+  {
+    "timestamp": "2026-07-04 21:58:00",
+    "studentId": "047",
+    "studentName": "曾子轩",
+    "delta": -4,
+    "reason": "未静班（组员）(¬▂¬)"
   }
 ]
