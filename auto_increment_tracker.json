@@ -10,8 +10,8 @@
     },
     "050": {
       "startDate": "2026-06-24",
-      "daysAdded": 7,
-      "enabled": false
+      "daysAdded": 0,
+      "enabled": true
     },
     "035": {
       "startDate": "2026-07-03",
@@ -40,11 +40,13 @@
     },
     "040": {
       "startDate": "2026-07-05",
-      "daysAdded": 0
+      "daysAdded": 0,
+      "enabled": false
     },
     "031": {
       "startDate": "2026-07-05",
-      "daysAdded": 0
+      "daysAdded": 0,
+      "enabled": false
     }
   }
 }
