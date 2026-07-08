@@ -6330,5 +6330,75 @@
     "studentName": "刘博凯",
     "delta": -8.522400000000001,
     "reason": "纪律差٩◔̯◔۶ 哼*2( 分界运算 )"
+  },
+  {
+    "timestamp": "2026-07-08 17:50:53",
+    "studentId": "035",
+    "studentName": "冯丰硕",
+    "delta": 2,
+    "reason": "低分持续补分（第1天）"
+  },
+  {
+    "timestamp": "2026-07-08 17:50:53",
+    "studentId": "019",
+    "studentName": "顾槿宸",
+    "delta": 2,
+    "reason": "低分持续补分（第1天）"
+  },
+  {
+    "timestamp": "2026-07-08 17:50:53",
+    "studentId": "031",
+    "studentName": "刘博凯",
+    "delta": 2,
+    "reason": "低分持续补分（第1天）"
+  },
+  {
+    "timestamp": "2026-07-08 17:50:53",
+    "studentId": "026",
+    "studentName": "潘烨磊",
+    "delta": 2,
+    "reason": "低分持续补分（第1天）"
+  },
+  {
+    "timestamp": "2026-07-08 17:50:53",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": 2,
+    "reason": "低分持续补分（第1天）"
+  },
+  {
+    "timestamp": "2026-07-08 17:50:53",
+    "studentId": "040",
+    "studentName": "朱熙元",
+    "delta": 2,
+    "reason": "低分持续补分（第1天）"
+  },
+  {
+    "timestamp": "2026-07-08 17:50:53",
+    "studentId": "050",
+    "studentName": "测试人员",
+    "delta": 2,
+    "reason": "低分持续补分（第1天）"
+  },
+  {
+    "timestamp": "2026-07-08 17:50:59",
+    "studentId": "035",
+    "studentName": "冯丰硕",
+    "delta": 2,
+    "reason": "低分持续补分（第3天）"
+  },
+  {
+    "timestamp": "2026-07-08 17:50:59",
+    "studentId": "026",
+    "studentName": "潘烨磊",
+    "delta": 2,
+    "reason": "低分持续补分（第3天）"
+  },
+  {
+    "timestamp": "2026-07-08 17:50:59",
+    "studentId": "050",
+    "studentName": "测试人员",
+    "delta": 2,
+    "reason": "低分持续补分（第3天）"
   }
 ]
