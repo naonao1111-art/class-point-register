@@ -5,7 +5,7 @@
   "lowScoreStudents": {
     "049": {
       "startDate": "2026-06-24",
-      "daysAdded": 5,
+      "daysAdded": 7,
       "enabled": false
     },
     "050": {
@@ -15,17 +15,17 @@
     },
     "035": {
       "startDate": "2026-07-03",
-      "daysAdded": 3,
+      "daysAdded": 6,
       "enabled": false
     },
     "019": {
       "startDate": "2026-07-05",
-      "daysAdded": 2,
+      "daysAdded": 4,
       "enabled": false
     },
     "029": {
       "startDate": "2026-07-03",
-      "daysAdded": 1,
+      "daysAdded": 6,
       "enabled": false
     },
     "036": {
@@ -35,17 +35,17 @@
     },
     "026": {
       "startDate": "2026-07-03",
-      "daysAdded": 3,
+      "daysAdded": 6,
       "enabled": false
     },
     "040": {
       "startDate": "2026-07-05",
-      "daysAdded": 1,
+      "daysAdded": 4,
       "enabled": false
     },
     "031": {
       "startDate": "2026-07-05",
-      "daysAdded": 1,
+      "daysAdded": 4,
       "enabled": false
     }
   }
