@@ -6358,54 +6358,5 @@
     "delta": -8.522400000000001,
     "reason": "纪律差٩◔̯◔۶ 哼*2( 分界运算 )",
     "id": "2026-07-04 22:06:52_031_-8.522400000000001"
-  },
-  {
-    "timestamp": "2026-07-08 19:24:19",
-    "studentId": "035",
-    "studentName": "冯丰硕",
-    "delta": 6,
-    "reason": "低分持续补分（补3天，已补6天）"
-  },
-  {
-    "timestamp": "2026-07-08 19:24:19",
-    "studentId": "019",
-    "studentName": "顾槿宸",
-    "delta": 4,
-    "reason": "低分持续补分（补2天，已补4天）"
-  },
-  {
-    "timestamp": "2026-07-08 19:24:19",
-    "studentId": "031",
-    "studentName": "刘博凯",
-    "delta": 6,
-    "reason": "低分持续补分（补3天，已补4天）"
-  },
-  {
-    "timestamp": "2026-07-08 19:24:19",
-    "studentId": "026",
-    "studentName": "潘烨磊",
-    "delta": 6,
-    "reason": "低分持续补分（补3天，已补6天）"
-  },
-  {
-    "timestamp": "2026-07-08 19:24:19",
-    "studentId": "029",
-    "studentName": "濮天昊",
-    "delta": 10,
-    "reason": "低分持续补分（补5天，已补6天）"
-  },
-  {
-    "timestamp": "2026-07-08 19:24:19",
-    "studentId": "040",
-    "studentName": "朱熙元",
-    "delta": 6,
-    "reason": "低分持续补分（补3天，已补4天）"
-  },
-  {
-    "timestamp": "2026-07-08 19:24:19",
-    "studentId": "049",
-    "studentName": "测试人员",
-    "delta": 4,
-    "reason": "低分持续补分（补2天，已补7天）"
   }
 ]
