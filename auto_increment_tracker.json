@@ -1,5 +1,5 @@
 {
-  "lastDailyCheck": 1783000112991,
+  "lastDailyCheck": 1783504253406,
   "stopped": false,
   "lastSundayBonus": 1782655387485,
   "lowScoreStudents": {
@@ -10,22 +10,22 @@
     },
     "050": {
       "startDate": "2026-06-24",
-      "daysAdded": 0,
+      "daysAdded": 2,
       "enabled": true
     },
     "035": {
       "startDate": "2026-07-03",
-      "daysAdded": 0,
+      "daysAdded": 2,
       "enabled": false
     },
     "019": {
       "startDate": "2026-07-05",
-      "daysAdded": 0,
+      "daysAdded": 2,
       "enabled": false
     },
     "029": {
       "startDate": "2026-07-03",
-      "daysAdded": 0,
+      "daysAdded": 1,
       "enabled": false
     },
     "036": {
@@ -35,17 +35,17 @@
     },
     "026": {
       "startDate": "2026-07-03",
-      "daysAdded": 0,
+      "daysAdded": 2,
       "enabled": false
     },
     "040": {
       "startDate": "2026-07-05",
-      "daysAdded": 0,
+      "daysAdded": 1,
       "enabled": false
     },
     "031": {
       "startDate": "2026-07-05",
-      "daysAdded": 0,
+      "daysAdded": 1,
       "enabled": false
     }
   }
