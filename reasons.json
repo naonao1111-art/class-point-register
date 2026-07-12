@@ -6364,27 +6364,7 @@
     "studentId": "002",
     "studentName": "胡凯琳",
     "delta": 0.5,
-    "reason": "周日评价奖励"
-  },
-  {
-    "timestamp": "2026-07-12 17:57:08",
-    "studentId": "049",
-    "studentName": "测试人员",
-    "delta": 0.135,
-    "reason": "1 (低于-45)"
-  },
-  {
-    "timestamp": "2026-07-12 17:57:12",
-    "studentId": "049",
-    "studentName": "测试人员",
-    "delta": 0.135,
-    "reason": "1 (低于-45)"
-  },
-  {
-    "timestamp": "2026-07-12 17:57:23",
-    "studentId": "049",
-    "studentName": "测试人员",
-    "delta": 0.135,
-    "reason": "1 (低于-45)"
+    "reason": "周日评价奖励",
+    "id": "2026-07-12 17:54:51_002_0.5"
   }
 ]
