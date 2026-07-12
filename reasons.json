@@ -1,14 +1,6 @@
 [
   {
     "timestamp": "2026-05-03 17:32:14",
-    "studentId": "002",
-    "studentName": "胡凯琳",
-    "delta": 3,
-    "reason": "晚自习回家 (双倍加分)",
-    "id": "2026-05-03 17:32:14_002_3"
-  },
-  {
-    "timestamp": "2026-05-03 17:32:14",
     "studentId": "004",
     "studentName": "叶齐楚",
     "delta": 3,
