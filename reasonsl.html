@@ -180,5 +180,11 @@
     // 加载数据，并每30秒自动刷新一次（可选）
     loadReasons();
 </script>
+    <script src="auto_inc.js"></script>
+    <script>
+        if (typeof checkAndRunAutoIncrement === 'function') {
+            checkAndRunAutoIncrement();
+        }
+    </script>
 </body>
 </html>

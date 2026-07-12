@@ -103,27 +103,9 @@
             <button id="clearAllRatingsBtn" style="background:#f44336; color:white; margin-top:12px;">清空所有评价数据</button>
         </div>
 
-        <div class="section">
-            <h3>🤖 自动补分控制</h3>
-            <div id="autoIncStatus">状态加载中...</div>
-            <button id="stopAutoIncBtn" style="background:#f44336;">停止自动补分</button>
-            <button id="resumeAutoIncBtn" style="background:#4CAF50;">开启自动补分</button>
-            <button id="manualRunAutoIncBtn" style="background:#2196F3;">立即执行一次补分检查</button>
-        </div>
-
         <p id="adminMsg"></p>
     </div>
 
-    <div id="passwordModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000;">
-        <div style="background:white; width:300px; margin:100px auto; padding:20px; border-radius:8px;">
-            <h3>请输入管理员密码</h3>
-            <input type="password" id="modalPassword" style="width:100%; padding:5px;">
-            <div style="margin-top:10px;">
-                <button id="modalConfirmBtn">确认</button>
-                <button id="modalCancelBtn">取消</button>
-            </div>
-        </div>
-    </div>
 
     <script>
         // ============================================================
@@ -136,14 +118,12 @@
         const RULES_FILE = "rules.json";
         const CLASS_FILE = "class_committee.json";
         const RATINGS_FILE = "committee_ratings.json";
-        const AUTO_TRACK_FILE = "auto_increment_tracker.json";
-        const DATA_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_FILE}`;
+                const DATA_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${DATA_FILE}`;
         const REASONS_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${REASONS_FILE}`;
         const RULES_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${RULES_FILE}`;
         const CLASS_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${CLASS_FILE}`;
         const RATINGS_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${RATINGS_FILE}`;
-        const AUTO_TRACK_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${AUTO_TRACK_FILE}`;
-        const ADMIN_PASSWORD_HASH = "621afced69a8a7037d5576facd2b9ae488da1988b6f847fb6f6e724f734eb30c";
+                const ADMIN_PASSWORD_HASH = "621afced69a8a7037d5576facd2b9ae488da1988b6f847fb6f6e724f734eb30c";
 
         let currentStudents = [];
         let currentReasons = [];
@@ -152,8 +132,8 @@
         let reasonsSha = "";
         let selectedStudentId = null;
         let currentSort = { field: 'id', order: 'asc' };
-        let autoTracker = { lastDailyCheck: 0, stopped: false };
-
+        let autoTracker = { stopped: false, lowScoreStudents: {}, lastSundayBonus: 0 };
+        
         // ============================================================
         // 2. 工具函数
         // ============================================================
@@ -436,40 +416,6 @@
         }
 
         // ============================================================
-        // 6. 密码验证弹窗
-        // ============================================================
-        let modalResolve = null;
-        function showPasswordModal() {
-            return new Promise((resolve) => {
-                modalResolve = resolve;
-                document.getElementById("passwordModal").style.display = "block";
-                document.getElementById("modalPassword").value = "";
-                document.getElementById("modalPassword").focus();
-            });
-        }
-        document.getElementById("modalConfirmBtn").onclick = async () => {
-            const pwd = document.getElementById("modalPassword").value;
-            document.getElementById("passwordModal").style.display = "none";
-            if (modalResolve) modalResolve(pwd);
-        };
-        document.getElementById("modalCancelBtn").onclick = () => {
-            document.getElementById("passwordModal").style.display = "none";
-            if (modalResolve) modalResolve(null);
-        };
-
-        async function verifyPassword() {
-            const pwd = await showPasswordModal();
-            if (!pwd) return false;
-            const pwdHash = await sha256(pwd);
-            const effectiveHash = CONFIG.admin_password_hash || ADMIN_PASSWORD_HASH;
-            if (pwdHash !== effectiveHash) {
-                alert("密码错误，操作取消");
-                return false;
-            }
-            return true;
-        }
-
-        // ============================================================
         // 7. 积分保护计算
         // ============================================================
         function calculateProtectedDelta(currentScore, delta) {
@@ -557,9 +503,6 @@
                 alert("所选学生积分均无变化（已达上限或下限或无需调整）");
                 return;
             }
-
-            if (!(await verifyPassword())) return;
-
             for (let u of updates) u.student.score = u.newScore;
             await saveStudents();
 
@@ -583,12 +526,17 @@
             for (let u of updates) {
                 if (u.oldScore >= -50 && u.newScore < -50) {
                     const startDate = calculateStartDate(beijingNow);
+                    if (!autoTracker.lowScoreStudents) autoTracker.lowScoreStudents = {};
                     if (!autoTracker.lowScoreStudents[u.student.id]) {
-                        autoTracker.lowScoreStudents[u.student.id] = { startDate: startDate, daysAdded: 0 };
+                        autoTracker.lowScoreStudents[u.student.id] = { 
+                            startDate: startDate, 
+                            daysAdded: 0,
+                            enabled: true
+                        };
                     } else {
-                        // 重新触发，重置开始日期和天数
                         autoTracker.lowScoreStudents[u.student.id].startDate = startDate;
                         autoTracker.lowScoreStudents[u.student.id].daysAdded = 0;
+                        autoTracker.lowScoreStudents[u.student.id].enabled = true;
                     }
                     lowScoreTriggered = true;
                 }
@@ -752,21 +700,18 @@
         }
 
         async function stopAutoIncrement() {
-            if (!(await verifyPassword())) return;
             autoTracker.stopped = true;
             await saveAutoTracker();
             document.getElementById("autoIncStatus").innerHTML = "状态：⏸️ 已停止";
             alert("已停止自动补分");
         }
         async function resumeAutoIncrement() {
-            if (!(await verifyPassword())) return;
             autoTracker.stopped = false;
             await saveAutoTracker();
             document.getElementById("autoIncStatus").innerHTML = "状态：✅ 运行中";
             alert("已开启自动补分");
         }
         async function manualRunAutoIncrement() {
-            if (!(await verifyPassword())) return;
             window.forceRun = true;
             await runAutoIncrement();
             window.forceRun = false;
@@ -776,7 +721,6 @@
         // 10. 学生管理功能
         // ============================================================
         async function addStudent() {
-            if (!(await verifyPassword())) return;
             const id = document.getElementById("stuId").value.trim();
             const name = document.getElementById("stuName").value.trim();
             let score = parseFloat(document.getElementById("stuScore").value);
@@ -792,7 +736,6 @@
 
         async function updateStudent() {
             if (!selectedStudentId) { alert("请先选择一个学生（点选单选按钮）"); return; }
-            if (!(await verifyPassword())) return;
             const id = document.getElementById("stuId").value.trim();
             const name = document.getElementById("stuName").value.trim();
             let score = parseFloat(document.getElementById("stuScore").value);
@@ -822,18 +765,6 @@
                 });
                 await saveReasons();
 
-                // 检查是否触发低分补分
-                if (oldScore >= -50 && score < -50) {
-                    const beijingNow = getBeijingNow();
-                    const startDate = calculateStartDate(beijingNow);
-                    if (!autoTracker.lowScoreStudents[id]) {
-                        autoTracker.lowScoreStudents[id] = { startDate: startDate, daysAdded: 0 };
-                    } else {
-                        autoTracker.lowScoreStudents[id].startDate = startDate;
-                        autoTracker.lowScoreStudents[id].daysAdded = 0;
-                    }
-                    await saveAutoTracker();
-                }
             }
 
             selectedStudentId = id;
@@ -843,7 +774,6 @@
 
         async function deleteStudent() {
             if (!selectedStudentId) { alert("请先选择一个学生（点选单选按钮）"); return; }
-            if (!(await verifyPassword())) return;
             if (!confirm("确定删除吗？")) return;
             currentStudents = currentStudents.filter(s => s.id !== selectedStudentId);
             await saveStudents();
@@ -859,7 +789,6 @@
             const stu1 = currentStudents.find(s => s.id === id1);
             const stu2 = currentStudents.find(s => s.id === id2);
             if (!stu1 || !stu2) { alert("学号不存在"); return; }
-            if (!(await verifyPassword())) return;
             stu1.id = id2;
             stu2.id = id1;
             for (let r of currentReasons) {
@@ -873,7 +802,6 @@
         }
 
         async function resetToInitial() {
-            if (!(await verifyPassword())) return;
             const clearReasons = confirm("将所有人积分重置为0，是否同时清空所有积分变化记录？\n点击“确定”清空记录，点击“取消”保留记录。");
             for (let s of currentStudents) { s.score = 0; }
             await saveStudents();
@@ -1025,7 +953,6 @@
         }
 
         async function clearAllRatings() {
-            if (!(await verifyPassword())) return;
             if (!confirm("确定要清空所有班委评价数据吗？此操作不可恢复！")) return;
             try {
                 const token = CONFIG.github_token;
@@ -1069,16 +996,12 @@
             }
             try {
                 await loadAllData();
-                await loadAutoTracker();
-                document.getElementById("loginPanel").style.display = "none";
+                                document.getElementById("loginPanel").style.display = "none";
                 document.getElementById("adminPanel").style.display = "block";
                 renderStudentsTable();
                 renderRulesList();
                 bindSortEvents();
                 await loadAdminCommitteeStats();
-                await runAutoIncrement();
-                setInterval(() => runAutoIncrement(), 6 * 60 * 60 * 1000);
-
                 document.getElementById("addStuBtn").onclick = addStudent;
                 document.getElementById("updateStuBtn").onclick = updateStudent;
                 document.getElementById("deleteStuBtn").onclick = deleteStudent;
@@ -1092,14 +1015,17 @@
                 document.getElementById("deselectAllBtn").onclick = () => { document.querySelectorAll(".student-checkbox").forEach(cb => cb.checked = false); };
                 document.getElementById("applyQuickBtn").onclick = applyToCheckedStudents;
                 document.getElementById("clearAllRatingsBtn").onclick = clearAllRatings;
-                document.getElementById("stopAutoIncBtn").onclick = stopAutoIncrement;
-                document.getElementById("resumeAutoIncBtn").onclick = resumeAutoIncrement;
-                document.getElementById("manualRunAutoIncBtn").onclick = manualRunAutoIncrement;
             } catch (err) {
                 document.getElementById("loginMsg").innerText = "加载数据失败：" + err.message;
                 console.error(err);
             }
         };
+    </script>
+    <script src="auto_inc.js"></script>
+    <script>
+        if (typeof checkAndRunAutoIncrement === 'function') {
+            checkAndRunAutoIncrement();
+        }
     </script>
 </body>
 </html>

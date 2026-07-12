@@ -61,7 +61,7 @@
             const weekNumber = Math.ceil((days + 1) / 7);
             return monday.getFullYear() + "-W" + String(weekNumber).padStart(2, '0');
         }
-   
+
 
         let currentStudents = [];
         let currentSort = { field: 'id', order: 'asc' };
@@ -224,6 +224,12 @@
 
         loadData();
         loadCommitteeStats();  // 加载好评率
+    </script>
+    <script src="auto_inc.js"></script>
+    <script>
+        if (typeof checkAndRunAutoIncrement === 'function') {
+            checkAndRunAutoIncrement();
+        }
     </script>
 </body>
 </html>

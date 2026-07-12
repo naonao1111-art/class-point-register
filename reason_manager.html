@@ -251,14 +251,6 @@
         if (allIds.length === 0) return;
         if (!confirm(`确定撤销选中的 ${allIds.length} 条记录吗？`)) return;
 
-        const pwd = prompt("请输入管理员密码");
-        if (!pwd) return;
-        const pwdHash = await sha256(pwd);
-        if (pwdHash !== ADMIN_PASSWORD_HASH) {
-            alert("密码错误，操作取消");
-            return;
-        }
-
         for (let id of allIds) {
             const record = allReasons.find(r => r.id === id);
             if (!record) continue;
@@ -282,13 +274,6 @@
         const replace = document.getElementById("replaceText").value;
         if (!find) { alert("请输入要查找的文本"); return; }
         if (!confirm(`确定要将所有原因中的 "${find}" 替换为 "${replace}" 吗？`)) return;
-        const pwd = prompt("请输入管理员密码");
-        if (!pwd) return;
-        const pwdHash = await sha256(pwd);
-        if (pwdHash !== ADMIN_PASSWORD_HASH) {
-            alert("密码错误，操作取消");
-            return;
-        }
         let count = 0;
         for (let r of allReasons) {
             if (r.reason.includes(find)) {
@@ -338,5 +323,11 @@
         }
     };
 </script>
+    <script src="auto_inc.js"></script>
+    <script>
+        if (typeof checkAndRunAutoIncrement === 'function') {
+            checkAndRunAutoIncrement();
+        }
+    </script>
 </body>
 </html>

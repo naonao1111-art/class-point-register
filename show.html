@@ -68,5 +68,11 @@
         }
         loadRules();
     </script>
+    <script src="auto_inc.js"></script>
+    <script>
+        if (typeof checkAndRunAutoIncrement === 'function') {
+            checkAndRunAutoIncrement();
+        }
+    </script>
 </body>
 </html>

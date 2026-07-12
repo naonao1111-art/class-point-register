@@ -42,6 +42,13 @@
 <div class="container" id="mainPanel" style="display:none;">
     <a href="admin.html" class="back-link">← 返回管理后台</a>
     <h1>🤖 低分补分单独控制</h1>
+    <div style="margin:10px 0; background:#f0f8ff; padding:12px; border-radius:6px;">
+        <strong>全局补分状态：</strong> <span id="globalStatus">加载中...</span>
+        <button id="stopGlobalBtn" class="btn" style="background:#f44336; color:white;">停止自动补分</button>
+        <button id="resumeGlobalBtn" class="btn" style="background:#4CAF50; color:white;">开启自动补分</button>
+        <button id="manualRunBtn" class="btn" style="background:#2196F3; color:white;">立即执行一次补分</button>
+        <span id="globalMsg" style="margin-left:10px;"></span>
+    </div>
     <p>可单独启用/禁用每个学生的补分，并手动调整已补天数。</p>
     <div style="margin: 10px 0;">
         <button id="saveAllBtn" class="btn btn-save">保存所有更改</button>
@@ -222,6 +229,12 @@
 
     async function saveAllChanges() {
         try {
+            // 确保每个记录都有 enabled 字段
+            for (let sid in trackerCopy) {
+                if (trackerCopy[sid].enabled === undefined) {
+                    trackerCopy[sid].enabled = true;
+                }
+            }
             // 将编辑后的 trackerCopy 写回 autoTracker
             autoTracker.lowScoreStudents = trackerCopy;
             await saveJSON(AUTO_TRACK_URL, autoTracker, "更新低分补分单独控制");
@@ -234,6 +247,45 @@
             document.getElementById("saveMsg").innerText = "保存失败：" + err.message;
             document.getElementById("saveMsg").className = "error";
         }
+    }
+
+    // ========== 全局补分控制 ==========
+    async function loadGlobalStatus() {
+        const tracker = await fetchJSON(AUTO_TRACK_URL);
+        if (tracker) {
+            const status = tracker.stopped ? '⏸️ 已停止' : '✅ 运行中';
+            document.getElementById('globalStatus').innerText = status;
+            document.getElementById('globalStatus').style.color = tracker.stopped ? 'red' : 'green';
+        }
+    }
+
+    async function stopGlobal() {
+        if (!confirm('确定要停止自动补分吗？')) return;
+        const tracker = await fetchJSON(AUTO_TRACK_URL);
+        if (tracker) {
+            tracker.stopped = true;
+            await saveJSON(AUTO_TRACK_URL, tracker, '停止自动补分');
+            loadGlobalStatus();
+            document.getElementById('globalMsg').innerText = '已停止';
+        }
+    }
+
+    async function resumeGlobal() {
+        if (!confirm('确定要开启自动补分吗？')) return;
+        const tracker = await fetchJSON(AUTO_TRACK_URL);
+        if (tracker) {
+            tracker.stopped = false;
+            await saveJSON(AUTO_TRACK_URL, tracker, '开启自动补分');
+            loadGlobalStatus();
+            document.getElementById('globalMsg').innerText = '已开启';
+        }
+    }
+
+    async function manualRun() {
+        if (!confirm('确定立即执行一次补分检查吗？')) return;
+        await checkAndRunAutoIncrement();
+        loadGlobalStatus();
+        document.getElementById('globalMsg').innerText = '执行完毕';
     }
 
     // ========== 登录 ==========
@@ -255,10 +307,20 @@
             document.getElementById("mainPanel").style.display = "block";
             renderTable();
             document.getElementById("saveAllBtn").onclick = saveAllChanges;
+            document.getElementById('stopGlobalBtn').onclick = stopGlobal;
+            document.getElementById('resumeGlobalBtn').onclick = resumeGlobal;
+            document.getElementById('manualRunBtn').onclick = manualRun;
+            loadGlobalStatus();
         } catch(err) {
             document.getElementById("loginMsg").innerText = "加载数据失败：" + err.message;
         }
     };
 </script>
+    <script src="auto_inc.js"></script>
+    <script>
+        if (typeof checkAndRunAutoIncrement === 'function') {
+            checkAndRunAutoIncrement();
+        }
+    </script>
 </body>
 </html>
