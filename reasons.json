@@ -6379,5 +6379,12 @@
     "studentName": "测试人员",
     "delta": 0.135,
     "reason": "1 (低于-45)"
+  },
+  {
+    "timestamp": "2026-07-12 17:57:23",
+    "studentId": "049",
+    "studentName": "测试人员",
+    "delta": 0.135,
+    "reason": "1 (低于-45)"
   }
 ]
