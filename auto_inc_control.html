@@ -161,6 +161,7 @@
         if (tracker) {
             autoTracker = tracker;
             if (!autoTracker.lowScoreStudents) autoTracker.lowScoreStudents = {};
+        if (!autoTracker.lastBonusWeek) autoTracker.lastBonusWeek = '';
         } else {
             autoTracker = { lowScoreStudents: {} };
         }

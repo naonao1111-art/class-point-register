@@ -189,24 +189,21 @@
             }
         }
 
-        // ---- 5. 周日奖励（只执行一次） ----
+        // ---- 5. 周日奖励（按周防重复） ----
         if (getBeijingWeekday(beijingNow) === 0) {
-            const lastSunday = tracker.lastSundayBonus || 0;
-            const lastSundayDate = lastSunday ? getBeijingDateStr(new Date(lastSunday)) : null;
-            if (lastSundayDate !== todayDate) {
-                const currentWeek = getWeekNumber(beijingNow);
+            const currentWeek = getWeekNumber(beijingNow);
+            if (tracker.lastBonusWeek !== currentWeek) {
                 let ratings = {};
                 try {
                     const ratingsData = await fetchJSON(RATINGS_URL);
                     if (ratingsData && ratingsData.ratings) ratings = ratingsData.ratings;
-                } catch(e) {}
+                } catch(e) { console.warn("获取评价数据失败", e); }
                 const weekRatings = ratings[currentWeek] || {};
                 const participants = Object.keys(weekRatings);
                 if (participants.length > 0) {
                     for (let sid of participants) {
                         const student = students.find(s => s.id === sid);
                         if (student) {
-                            // 直接用0.5分，不触发保护（简单处理）
                             const delta = 0.5;
                             student.score += delta;
                             student.score = parseFloat(student.score.toFixed(2));
@@ -219,7 +216,7 @@
                         }
                     }
                 }
-                tracker.lastSundayBonus = beijingNow.getTime();
+                tracker.lastBonusWeek = currentWeek; // 标记本周已奖励
             }
         }
 

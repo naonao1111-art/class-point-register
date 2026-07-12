@@ -566,6 +566,7 @@
                 }
                 if (!autoTracker.hasOwnProperty('lastSundayBonus')) autoTracker.lastSundayBonus = 0;
                 if (!autoTracker.hasOwnProperty('lowScoreStudents')) autoTracker.lowScoreStudents = {};
+                if (!autoTracker.hasOwnProperty('lastBonusWeek')) autoTracker.lastBonusWeek = '';
             } catch(e) {
                 console.warn("加载自动补分跟踪失败", e);
                 autoTracker = { lastDailyCheck: 0, stopped: false, lastSundayBonus: 0, lowScoreStudents: {} };
