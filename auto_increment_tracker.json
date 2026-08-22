@@ -5,7 +5,7 @@
   "lowScoreStudents": {
     "049": {
       "startDate": "2026-06-24",
-      "daysAdded": 7,
+      "daysAdded": 0,
       "enabled": true
     },
     "035": {
@@ -43,5 +43,6 @@
       "daysAdded": 4,
       "enabled": false
     }
-  }
+  },
+  "lastBonusWeek": ""
 }
