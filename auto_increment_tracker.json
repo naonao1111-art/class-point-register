@@ -1,12 +1,12 @@
 {
   "lastDailyCheck": 1783504259063,
-  "stopped": true,
+  "stopped": false,
   "lastSundayBonus": 1783850572253,
   "lowScoreStudents": {
     "049": {
       "startDate": "2026-06-24",
       "daysAdded": 0,
-      "enabled": true
+      "enabled": false
     },
     "035": {
       "startDate": "2026-07-03",
