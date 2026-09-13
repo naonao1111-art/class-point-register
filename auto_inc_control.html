@@ -53,12 +53,7 @@
 
 <div class="container" id="mainPanel" style="display:none;">
     <a href="admin.html" class="back-link">← 返回管理后台</a>
-    <h1>⚙️ 自动控制中心</h1>
-    <div class="notice">
-        本页集中控制所有“自动机制”：① 全局补分开关与每个学生的补分明细；② 低分保护规则（触发条件与倍率）；③ 投票加分（周日评价奖励）。<br>
-        规则保存在 <strong>protection_rules.json</strong>，保存后立即生效，无需刷新其他页面。
-    </div>
-
+    <h1>自动控制中心</h1>
     <div class="section">
         <h3>全局补分状态</h3>
         <div style="margin:10px 0;">
@@ -75,7 +70,7 @@
         <h3>低分保护规则编辑</h3>
         <div class="desc">
             低分补分：低于「触发分」进入补分，每天 +「每日补分」，最多补「最大天数」天；停用期间不累计。<br>
-            积分保护倍率：低于 T1/T2/T3 时加分放大（upRatio）、减分缩小（downRatio）。
+            积分保护倍率：低于 T1/T2/T3 时加分*倍数、减分/倍数。
         </div>
         <table class="rule-table">
             <tr><td>触发分（低于此分进入低分补分）</td><td><input type="number" id="cfgThreshold" step="1" value="-50"></td></tr>
@@ -530,4 +525,3 @@
     </script>
 </body>
 </html>
-<!-- （注：内容由AI生成） -->
