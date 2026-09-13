@@ -40,7 +40,7 @@
             <a href="show_control.html">管理积分规则</a>
             <a href="class_control.html">管理班委</a>
             <a href="reason_manager.html">管理原因记录（撤销/编辑）</a>
-            <a href="auto_inc_control.html">自动补分控制</a>
+            <a href="auto_inc_control.html">自动控制中心（补分/规则/投票）</a>
         </div>
 
         <div class="section">
@@ -133,6 +133,12 @@
         let selectedStudentId = null;
         let currentSort = { field: 'id', order: 'asc' };
         let autoTracker = { stopped: false, lowScoreStudents: {}, lastSundayBonus: 0 };
+        // 积分保护规则（从 protection_rules.json 读取，可在“自动控制中心”页面编辑）
+        let protectRules = {
+            T1: -30, T2: -38, T3: -45,
+            upRatio1: 1.1, upRatio2: 1.2, upRatio3: 1.35,
+            downRatio1: 1.12, downRatio2: 1.25, downRatio3: 1.5
+        };
         
         // ============================================================
         // 2. 工具函数
@@ -185,6 +191,29 @@
         function getBeijingWeekday(d) {
             d = d || getBeijingNow();
             return d.getDay(); // 0=周日
+        }
+
+        // 加载积分保护规则配置（protection_rules.json）
+        async function loadProtectRules() {
+            try {
+                const resp = await fetch(
+                    "https://naonao1111-art.github.io/class-point-register/protection_rules.json?t=" + Date.now(),
+                    { cache: "no-store" }
+                );
+                if (resp.ok) {
+                    const cfg = await resp.json();
+                    const p = cfg.lowScoreProtect || {};
+                    if (typeof p.T1 === 'number') protectRules.T1 = p.T1;
+                    if (typeof p.T2 === 'number') protectRules.T2 = p.T2;
+                    if (typeof p.T3 === 'number') protectRules.T3 = p.T3;
+                    if (typeof p.upRatio1 === 'number') protectRules.upRatio1 = p.upRatio1;
+                    if (typeof p.upRatio2 === 'number') protectRules.upRatio2 = p.upRatio2;
+                    if (typeof p.upRatio3 === 'number') protectRules.upRatio3 = p.upRatio3;
+                    if (typeof p.downRatio1 === 'number') protectRules.downRatio1 = p.downRatio1;
+                    if (typeof p.downRatio2 === 'number') protectRules.downRatio2 = p.downRatio2;
+                    if (typeof p.downRatio3 === 'number') protectRules.downRatio3 = p.downRatio3;
+                }
+            } catch(e) { console.warn("加载积分保护规则失败，使用默认值", e); }
         }
 
         // 计算低分补分开始日期
@@ -420,45 +449,47 @@
         // ============================================================
         function calculateProtectedDelta(currentScore, delta) {
             if (delta === 0) return { actualDelta: 0, remark: ""};
-            const T1 = -30, T2 = -38, T3 = -45;
+            const T1 = protectRules.T1, T2 = protectRules.T2, T3 = protectRules.T3;
+            const R3u = protectRules.upRatio3, R2u = protectRules.upRatio2, R1u = protectRules.upRatio1;
+            const R3d = protectRules.downRatio3, R2d = protectRules.downRatio2, R1d = protectRules.downRatio1;
             let actualDelta = delta;
             let remark = "";
             let temporery3 = currentScore - T3;
             let temporery2 = currentScore - T2;
             let temporery1 = currentScore - T1;
             if (delta > 0) {
-                if (currentScore <= T3 && currentScore + delta * 1.35 > T3) {
-                    delta = delta + temporery3 / 1.35;
+                if (currentScore <= T3 && currentScore + delta * R3u > T3) {
+                    delta = delta + temporery3 / R3u;
                     actualDelta = delta * 1.25 - temporery3; remark = "( 分界运算 )"
                 }else if (currentScore <= T3) {
-                    actualDelta = delta * 1.35; remark = " (低于-45)";
-                }else if (currentScore <= T2 && currentScore + delta * 1.2 > T2) {
-                    delta = delta + temporery2 / 1.2;
+                    actualDelta = delta * R3u; remark = " (低于-45)";
+                }else if (currentScore <= T2 && currentScore + delta * R2u > T2) {
+                    delta = delta + temporery2 / R2u;
                     actualDelta = delta * 1.1 - temporery2 ; remark = "( 分界运算 )";
                 }else if (currentScore <= T2) {
-                    actualDelta = delta * 1.2; remark = " (低于-38)";
-                }else if (currentScore <= T1  && currentScore + delta * 1.1 > T1) {
-                    delta = delta + temporery1  / 1.1;
+                    actualDelta = delta * R2u; remark = " (低于-38)";
+                }else if (currentScore <= T1  && currentScore + delta * R1u > T1) {
+                    delta = delta + temporery1  / R1u;
                     actualDelta = delta - temporery1 ; remark = "( 分界运算 )";
                 }else if (currentScore <= T1) {
-                    actualDelta = delta * 1.1; remark = " (低于-30)";
+                    actualDelta = delta * R1u; remark = " (低于-30)";
                 }
             } else if (delta < 0) {
                 if (currentScore <= T3) {
-                    actualDelta = delta / 1.5; remark = " (低于-45)";
-                }else if (currentScore <= T2 && currentScore + delta/ 1.25 <= T3) {
-                    delta = delta + temporery3 * 1.25;
-                    actualDelta = delta / 1.5 - temporery3; remark = "( 分界运算 )"
+                    actualDelta = delta / R3d; remark = " (低于-45)";
+                }else if (currentScore <= T2 && currentScore + delta/ R2d <= T3) {
+                    delta = delta + temporery3 * R2d;
+                    actualDelta = delta / R3d - temporery3; remark = "( 分界运算 )"
                 }else if (currentScore <= T2) {
-                    actualDelta = delta / 1.25; remark = " (低于-38)";
-                }else if (currentScore <= T1 && currentScore + delta / 1.12 <= T2) {
-                    delta = delta + temporery2 * 1.12;
-                    actualDelta = delta / 1.25 - temporery2; remark = "( 分界运算 )";
+                    actualDelta = delta / R2d; remark = " (低于-38)";
+                }else if (currentScore <= T1 && currentScore + delta / R1d <= T2) {
+                    delta = delta + temporery2 * R1d;
+                    actualDelta = delta / R2d - temporery2; remark = "( 分界运算 )";
                 }else if (currentScore <= T1) {
-                    actualDelta = delta / 1.12; remark = " (低于-30)";
+                    actualDelta = delta / R1d; remark = " (低于-30)";
                 }else if (currentScore > T1 && currentScore + delta  <= T1) {
                     delta = delta + temporery1 ;
-                    actualDelta = delta / 1.12 - temporery1 ; remark = "( 分界运算 )";
+                    actualDelta = delta / R1d - temporery1 ; remark = "( 分界运算 )";
                 }
             }
             return { actualDelta, remark };
@@ -503,54 +534,62 @@
                 alert("所选学生积分均无变化（已达上限或下限或无需调整）");
                 return;
             }
-            for (let u of updates) u.student.score = u.newScore;
-            await saveStudents();
+            const applyBtn = document.getElementById("applyQuickBtn");
+            const adminMsgEl = document.getElementById("adminMsg");
+            if (applyBtn) { applyBtn.disabled = true; applyBtn.innerText = "正在修改…"; }
+            if (adminMsgEl) adminMsgEl.innerText = "正在修改…请稍候，不要重复操作";
+            try {
+                for (let u of updates) u.student.score = u.newScore;
+                await saveStudents();
 
-            // 使用北京时间
-            const beijingNow = getBeijingNow();
-            const timestamp = formatBeijingTime(beijingNow);
+                // 使用北京时间
+                const beijingNow = getBeijingNow();
+                const timestamp = formatBeijingTime(beijingNow);
 
-            const newRecords = updates.map(u => ({
-                timestamp: timestamp,
-                studentId: u.student.id,
-                studentName: u.student.name,
-                delta: u.actualDelta,
-                reason: reason + u.remark
-            }));
+                const newRecords = updates.map(u => ({
+                    timestamp: timestamp,
+                    studentId: u.student.id,
+                    studentName: u.student.name,
+                    delta: u.actualDelta,
+                    reason: reason + u.remark
+                }));
 
-            currentReasons.push(...newRecords);
-            await saveReasons();
+                currentReasons.push(...newRecords);
+                await saveReasons();
 
-            // 检查是否触发低分补分（从 >=-50 变为 <-50）
-            let lowScoreTriggered = false;
-            for (let u of updates) {
-                if (u.oldScore >= -50 && u.newScore < -50) {
-                    const startDate = calculateStartDate(beijingNow);
-                    if (!autoTracker.lowScoreStudents) autoTracker.lowScoreStudents = {};
-                    if (!autoTracker.lowScoreStudents[u.student.id]) {
-                        autoTracker.lowScoreStudents[u.student.id] = { 
-                            startDate: startDate, 
-                            daysAdded: 0,
-                            enabled: true
-                        };
-                    } else {
-                        autoTracker.lowScoreStudents[u.student.id].startDate = startDate;
-                        autoTracker.lowScoreStudents[u.student.id].daysAdded = 0;
-                        autoTracker.lowScoreStudents[u.student.id].enabled = true;
+                // 检查是否触发低分补分（从 >=-50 变为 <-50）
+                let lowScoreTriggered = false;
+                for (let u of updates) {
+                    if (u.oldScore >= -50 && u.newScore < -50) {
+                        const startDate = calculateStartDate(beijingNow);
+                        if (!autoTracker.lowScoreStudents) autoTracker.lowScoreStudents = {};
+                        if (!autoTracker.lowScoreStudents[u.student.id]) {
+                            autoTracker.lowScoreStudents[u.student.id] = { 
+                                startDate: startDate, 
+                                daysAdded: 0,
+                                enabled: true
+                            };
+                        } else {
+                            autoTracker.lowScoreStudents[u.student.id].startDate = startDate;
+                            autoTracker.lowScoreStudents[u.student.id].daysAdded = 0;
+                            autoTracker.lowScoreStudents[u.student.id].enabled = true;
+                        }
+                        lowScoreTriggered = true;
                     }
-                    lowScoreTriggered = true;
                 }
-            }
-            if (lowScoreTriggered) {
-                await saveAutoTracker();
-            }
+                if (lowScoreTriggered) {
+                    await saveAutoTracker();
+                }
 
-            renderStudentsTable();
-            let protectedCount = updates.filter(u => u.remark !== "").length;
-            let msg = `成功为 ${updates.length} 名学生调整积分。`;
-            if (protectedCount > 0) msg += ` 其中 ${protectedCount} 人触发积分保护。`;
-            if (lowScoreTriggered) msg += " 有学生触发低分补分机制。";
-            document.getElementById("adminMsg").innerText = msg;
+                renderStudentsTable();
+                let protectedCount = updates.filter(u => u.remark !== "").length;
+                let msg = `成功为 ${updates.length} 名学生调整积分。`;
+                if (protectedCount > 0) msg += ` 其中 ${protectedCount} 人触发积分保护。`;
+                if (lowScoreTriggered) msg += " 有学生触发低分补分机制。";
+                adminMsgEl.innerText = msg;
+            } finally {
+                if (applyBtn) { applyBtn.disabled = false; applyBtn.innerText = "应用到选中学生"; }
+            }
         }
 
         // ============================================================
@@ -997,6 +1036,8 @@
             }
             try {
                 await loadAllData();
+                await loadProtectRules();
+                await loadAutoTracker();
                                 document.getElementById("loginPanel").style.display = "none";
                 document.getElementById("adminPanel").style.display = "block";
                 renderStudentsTable();
@@ -1030,3 +1071,4 @@
     </script>
 </body>
 </html>
+<!-- （注：内容由AI生成） -->

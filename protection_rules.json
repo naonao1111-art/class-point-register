@@ -1,0 +1,27 @@
+{
+  "lowScoreProtect": {
+    "threshold": -50,
+    "perDay": 2,
+    "maxDays": 7,
+    "T1": -30,
+    "T2": -38,
+    "T3": -45,
+    "upRatio1": 1.1,
+    "upRatio2": 1.2,
+    "upRatio3": 1.35,
+    "downRatio1": 1.12,
+    "downRatio2": 1.25,
+    "downRatio3": 1.5
+  },
+  "voteBonus": {
+    "enabled": true,
+    "bonus": 0.5,
+    "weights": {
+      "verygood": 1,
+      "good": 0.5,
+      "justsoso": 0,
+      "littlebad": -0.5,
+      "bad": -1
+    }
+  }
+}

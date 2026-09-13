@@ -20,6 +20,11 @@
         .login-area { background: #f0f2f5; padding: 15px; border-radius: 10px; margin-bottom: 20px; }
         .login-area input { padding: 8px; font-size: 16px; border: 1px solid #ccc; border-radius: 6px; width: 200px; }
         .login-area button { padding: 6px 12px; background: #2196F3; color: white; border: none; border-radius: 6px; cursor: pointer; }
+        .status-bar { position: sticky; top: 0; z-index: 999; display: none; padding: 10px 16px; margin-bottom: 12px; border-radius: 6px; font-weight: bold; font-size: 14px; background: #fff3cd; color: #856404; border: 1px solid #ffe69c; }
+        .status-bar.busy { display: block; background: #fff3cd; color: #856404; border-color: #ffe69c; }
+        .status-bar.ok { display: block; background: #d4edda; color: #155724; border-color: #c3e6cb; }
+        .status-bar.err { display: block; background: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+        button:disabled { opacity: 0.6; cursor: not-allowed; }
     </style>
 </head>
 <body>
@@ -36,7 +41,8 @@
 <div class="container" id="mainPanel" style="display:none;">
     <a href="admin.html" class="back-link">← 返回管理后台</a>
     <h1>积分变化记录管理</h1>
-    <p>撤销记录均需要管理员密码。操作成功后页面将自动刷新。</p>
+    <p>撤销记录均需要管理员密码。修改即时保存，<strong>无需刷新页面</strong>；关闭页面后再打开即为最新数据。</p>
+    <div id="statusBar" class="status-bar"></div>
 
     <div class="filter-group">
         <input type="text" id="filterText" placeholder="学号/姓名/原因关键词" style="width: 250px;">
@@ -137,6 +143,18 @@
         if (!resp.ok) throw new Error("保存失败");
     }
 
+    // ========== 全局状态提示条（修改时提示“正在修改”，避免用户误以为没反应）==========
+    function showStatus(text, type) {
+        const bar = document.getElementById("statusBar");
+        if (!bar) return;
+        bar.className = "status-bar " + (type || "busy");
+        bar.innerText = text;
+        if (type === "ok" || type === "err") {
+            clearTimeout(showStatus._timer);
+            showStatus._timer = setTimeout(() => { bar.className = "status-bar"; }, 6000);
+        }
+    }
+
     // ========== 数据加载 ==========
     async function loadData() {
         const data = await fetchJSON(DATA_URL);
@@ -198,7 +216,7 @@
             const saveBtn = document.createElement("button");
             saveBtn.innerText = "保存原因";
             saveBtn.className = "save-btn";
-            saveBtn.onclick = () => saveGroupReason(g, inputReason.value);
+            saveBtn.onclick = () => saveGroupReason(g, inputReason.value, saveBtn);
             btnCell.appendChild(saveBtn);
             const chk = document.createElement("input");
             chk.type = "checkbox";
@@ -209,16 +227,26 @@
         });
     }
 
-    async function saveGroupReason(group, newReason) {
-        for (let r of group.records) {
-            r.reason = newReason;
+    async function saveGroupReason(group, newReason, btn) {
+        if (!newReason || !newReason.trim()) {
+            showStatus("原因不能为空", "err");
+            return;
         }
+        const oldReasons = group.records.map(r => r.reason);
+        for (let r of group.records) {
+            r.reason = newReason.trim();
+        }
+        showStatus("正在修改…请稍候，不要重复操作", "busy");
+        if (btn) btn.disabled = true;
         try {
             await saveJSON(REASONS_URL, allReasons, "编辑原因（批量）");
-            alert("原因已保存，页面将刷新");
-            location.reload();
+            showStatus("已保存，无需刷新页面（关闭页面后其他页面打开即为最新数据）", "ok");
         } catch(err) {
-            alert("保存失败：" + err.message);
+            // 保存失败：回滚内存修改，避免页面与仓库不一致
+            group.records.forEach((r, i) => { r.reason = oldReasons[i]; });
+            showStatus("保存失败：" + err.message + "，请重试", "err");
+        } finally {
+            if (btn) btn.disabled = false;
         }
     }
 
@@ -238,9 +266,10 @@
 
     // ========== 批量撤销 ==========
     document.getElementById("revokeSelectedBtn").onclick = async () => {
+        const revokeBtn = document.getElementById("revokeSelectedBtn");
         const checkboxes = document.querySelectorAll(".group-checkbox:checked");
         if (checkboxes.length === 0) {
-            alert("请至少选择一条记录");
+            showStatus("请至少选择一条记录", "err");
             return;
         }
         let allIds = [];
@@ -250,6 +279,10 @@
         });
         if (allIds.length === 0) return;
         if (!confirm(`确定撤销选中的 ${allIds.length} 条记录吗？`)) return;
+
+        // 先备份，保存失败时恢复
+        const backupStudents = JSON.parse(JSON.stringify(currentStudents));
+        const backupReasons = JSON.parse(JSON.stringify(allReasons));
 
         for (let id of allIds) {
             const record = allReasons.find(r => r.id === id);
@@ -261,19 +294,35 @@
             }
         }
         allReasons = allReasons.filter(r => !allIds.includes(r.id));
+        filteredReasons = [...allReasons];
 
-        await saveJSON(DATA_URL, { students: currentStudents }, "撤销操作恢复分数");
-        await saveJSON(REASONS_URL, allReasons, "撤销操作删除记录");
-        alert("撤销成功！页面将刷新");
-        location.reload();
+        showStatus(`正在撤销 ${allIds.length} 条记录…请稍候，不要重复操作`, "busy");
+        if (revokeBtn) revokeBtn.disabled = true;
+        try {
+            await saveJSON(DATA_URL, { students: currentStudents }, "撤销操作恢复分数");
+            await saveJSON(REASONS_URL, allReasons, "撤销操作删除记录");
+            showStatus(`已撤销 ${allIds.length} 条记录，数据已保存，无需刷新页面`, "ok");
+            renderTable();
+        } catch(err) {
+            // 恢复内存数据，保持与仓库一致
+            currentStudents = backupStudents;
+            allReasons = backupReasons;
+            filteredReasons = [...allReasons];
+            renderTable();
+            showStatus("撤销失败：" + err.message + "，已恢复原状，请重试", "err");
+        } finally {
+            if (revokeBtn) revokeBtn.disabled = false;
+        }
     };
 
     // ========== 批量替换原因 ==========
     document.getElementById("replaceBtn").onclick = async () => {
+        const replaceBtn = document.getElementById("replaceBtn");
         const find = document.getElementById("findText").value.trim();
         const replace = document.getElementById("replaceText").value;
-        if (!find) { alert("请输入要查找的文本"); return; }
+        if (!find) { showStatus("请输入要查找的文本", "err"); return; }
         if (!confirm(`确定要将所有原因中的 "${find}" 替换为 "${replace}" 吗？`)) return;
+        const backupReasons = JSON.parse(JSON.stringify(allReasons));
         let count = 0;
         for (let r of allReasons) {
             if (r.reason.includes(find)) {
@@ -285,12 +334,21 @@
             document.getElementById("replaceMsg").innerText = "未找到匹配项";
             return;
         }
+        showStatus(`正在替换 ${count} 条记录…请稍候，不要重复操作`, "busy");
+        if (replaceBtn) replaceBtn.disabled = true;
         try {
             await saveJSON(REASONS_URL, allReasons, "批量替换原因关键词");
-            document.getElementById("replaceMsg").innerText = `成功替换 ${count} 条记录，页面刷新中...`;
-            location.reload();
+            document.getElementById("replaceMsg").innerText = `成功替换 ${count} 条记录`;
+            showStatus(`已替换 ${count} 条记录，数据已保存，无需刷新页面`, "ok");
+            renderTable();
         } catch(err) {
-            alert("保存失败：" + err.message);
+            allReasons = backupReasons;
+            filteredReasons = [...allReasons];
+            document.getElementById("replaceMsg").innerText = "";
+            renderTable();
+            showStatus("保存失败：" + err.message + "，已恢复原状，请重试", "err");
+        } finally {
+            if (replaceBtn) replaceBtn.disabled = false;
         }
     };
 
@@ -331,3 +389,4 @@
     </script>
 </body>
 </html>
+<!-- （注：内容由AI生成） -->

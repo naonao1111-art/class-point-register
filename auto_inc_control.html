@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <title>自动补分单独控制</title>
+    <title>自动控制中心</title>
     <style>
         body { font-family: Arial, sans-serif; margin: 20px; background: #f5f7fa; }
         .container { max-width: 1200px; margin: 0 auto; background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
@@ -15,6 +15,7 @@
         .btn { padding: 6px 12px; border: none; border-radius: 4px; cursor: pointer; }
         .btn-save { background: #4CAF50; color: white; }
         .btn-save:hover { background: #45a049; }
+        .btn:disabled { opacity: 0.6; cursor: not-allowed; }
         .status-active { color: green; font-weight: bold; }
         .status-disabled { color: red; }
         .error { color: red; }
@@ -24,8 +25,19 @@
         .login-area button { padding: 6px 12px; background: #2196F3; color: white; border: none; border-radius: 6px; cursor: pointer; }
         .filter-group { margin: 10px 0; }
         .filter-group input { padding: 5px; width: 200px; }
-        input[type="number"] { width: 60px; padding: 4px; }
+        input[type="number"] { width: 70px; padding: 4px; }
         input[type="checkbox"] { transform: scale(1.2); }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #e0e0e0; border-radius: 8px; background: #fafcfe; }
+        .section h3 { margin-top: 0; color: #2c3e50; }
+        .section .desc { font-size: 12px; color: #666; margin: 4px 0 10px; }
+        .field-label { font-size: 13px; color: #555; }
+        .notice { background: #fff8e1; border-left: 5px solid #ffc107; padding: 10px 14px; border-radius: 4px; color: #795548; margin-bottom: 20px; font-size: 14px; }
+        .inline-form { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; margin: 10px 0; }
+        .inline-form label { display: flex; align-items: center; gap: 6px; font-size: 13px; }
+        .rule-table { width: auto; min-width: 60%; }
+        .rule-table td { text-align: left; }
+        .rule-table td:first-child { font-weight: bold; width: 160px; background: #f6f8fa; }
+        .msg { margin-left: 10px; font-size: 13px; }
     </style>
 </head>
 <body>
@@ -41,33 +53,92 @@
 
 <div class="container" id="mainPanel" style="display:none;">
     <a href="admin.html" class="back-link">← 返回管理后台</a>
-    <h1>🤖 低分补分单独控制</h1>
-    <div style="margin:10px 0; background:#f0f8ff; padding:12px; border-radius:6px;">
-        <strong>全局补分状态：</strong> <span id="globalStatus">加载中...</span>
-        <button id="stopGlobalBtn" class="btn" style="background:#f44336; color:white;">停止自动补分</button>
-        <button id="resumeGlobalBtn" class="btn" style="background:#4CAF50; color:white;">开启自动补分</button>
-        <button id="manualRunBtn" class="btn" style="background:#2196F3; color:white;">立即执行一次补分</button>
-        <span id="globalMsg" style="margin-left:10px;"></span>
+    <h1>⚙️ 自动控制中心</h1>
+    <div class="notice">
+        本页集中控制所有“自动机制”：① 全局补分开关与每个学生的补分明细；② 低分保护规则（触发条件与倍率）；③ 投票加分（周日评价奖励）。<br>
+        规则保存在 <strong>protection_rules.json</strong>，保存后立即生效，无需刷新其他页面。
     </div>
-    <p>可单独启用/禁用每个学生的补分，并手动调整已补天数。</p>
-    <div style="margin: 10px 0;">
-        <button id="saveAllBtn" class="btn btn-save">保存所有更改</button>
-        <span id="saveMsg" style="margin-left: 10px;"></span>
+
+    <div class="section">
+        <h3>全局补分状态</h3>
+        <div style="margin:10px 0;">
+            <strong>全局补分状态：</strong> <span id="globalStatus">加载中...</span>
+            <button id="stopGlobalBtn" class="btn" style="background:#f44336; color:white;">停止自动补分</button>
+            <button id="resumeGlobalBtn" class="btn" style="background:#4CAF50; color:white;">开启自动补分</button>
+            <button id="manualRunBtn" class="btn" style="background:#2196F3; color:white;">立即执行一次补分</button>
+            <span id="globalMsg" class="msg"></span>
+        </div>
+        <div class="desc">“立即执行一次补分”会忽略今日已执行标记强制再跑一次；每次执行只补一天（+2），同日不会重复补分。</div>
     </div>
-    <table id="trackTable">
-        <thead>
-            <tr>
-                <th>学号</th>
-                <th>姓名</th>
-                <th>当前积分</th>
-                <th>开始日期</th>
-                <th>已补天数</th>
-                <th>启用补分</th>
-                <th>状态</th>
-            </tr>
-        </thead>
-        <tbody></tbody>
-    </table>
+
+    <div class="section">
+        <h3>低分保护规则编辑</h3>
+        <div class="desc">
+            低分补分：低于「触发分」进入补分，每天 +「每日补分」，最多补「最大天数」天；停用期间不累计。<br>
+            积分保护倍率：低于 T1/T2/T3 时加分放大（upRatio）、减分缩小（downRatio）。
+        </div>
+        <table class="rule-table">
+            <tr><td>触发分（低于此分进入低分补分）</td><td><input type="number" id="cfgThreshold" step="1" value="-50"></td></tr>
+            <tr><td>每日补分</td><td><input type="number" id="cfgPerDay" step="0.5" value="2"></td></tr>
+            <tr><td>最大补分天数</td><td><input type="number" id="cfgMaxDays" step="1" min="1" max="30" value="7"></td></tr>
+            <tr><td>T1 档位（低于该分触发）</td><td><input type="number" id="cfgT1" step="1" value="-30"></td></tr>
+            <tr><td>T2 档位</td><td><input type="number" id="cfgT2" step="1" value="-38"></td></tr>
+            <tr><td>T3 档位</td><td><input type="number" id="cfgT3" step="1" value="-45"></td></tr>
+            <tr><td>加分倍率 1（低于 T1）</td><td><input type="number" id="cfgUpRatio1" step="0.01" value="1.1"></td></tr>
+            <tr><td>加分倍率 2（低于 T2）</td><td><input type="number" id="cfgUpRatio2" step="0.01" value="1.2"></td></tr>
+            <tr><td>加分倍率 3（低于 T3）</td><td><input type="number" id="cfgUpRatio3" step="0.01" value="1.35"></td></tr>
+            <tr><td>减分倍率 1（低于 T1）</td><td><input type="number" id="cfgDownRatio1" step="0.01" value="1.12"></td></tr>
+            <tr><td>减分倍率 2（低于 T2）</td><td><input type="number" id="cfgDownRatio2" step="0.01" value="1.25"></td></tr>
+            <tr><td>减分倍率 3（低于 T3）</td><td><input type="number" id="cfgDownRatio3" step="0.01" value="1.5"></td></tr>
+        </table>
+        <div style="margin-top:12px;">
+            <button id="saveRulesBtn" class="btn btn-save">保存全部规则</button>
+            <span id="rulesMsg" class="msg"></span>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>投票加分控制（周日评价奖励）</h3>
+        <div class="desc">每周日自动给「本周参与班委评价」的同学加分。关闭后不再发放；权重用于好评率统计。</div>
+        <div class="inline-form">
+            <label><input type="checkbox" id="cfgVoteEnabled" checked> 启用周日投票加分</label>
+            <label>每人奖励分值：<input type="number" id="cfgVoteBonus" step="0.1" value="0.5"></label>
+        </div>
+        <table class="rule-table" style="margin-top:10px;">
+            <tr><td>权重：很好（verygood）</td><td><input type="number" id="cfgWVerygood" step="0.1" value="1"></td></tr>
+            <tr><td>权重：还好（good）</td><td><input type="number" id="cfgWGood" step="0.1" value="0.5"></td></tr>
+            <tr><td>权重：也就那样（justsoso）</td><td><input type="number" id="cfgWJustsoso" step="0.1" value="0"></td></tr>
+            <tr><td>权重：咦~（littlebad）</td><td><input type="number" id="cfgWLittlebad" step="0.1" value="-0.5"></td></tr>
+            <tr><td>权重：咦咦咦~~~（bad）</td><td><input type="number" id="cfgWBad" step="0.1" value="-1"></td></tr>
+        </table>
+        <div style="margin-top:12px;">
+            <button id="saveVoteBtn" class="btn btn-save">保存投票加分设置</button>
+            <span id="voteMsg" class="msg"></span>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>低分补分学生明细</h3>
+        <p class="desc">可单独启用/禁用每个学生的补分，并手动调整已补天数（0~最大天数）。修改后点击「保存所有更改」。</p>
+        <div style="margin: 10px 0;">
+            <button id="saveAllBtn" class="btn btn-save">保存所有更改</button>
+            <span id="saveMsg" class="msg"></span>
+        </div>
+        <table id="trackTable">
+            <thead>
+                <tr>
+                    <th>学号</th>
+                    <th>姓名</th>
+                    <th>当前积分</th>
+                    <th>开始日期</th>
+                    <th>已补天数</th>
+                    <th>启用补分</th>
+                    <th>状态</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
 </div>
 
 <script>
@@ -76,12 +147,28 @@
     const REPO_NAME = "class-point-register";
     const DATA_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data.json`;
     const AUTO_TRACK_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/auto_increment_tracker.json`;
+    const RULES_CONFIG_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/protection_rules.json`;
+    const RULES_CONFIG_PUBLIC_URL = "https://naonao1111-art.github.io/class-point-register/protection_rules.json";
     const ADMIN_PASSWORD_HASH = "5c3eb3d2447712b1867351e3b3cbedb4ac010a1f834b5fe38b7e26f22dcda386";
 
     let CONFIG = { github_token: "" };
     let currentStudents = [];
     let autoTracker = { lowScoreStudents: {} };
     let trackerCopy = {}; // 用于编辑的副本
+
+    // 规则配置默认值
+    let rulesConfig = {
+        lowScoreProtect: {
+            threshold: -50, perDay: 2, maxDays: 7,
+            T1: -30, T2: -38, T3: -45,
+            upRatio1: 1.1, upRatio2: 1.2, upRatio3: 1.35,
+            downRatio1: 1.12, downRatio2: 1.25, downRatio3: 1.5
+        },
+        voteBonus: {
+            enabled: true, bonus: 0.5,
+            weights: { verygood: 1, good: 0.5, justsoso: 0, littlebad: -0.5, bad: -1 }
+        }
+    };
 
     function decodeToken(obfuscated) {
         if (!obfuscated) return "";
@@ -154,6 +241,97 @@
         if (!resp.ok) throw new Error("保存失败");
     }
 
+    // ========== 规则配置读写 ==========
+    async function loadRulesConfig() {
+        try {
+            const resp = await fetch(RULES_CONFIG_PUBLIC_URL + "?t=" + Date.now(), { cache: "no-store" });
+            if (resp.ok) {
+                const cfg = await resp.json();
+                const lp = cfg.lowScoreProtect || {};
+                const vb = cfg.voteBonus || {};
+                for (let k of ['threshold','perDay','maxDays','T1','T2','T3','upRatio1','upRatio2','upRatio3','downRatio1','downRatio2','downRatio3']) {
+                    if (typeof lp[k] === 'number') rulesConfig.lowScoreProtect[k] = lp[k];
+                }
+                if (typeof vb.enabled === 'boolean') rulesConfig.voteBonus.enabled = vb.enabled;
+                if (typeof vb.bonus === 'number') rulesConfig.voteBonus.bonus = vb.bonus;
+                if (vb.weights) Object.assign(rulesConfig.voteBonus.weights, vb.weights);
+            }
+        } catch(e) { console.warn("加载规则配置失败，使用默认值", e); }
+        fillRuleForm();
+    }
+
+    function fillRuleForm() {
+        const lp = rulesConfig.lowScoreProtect;
+        const vb = rulesConfig.voteBonus;
+        const w = vb.weights;
+        document.getElementById("cfgThreshold").value = lp.threshold;
+        document.getElementById("cfgPerDay").value = lp.perDay;
+        document.getElementById("cfgMaxDays").value = lp.maxDays;
+        document.getElementById("cfgT1").value = lp.T1;
+        document.getElementById("cfgT2").value = lp.T2;
+        document.getElementById("cfgT3").value = lp.T3;
+        document.getElementById("cfgUpRatio1").value = lp.upRatio1;
+        document.getElementById("cfgUpRatio2").value = lp.upRatio2;
+        document.getElementById("cfgUpRatio3").value = lp.upRatio3;
+        document.getElementById("cfgDownRatio1").value = lp.downRatio1;
+        document.getElementById("cfgDownRatio2").value = lp.downRatio2;
+        document.getElementById("cfgDownRatio3").value = lp.downRatio3;
+        document.getElementById("cfgVoteEnabled").checked = !!vb.enabled;
+        document.getElementById("cfgVoteBonus").value = vb.bonus;
+        document.getElementById("cfgWVerygood").value = w.verygood;
+        document.getElementById("cfgWGood").value = w.good;
+        document.getElementById("cfgWJustsoso").value = w.justsoso;
+        document.getElementById("cfgWLittlebad").value = w.littlebad;
+        document.getElementById("cfgWBad").value = w.bad;
+    }
+
+    function collectRulesConfig() {
+        const g = id => parseFloat(document.getElementById(id).value);
+        return {
+            lowScoreProtect: {
+                threshold: g("cfgThreshold"),
+                perDay: g("cfgPerDay"),
+                maxDays: Math.max(1, Math.round(g("cfgMaxDays"))),
+                T1: g("cfgT1"),
+                T2: g("cfgT2"),
+                T3: g("cfgT3"),
+                upRatio1: g("cfgUpRatio1"),
+                upRatio2: g("cfgUpRatio2"),
+                upRatio3: g("cfgUpRatio3"),
+                downRatio1: g("cfgDownRatio1"),
+                downRatio2: g("cfgDownRatio2"),
+                downRatio3: g("cfgDownRatio3")
+            },
+            voteBonus: {
+                enabled: document.getElementById("cfgVoteEnabled").checked,
+                bonus: g("cfgVoteBonus"),
+                weights: {
+                    verygood: g("cfgWVerygood"),
+                    good: g("cfgWGood"),
+                    justsoso: g("cfgWJustsoso"),
+                    littlebad: g("cfgWLittlebad"),
+                    bad: g("cfgWBad")
+                }
+            }
+        };
+    }
+
+    async function saveRulesInternal(btn, msgEl, doneMsg) {
+        const cfg = collectRulesConfig();
+        if (btn) { btn.disabled = true; btn.innerText = "正在修改…"; }
+        if (msgEl) { msgEl.innerText = "正在修改…请稍候，不要重复点击"; msgEl.className = "msg"; }
+        try {
+            await saveJSON(RULES_CONFIG_URL, cfg, "更新自动控制规则");
+            rulesConfig = cfg;
+            if (msgEl) { msgEl.innerText = doneMsg + "（已生效，无需刷新）"; msgEl.className = "msg success"; }
+        } catch(err) {
+            if (msgEl) { msgEl.innerText = "保存失败：" + err.message + "，请重试"; msgEl.className = "msg error"; }
+        } finally {
+            if (btn) { btn.disabled = false; btn.innerText = btn.dataset.originText || "保存"; }
+        }
+    }
+
+    // ========== 数据加载（低分补分明细）==========
     async function loadData() {
         const data = await fetchJSON(DATA_URL);
         currentStudents = (data?.students || []).map(s => ({ ...s, score: parseFloat(s.score) }));
@@ -161,7 +339,7 @@
         if (tracker) {
             autoTracker = tracker;
             if (!autoTracker.lowScoreStudents) autoTracker.lowScoreStudents = {};
-        if (!autoTracker.lastBonusWeek) autoTracker.lastBonusWeek = '';
+            if (!autoTracker.lastBonusWeek) autoTracker.lastBonusWeek = '';
         } else {
             autoTracker = { lowScoreStudents: {} };
         }
@@ -174,6 +352,7 @@
         tbody.innerHTML = "";
         const studentMap = {};
         currentStudents.forEach(s => studentMap[s.id] = s);
+        const maxDays = rulesConfig.lowScoreProtect.maxDays;
 
         for (let sid in trackerCopy) {
             const info = trackerCopy[sid];
@@ -194,14 +373,14 @@
             const inputDays = document.createElement('input');
             inputDays.type = 'number';
             inputDays.min = 0;
-            inputDays.max = 7;
+            inputDays.max = maxDays;
             inputDays.value = daysAdded;
             inputDays.style.width = '60px';
             inputDays.dataset.sid = sid;
             inputDays.addEventListener('change', () => {
                 const val = parseInt(inputDays.value);
                 if (isNaN(val) || val < 0) inputDays.value = 0;
-                if (val > 7) inputDays.value = 7;
+                if (val > maxDays) inputDays.value = maxDays;
                 trackerCopy[sid].daysAdded = parseInt(inputDays.value);
             });
             daysCell.appendChild(inputDays);
@@ -219,8 +398,8 @@
 
             // 状态
             const statusCell = row.insertCell(6);
-            const statusText = enabled ? (daysAdded < 7 ? '补分中' : '已完成') : '已禁用';
-            const color = enabled ? (daysAdded < 7 ? 'green' : 'orange') : 'red';
+            const statusText = enabled ? (daysAdded < maxDays ? '补分中' : '已完成') : '已禁用';
+            const color = enabled ? (daysAdded < maxDays ? 'green' : 'orange') : 'red';
             statusCell.innerHTML = `<span style="color:${color};font-weight:bold;">${statusText}</span>`;
         }
         if (Object.keys(trackerCopy).length === 0) {
@@ -229,6 +408,10 @@
     }
 
     async function saveAllChanges() {
+        const btn = document.getElementById("saveAllBtn");
+        const msgEl = document.getElementById("saveMsg");
+        if (btn) { btn.disabled = true; btn.innerText = "正在修改…"; }
+        if (msgEl) { msgEl.innerText = "正在修改…请稍候，不要重复点击"; msgEl.className = "msg"; }
         try {
             // 确保每个记录都有 enabled 字段
             for (let sid in trackerCopy) {
@@ -239,14 +422,14 @@
             // 将编辑后的 trackerCopy 写回 autoTracker
             autoTracker.lowScoreStudents = trackerCopy;
             await saveJSON(AUTO_TRACK_URL, autoTracker, "更新低分补分单独控制");
-            document.getElementById("saveMsg").innerText = "保存成功！";
-            document.getElementById("saveMsg").className = "success";
+            if (msgEl) { msgEl.innerText = "保存成功！"; msgEl.className = "msg success"; }
             // 重新加载数据以反映最新
             await loadData();
             renderTable();
         } catch(err) {
-            document.getElementById("saveMsg").innerText = "保存失败：" + err.message;
-            document.getElementById("saveMsg").className = "error";
+            if (msgEl) { msgEl.innerText = "保存失败：" + err.message; msgEl.className = "msg error"; }
+        } finally {
+            if (btn) { btn.disabled = false; btn.innerText = "保存所有更改"; }
         }
     }
 
@@ -262,6 +445,8 @@
 
     async function stopGlobal() {
         if (!confirm('确定要停止自动补分吗？')) return;
+        const btn = document.getElementById("stopGlobalBtn");
+        if (btn) { btn.disabled = true; btn.innerText = "正在修改…"; }
         const tracker = await fetchJSON(AUTO_TRACK_URL);
         if (tracker) {
             tracker.stopped = true;
@@ -269,10 +454,13 @@
             loadGlobalStatus();
             document.getElementById('globalMsg').innerText = '已停止';
         }
+        if (btn) { btn.disabled = false; btn.innerText = "停止自动补分"; }
     }
 
     async function resumeGlobal() {
         if (!confirm('确定要开启自动补分吗？')) return;
+        const btn = document.getElementById("resumeGlobalBtn");
+        if (btn) { btn.disabled = true; btn.innerText = "正在修改…"; }
         const tracker = await fetchJSON(AUTO_TRACK_URL);
         if (tracker) {
             tracker.stopped = false;
@@ -280,13 +468,23 @@
             loadGlobalStatus();
             document.getElementById('globalMsg').innerText = '已开启';
         }
+        if (btn) { btn.disabled = false; btn.innerText = "开启自动补分"; }
     }
 
     async function manualRun() {
-        if (!confirm('确定立即执行一次补分检查吗？')) return;
-        await checkAndRunAutoIncrement();
-        loadGlobalStatus();
-        document.getElementById('globalMsg').innerText = '执行完毕';
+        if (!confirm('确定立即执行一次补分检查吗？（会忽略今日已执行标记）')) return;
+        const btn = document.getElementById("manualRunBtn");
+        if (btn) { btn.disabled = true; btn.innerText = "正在执行…"; }
+        document.getElementById('globalMsg').innerText = '正在执行补分…请稍候';
+        try {
+            await checkAndRunAutoIncrement(true);
+            document.getElementById('globalMsg').innerText = '执行完毕';
+        } catch(e) {
+            document.getElementById('globalMsg').innerText = '执行出错：' + e.message;
+        } finally {
+            if (btn) { btn.disabled = false; btn.innerText = "立即执行一次补分"; }
+            loadGlobalStatus();
+        }
     }
 
     // ========== 登录 ==========
@@ -304,9 +502,16 @@
         }
         try {
             await loadData();
+            await loadRulesConfig();
             document.getElementById("loginPanel").style.display = "none";
             document.getElementById("mainPanel").style.display = "block";
             renderTable();
+            const saveBtn = document.getElementById("saveRulesBtn");
+            saveBtn.dataset.originText = "保存全部规则";
+            saveBtn.onclick = () => saveRulesInternal(saveBtn, document.getElementById("rulesMsg"), "规则已保存");
+            const voteBtn = document.getElementById("saveVoteBtn");
+            voteBtn.dataset.originText = "保存投票加分设置";
+            voteBtn.onclick = () => saveRulesInternal(voteBtn, document.getElementById("voteMsg"), "投票加分设置已保存");
             document.getElementById("saveAllBtn").onclick = saveAllChanges;
             document.getElementById('stopGlobalBtn').onclick = stopGlobal;
             document.getElementById('resumeGlobalBtn').onclick = resumeGlobal;
@@ -325,3 +530,4 @@
     </script>
 </body>
 </html>
+<!-- （注：内容由AI生成） -->
