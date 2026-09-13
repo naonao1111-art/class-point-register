@@ -1,6 +1,6 @@
 {
   "lowScoreProtect": {
-    "threshold": -52,
+    "threshold": -50,
     "perDay": 2,
     "maxDays": 7,
     "T1": -30,
