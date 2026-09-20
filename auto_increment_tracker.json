@@ -6,43 +6,43 @@
     "049": {
       "startDate": "2026-06-24",
       "daysAdded": 7,
-      "enabled": false
+      "enabled": true
     },
     "035": {
       "startDate": "2026-07-03",
       "daysAdded": 7,
-      "enabled": false,
+      "enabled": true,
       "lastAddDate": "2026-09-13"
     },
     "019": {
       "startDate": "2026-07-05",
       "daysAdded": 7,
-      "enabled": false
+      "enabled": true
     },
     "029": {
       "startDate": "2026-07-03",
       "daysAdded": 7,
-      "enabled": false
+      "enabled": true
     },
     "036": {
       "startDate": "2026-07-03",
       "daysAdded": 7,
-      "enabled": false
+      "enabled": true
     },
     "026": {
       "startDate": "2026-07-03",
       "daysAdded": 7,
-      "enabled": false
+      "enabled": true
     },
     "040": {
       "startDate": "2026-07-05",
       "daysAdded": 7,
-      "enabled": false
+      "enabled": true
     },
     "031": {
       "startDate": "2026-07-05",
       "daysAdded": 7,
-      "enabled": false
+      "enabled": true
     }
   },
   "lastBonusWeek": "2026-W36"
