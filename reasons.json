@@ -19,5 +19,19 @@
     "studentName": "沈天辰",
     "delta": -0.5,
     "reason": "寝室扣分扣分0.5"
+  },
+  {
+    "timestamp": "2026-09-20 12:57:07",
+    "studentId": "014",
+    "studentName": "姚腾浩",
+    "delta": -1,
+    "reason": "寝室纪律扣分1"
+  },
+  {
+    "timestamp": "2026-09-20 12:57:07",
+    "studentId": "026",
+    "studentName": "潘烨磊",
+    "delta": -1,
+    "reason": "寝室纪律扣分1"
   }
 ]
