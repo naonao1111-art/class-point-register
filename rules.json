@@ -1,8 +1,8 @@
 {
   "rules": [
     {
-      "action": "多次作业没交",
-      "score": -2
+      "action": "2+作业没交",
+      "score": -0.5
     },
     {
       "action": "迟到",
