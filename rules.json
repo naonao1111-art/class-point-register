@@ -1,7 +1,7 @@
 {
   "rules": [
     {
-      "action": "2+作业没交(all)",
+      "action": "2+作业没交(all) n+",
       "score": -0.5
     },
     {
