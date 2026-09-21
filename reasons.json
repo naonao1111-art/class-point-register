@@ -33,5 +33,19 @@
     "studentName": "潘烨磊",
     "delta": -1,
     "reason": "寝室纪律扣分1"
+  },
+  {
+    "timestamp": "2026-09-21 16:41:51",
+    "studentId": "007",
+    "studentName": "金鑫璇",
+    "delta": 0.4,
+    "reason": "参加比赛（固定）1500"
+  },
+  {
+    "timestamp": "2026-09-21 16:41:51",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": 0.4,
+    "reason": "参加比赛（固定）1500"
   }
 ]
