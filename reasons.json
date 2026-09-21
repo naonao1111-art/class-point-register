@@ -75,5 +75,12 @@
     "studentName": "冯丰硕",
     "delta": -0.5,
     "reason": "纪律差once"
+  },
+  {
+    "timestamp": "2026-09-21 21:04:13",
+    "studentId": "033",
+    "studentName": "应扎吉",
+    "delta": -0.5,
+    "reason": "纪律差once"
   }
 ]
