@@ -4,83 +4,79 @@
     "studentId": "018",
     "studentName": "苏义涵",
     "delta": -0.5,
-    "reason": "寝室扣分扣分0.5"
+    "reason": "寝室扣分扣分0.5",
+    "id": "2026-09-20 12:56:20_018_-0.5"
   },
   {
     "timestamp": "2026-09-20 12:56:20",
     "studentId": "020",
     "studentName": "姚奇胜",
     "delta": -0.5,
-    "reason": "寝室扣分扣分0.5"
+    "reason": "寝室扣分扣分0.5",
+    "id": "2026-09-20 12:56:20_020_-0.5"
   },
   {
     "timestamp": "2026-09-20 12:56:20",
     "studentId": "024",
     "studentName": "沈天辰",
     "delta": -0.5,
-    "reason": "寝室扣分扣分0.5"
+    "reason": "寝室扣分扣分0.5",
+    "id": "2026-09-20 12:56:20_024_-0.5"
   },
   {
     "timestamp": "2026-09-20 12:57:07",
     "studentId": "014",
     "studentName": "姚腾浩",
     "delta": -1,
-    "reason": "寝室纪律扣分1"
+    "reason": "寝室纪律扣分1",
+    "id": "2026-09-20 12:57:07_014_-1"
   },
   {
     "timestamp": "2026-09-20 12:57:07",
     "studentId": "026",
     "studentName": "潘烨磊",
     "delta": -1,
-    "reason": "寝室纪律扣分1"
+    "reason": "寝室纪律扣分1",
+    "id": "2026-09-20 12:57:07_026_-1"
   },
   {
     "timestamp": "2026-09-21 16:41:51",
     "studentId": "007",
     "studentName": "金鑫璇",
     "delta": 0.4,
-    "reason": "参加比赛（固定）1500"
+    "reason": "参加比赛（固定）1500",
+    "id": "2026-09-21 16:41:51_007_0.4"
   },
   {
     "timestamp": "2026-09-21 16:41:51",
     "studentId": "021",
     "studentName": "朱晨曦",
     "delta": 0.4,
-    "reason": "参加比赛（固定）1500"
-  },
-  {
-    "timestamp": "2026-09-21 16:55:40",
-    "studentId": "021",
-    "studentName": "朱晨曦",
-    "delta": -0.4,
-    "reason": "修改积分为 0"
-  },
-  {
-    "timestamp": "2026-09-21 16:55:48",
-    "studentId": "007",
-    "studentName": "金鑫璇",
-    "delta": -0.4,
-    "reason": "修改积分为 0"
+    "reason": "参加比赛（固定）1500",
+    "id": "2026-09-21 16:41:51_021_0.4"
   },
   {
     "timestamp": "2026-09-21 20:35:35",
     "studentId": "010",
     "studentName": "陈静怡",
     "delta": -0.5,
-    "reason": "纪律差once"
+    "reason": "纪律差once",
+    "id": "2026-09-21 20:35:35_010_-0.5"
   },
   {
     "timestamp": "2026-09-21 20:35:35",
     "studentId": "035",
     "studentName": "冯丰硕",
     "delta": -0.5,
-    "reason": "纪律差once"
+    "reason": "纪律差once",
+    "id": "2026-09-21 20:35:35_035_-0.5"
   },
   {
     "timestamp": "2026-09-21 21:04:13",
     "studentId": "033",
     "studentName": "应扎吉",
     "delta": -0.5,
-    "reason": "纪律差once"
+    "reason": "纪律差once",
+    "id": "2026-09-21 21:04:13_033_-0.5"
   }
 ]
