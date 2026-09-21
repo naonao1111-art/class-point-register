@@ -47,5 +47,12 @@
     "studentName": "朱晨曦",
     "delta": 0.4,
     "reason": "参加比赛（固定）1500"
+  },
+  {
+    "timestamp": "2026-09-21 16:55:40",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": -0.4,
+    "reason": "修改积分为 0"
   }
 ]
