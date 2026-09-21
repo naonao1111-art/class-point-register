@@ -54,5 +54,12 @@
     "studentName": "朱晨曦",
     "delta": -0.4,
     "reason": "修改积分为 0"
+  },
+  {
+    "timestamp": "2026-09-21 16:55:48",
+    "studentId": "007",
+    "studentName": "金鑫璇",
+    "delta": -0.4,
+    "reason": "修改积分为 0"
   }
 ]
