@@ -104,5 +104,12 @@
     "studentName": "闫之诺",
     "delta": -0.2,
     "reason": "上课被老师批评"
+  },
+  {
+    "timestamp": "2026-09-22 23:16:53",
+    "studentId": "005",
+    "studentName": "沈姚栎",
+    "delta": -0.5,
+    "reason": "扣分0.5（窗台脏）"
   }
 ]
