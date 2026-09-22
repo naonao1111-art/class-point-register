@@ -62,5 +62,47 @@
     "delta": -0.5,
     "reason": "纪律差once",
     "id": "2026-09-21 21:04:13_033_-0.5"
+  },
+  {
+    "timestamp": "2026-09-22 23:14:59",
+    "studentId": "002",
+    "studentName": "胡凯琳",
+    "delta": -0.2,
+    "reason": "上课被老师批评"
+  },
+  {
+    "timestamp": "2026-09-22 23:14:59",
+    "studentId": "014",
+    "studentName": "姚腾浩",
+    "delta": -0.2,
+    "reason": "上课被老师批评"
+  },
+  {
+    "timestamp": "2026-09-22 23:14:59",
+    "studentId": "023",
+    "studentName": "牧周磊",
+    "delta": -0.2,
+    "reason": "上课被老师批评"
+  },
+  {
+    "timestamp": "2026-09-22 23:14:59",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": -0.2,
+    "reason": "上课被老师批评"
+  },
+  {
+    "timestamp": "2026-09-22 23:14:59",
+    "studentId": "039",
+    "studentName": "胡宵",
+    "delta": -0.2,
+    "reason": "上课被老师批评"
+  },
+  {
+    "timestamp": "2026-09-22 23:14:59",
+    "studentId": "042",
+    "studentName": "闫之诺",
+    "delta": -0.2,
+    "reason": "上课被老师批评"
   }
 ]
