@@ -111,5 +111,19 @@
     "studentName": "沈姚栎",
     "delta": -0.5,
     "reason": "扣分0.5（窗台脏）"
+  },
+  {
+    "timestamp": "2026-09-22 23:18:09",
+    "studentId": "008",
+    "studentName": "王李婧",
+    "delta": -0.5,
+    "reason": "扣分0.5（投影仪 窗台脏）"
+  },
+  {
+    "timestamp": "2026-09-22 23:18:09",
+    "studentId": "041",
+    "studentName": "童清扬",
+    "delta": -0.5,
+    "reason": "扣分0.5（投影仪 窗台脏）"
   }
 ]
