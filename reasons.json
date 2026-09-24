@@ -125,5 +125,33 @@
     "studentName": "童清扬",
     "delta": -0.5,
     "reason": "扣分0.5（投影仪 窗台脏）"
+  },
+  {
+    "timestamp": "2026-09-24 23:59:27",
+    "studentId": "001",
+    "studentName": "沈乐妍",
+    "delta": -0.5,
+    "reason": "午睡纪律差once"
+  },
+  {
+    "timestamp": "2026-09-24 23:59:27",
+    "studentId": "002",
+    "studentName": "胡凯琳",
+    "delta": -0.5,
+    "reason": "午睡纪律差once"
+  },
+  {
+    "timestamp": "2026-09-24 23:59:27",
+    "studentId": "033",
+    "studentName": "应扎吉",
+    "delta": -0.5,
+    "reason": "午睡纪律差once"
+  },
+  {
+    "timestamp": "2026-09-24 23:59:27",
+    "studentId": "037",
+    "studentName": "陈昀泽",
+    "delta": -0.5,
+    "reason": "午睡纪律差once"
   }
 ]
