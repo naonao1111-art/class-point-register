@@ -244,5 +244,12 @@
     "studentName": "刘昊",
     "delta": 0.4,
     "reason": "搬书"
+  },
+  {
+    "timestamp": "2026-09-25 00:01:39",
+    "studentId": "049",
+    "studentName": "360浏览器",
+    "delta": -3,
+    "reason": "修改积分为 -3"
   }
 ]
