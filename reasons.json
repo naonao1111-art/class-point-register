@@ -153,5 +153,96 @@
     "studentName": "陈昀泽",
     "delta": -0.5,
     "reason": "午睡纪律差once"
+  },
+  {
+    "timestamp": "2026-09-25 00:00:42",
+    "studentId": "013",
+    "studentName": "袁煦泽",
+    "delta": 0.4,
+    "reason": "搬书"
+  },
+  {
+    "timestamp": "2026-09-25 00:00:42",
+    "studentId": "014",
+    "studentName": "姚腾浩",
+    "delta": 0.4,
+    "reason": "搬书"
+  },
+  {
+    "timestamp": "2026-09-25 00:00:42",
+    "studentId": "017",
+    "studentName": "黄智恒",
+    "delta": 0.4,
+    "reason": "搬书"
+  },
+  {
+    "timestamp": "2026-09-25 00:00:42",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": 0.4,
+    "reason": "搬书"
+  },
+  {
+    "timestamp": "2026-09-25 00:00:42",
+    "studentId": "023",
+    "studentName": "牧周磊",
+    "delta": 0.4,
+    "reason": "搬书"
+  },
+  {
+    "timestamp": "2026-09-25 00:00:42",
+    "studentId": "025",
+    "studentName": "俞齐",
+    "delta": 0.4,
+    "reason": "搬书"
+  },
+  {
+    "timestamp": "2026-09-25 00:00:42",
+    "studentId": "027",
+    "studentName": "吕峥程",
+    "delta": 0.4,
+    "reason": "搬书"
+  },
+  {
+    "timestamp": "2026-09-25 00:00:42",
+    "studentId": "028",
+    "studentName": "李岩蹊",
+    "delta": 0.4,
+    "reason": "搬书"
+  },
+  {
+    "timestamp": "2026-09-25 00:00:42",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": 0.4,
+    "reason": "搬书"
+  },
+  {
+    "timestamp": "2026-09-25 00:00:42",
+    "studentId": "037",
+    "studentName": "陈昀泽",
+    "delta": 0.4,
+    "reason": "搬书"
+  },
+  {
+    "timestamp": "2026-09-25 00:00:42",
+    "studentId": "039",
+    "studentName": "胡宵",
+    "delta": 0.4,
+    "reason": "搬书"
+  },
+  {
+    "timestamp": "2026-09-25 00:00:42",
+    "studentId": "044",
+    "studentName": "金智宸",
+    "delta": 0.4,
+    "reason": "搬书"
+  },
+  {
+    "timestamp": "2026-09-25 00:00:42",
+    "studentId": "046",
+    "studentName": "刘昊",
+    "delta": 0.4,
+    "reason": "搬书"
   }
 ]
