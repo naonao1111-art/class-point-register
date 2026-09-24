@@ -68,188 +68,215 @@
     "studentId": "002",
     "studentName": "胡凯琳",
     "delta": -0.2,
-    "reason": "上课被老师批评"
+    "reason": "上课被老师批评",
+    "id": "2026-09-22 23:14:59_002_-0.2"
   },
   {
     "timestamp": "2026-09-22 23:14:59",
     "studentId": "014",
     "studentName": "姚腾浩",
     "delta": -0.2,
-    "reason": "上课被老师批评"
+    "reason": "上课被老师批评",
+    "id": "2026-09-22 23:14:59_014_-0.2"
   },
   {
     "timestamp": "2026-09-22 23:14:59",
     "studentId": "023",
     "studentName": "牧周磊",
     "delta": -0.2,
-    "reason": "上课被老师批评"
+    "reason": "上课被老师批评",
+    "id": "2026-09-22 23:14:59_023_-0.2"
   },
   {
     "timestamp": "2026-09-22 23:14:59",
     "studentId": "029",
     "studentName": "濮天昊",
     "delta": -0.2,
-    "reason": "上课被老师批评"
+    "reason": "上课被老师批评",
+    "id": "2026-09-22 23:14:59_029_-0.2"
   },
   {
     "timestamp": "2026-09-22 23:14:59",
     "studentId": "039",
     "studentName": "胡宵",
     "delta": -0.2,
-    "reason": "上课被老师批评"
+    "reason": "上课被老师批评",
+    "id": "2026-09-22 23:14:59_039_-0.2"
   },
   {
     "timestamp": "2026-09-22 23:14:59",
     "studentId": "042",
     "studentName": "闫之诺",
     "delta": -0.2,
-    "reason": "上课被老师批评"
+    "reason": "上课被老师批评",
+    "id": "2026-09-22 23:14:59_042_-0.2"
   },
   {
     "timestamp": "2026-09-22 23:16:53",
     "studentId": "005",
     "studentName": "沈姚栎",
     "delta": -0.5,
-    "reason": "扣分0.5（窗台脏）"
+    "reason": "扣分0.5（窗台脏）",
+    "id": "2026-09-22 23:16:53_005_-0.5"
   },
   {
     "timestamp": "2026-09-22 23:18:09",
     "studentId": "008",
     "studentName": "王李婧",
     "delta": -0.5,
-    "reason": "扣分0.5（投影仪 窗台脏）"
+    "reason": "扣分0.5（投影仪 窗台脏）",
+    "id": "2026-09-22 23:18:09_008_-0.5"
   },
   {
     "timestamp": "2026-09-22 23:18:09",
     "studentId": "041",
     "studentName": "童清扬",
     "delta": -0.5,
-    "reason": "扣分0.5（投影仪 窗台脏）"
+    "reason": "扣分0.5（投影仪 窗台脏）",
+    "id": "2026-09-22 23:18:09_041_-0.5"
   },
   {
     "timestamp": "2026-09-24 23:59:27",
     "studentId": "001",
     "studentName": "沈乐妍",
     "delta": -0.5,
-    "reason": "午睡纪律差once"
+    "reason": "午睡纪律差once",
+    "id": "2026-09-24 23:59:27_001_-0.5"
   },
   {
     "timestamp": "2026-09-24 23:59:27",
     "studentId": "002",
     "studentName": "胡凯琳",
     "delta": -0.5,
-    "reason": "午睡纪律差once"
+    "reason": "午睡纪律差once",
+    "id": "2026-09-24 23:59:27_002_-0.5"
   },
   {
     "timestamp": "2026-09-24 23:59:27",
     "studentId": "033",
     "studentName": "应扎吉",
     "delta": -0.5,
-    "reason": "午睡纪律差once"
+    "reason": "午睡纪律差once",
+    "id": "2026-09-24 23:59:27_033_-0.5"
   },
   {
     "timestamp": "2026-09-24 23:59:27",
     "studentId": "037",
     "studentName": "陈昀泽",
     "delta": -0.5,
-    "reason": "午睡纪律差once"
+    "reason": "午睡纪律差once",
+    "id": "2026-09-24 23:59:27_037_-0.5"
   },
   {
     "timestamp": "2026-09-25 00:00:42",
     "studentId": "013",
     "studentName": "袁煦泽",
     "delta": 0.4,
-    "reason": "搬书"
+    "reason": "搬书",
+    "id": "2026-09-25 00:00:42_013_0.4"
   },
   {
     "timestamp": "2026-09-25 00:00:42",
     "studentId": "014",
     "studentName": "姚腾浩",
     "delta": 0.4,
-    "reason": "搬书"
+    "reason": "搬书",
+    "id": "2026-09-25 00:00:42_014_0.4"
   },
   {
     "timestamp": "2026-09-25 00:00:42",
     "studentId": "017",
     "studentName": "黄智恒",
     "delta": 0.4,
-    "reason": "搬书"
+    "reason": "搬书",
+    "id": "2026-09-25 00:00:42_017_0.4"
   },
   {
     "timestamp": "2026-09-25 00:00:42",
     "studentId": "021",
     "studentName": "朱晨曦",
     "delta": 0.4,
-    "reason": "搬书"
+    "reason": "搬书",
+    "id": "2026-09-25 00:00:42_021_0.4"
   },
   {
     "timestamp": "2026-09-25 00:00:42",
     "studentId": "023",
     "studentName": "牧周磊",
     "delta": 0.4,
-    "reason": "搬书"
+    "reason": "搬书",
+    "id": "2026-09-25 00:00:42_023_0.4"
   },
   {
     "timestamp": "2026-09-25 00:00:42",
     "studentId": "025",
     "studentName": "俞齐",
     "delta": 0.4,
-    "reason": "搬书"
+    "reason": "搬书",
+    "id": "2026-09-25 00:00:42_025_0.4"
   },
   {
     "timestamp": "2026-09-25 00:00:42",
     "studentId": "027",
     "studentName": "吕峥程",
     "delta": 0.4,
-    "reason": "搬书"
+    "reason": "搬书",
+    "id": "2026-09-25 00:00:42_027_0.4"
   },
   {
     "timestamp": "2026-09-25 00:00:42",
     "studentId": "028",
     "studentName": "李岩蹊",
     "delta": 0.4,
-    "reason": "搬书"
+    "reason": "搬书",
+    "id": "2026-09-25 00:00:42_028_0.4"
   },
   {
     "timestamp": "2026-09-25 00:00:42",
     "studentId": "029",
     "studentName": "濮天昊",
     "delta": 0.4,
-    "reason": "搬书"
+    "reason": "搬书",
+    "id": "2026-09-25 00:00:42_029_0.4"
   },
   {
     "timestamp": "2026-09-25 00:00:42",
     "studentId": "037",
     "studentName": "陈昀泽",
     "delta": 0.4,
-    "reason": "搬书"
+    "reason": "搬书",
+    "id": "2026-09-25 00:00:42_037_0.4"
   },
   {
     "timestamp": "2026-09-25 00:00:42",
     "studentId": "039",
     "studentName": "胡宵",
     "delta": 0.4,
-    "reason": "搬书"
+    "reason": "搬书",
+    "id": "2026-09-25 00:00:42_039_0.4"
   },
   {
     "timestamp": "2026-09-25 00:00:42",
     "studentId": "044",
     "studentName": "金智宸",
     "delta": 0.4,
-    "reason": "搬书"
+    "reason": "搬书",
+    "id": "2026-09-25 00:00:42_044_0.4"
   },
   {
     "timestamp": "2026-09-25 00:00:42",
     "studentId": "046",
     "studentName": "刘昊",
     "delta": 0.4,
-    "reason": "搬书"
+    "reason": "搬书",
+    "id": "2026-09-25 00:00:42_046_0.4"
   },
   {
     "timestamp": "2026-09-25 00:01:39",
     "studentId": "049",
     "studentName": "360浏览器",
     "delta": -3,
-    "reason": "修改积分为 -3"
+    "reason": "修改积分为 -3（实验程序）",
+    "id": "2026-09-25 00:01:39_049_-3"
   }
 ]
