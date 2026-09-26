@@ -366,5 +366,26 @@
     "delta": 0.2,
     "reason": "9.24搬书",
     "id": "2026-09-26 22:19:51_046_0.2"
+  },
+  {
+    "timestamp": "2026-09-26 22:22:39",
+    "studentId": "010",
+    "studentName": "陈静怡",
+    "delta": -0.2,
+    "reason": "9.21纪律差once"
+  },
+  {
+    "timestamp": "2026-09-26 22:22:39",
+    "studentId": "033",
+    "studentName": "应扎吉",
+    "delta": -0.2,
+    "reason": "9.21纪律差once"
+  },
+  {
+    "timestamp": "2026-09-26 22:22:39",
+    "studentId": "035",
+    "studentName": "冯丰硕",
+    "delta": -0.2,
+    "reason": "9.21纪律差once"
   }
 ]
