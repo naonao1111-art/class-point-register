@@ -330,5 +330,26 @@
     "studentName": "刘昊",
     "delta": -0.1,
     "reason": "非病假不返校"
+  },
+  {
+    "timestamp": "2026-09-26 22:14:42",
+    "studentId": "027",
+    "studentName": "吕峥程",
+    "delta": -0.2,
+    "reason": "晚①纪律差once"
+  },
+  {
+    "timestamp": "2026-09-26 22:14:42",
+    "studentId": "034",
+    "studentName": "盛睿良",
+    "delta": -0.2,
+    "reason": "晚①纪律差once"
+  },
+  {
+    "timestamp": "2026-09-26 22:14:42",
+    "studentId": "037",
+    "studentName": "陈昀泽",
+    "delta": -0.2,
+    "reason": "晚①纪律差once"
   }
 ]
