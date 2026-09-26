@@ -278,5 +278,33 @@
     "delta": -3,
     "reason": "修改积分为 -3（实验程序）",
     "id": "2026-09-25 00:01:39_049_-3"
+  },
+  {
+    "timestamp": "2026-09-26 22:11:01",
+    "studentId": "001",
+    "studentName": "沈乐妍",
+    "delta": -0.2,
+    "reason": "9.24午睡纪律差once"
+  },
+  {
+    "timestamp": "2026-09-26 22:11:01",
+    "studentId": "002",
+    "studentName": "胡凯琳",
+    "delta": -0.2,
+    "reason": "9.24午睡纪律差once"
+  },
+  {
+    "timestamp": "2026-09-26 22:11:01",
+    "studentId": "033",
+    "studentName": "应扎吉",
+    "delta": -0.2,
+    "reason": "9.24午睡纪律差once"
+  },
+  {
+    "timestamp": "2026-09-26 22:11:01",
+    "studentId": "037",
+    "studentName": "陈昀泽",
+    "delta": -0.2,
+    "reason": "9.24午睡纪律差once"
   }
 ]
