@@ -40,30 +40,6 @@
     "id": "2026-09-20 12:57:07_026_-1"
   },
   {
-    "timestamp": "2026-09-21 20:35:35",
-    "studentId": "010",
-    "studentName": "陈静怡",
-    "delta": -0.5,
-    "reason": "纪律差once",
-    "id": "2026-09-21 20:35:35_010_-0.5"
-  },
-  {
-    "timestamp": "2026-09-21 20:35:35",
-    "studentId": "035",
-    "studentName": "冯丰硕",
-    "delta": -0.5,
-    "reason": "纪律差once",
-    "id": "2026-09-21 20:35:35_035_-0.5"
-  },
-  {
-    "timestamp": "2026-09-21 21:04:13",
-    "studentId": "033",
-    "studentName": "应扎吉",
-    "delta": -0.5,
-    "reason": "纪律差once",
-    "id": "2026-09-21 21:04:13_033_-0.5"
-  },
-  {
     "timestamp": "2026-09-22 23:14:59",
     "studentId": "002",
     "studentName": "胡凯琳",
@@ -372,20 +348,23 @@
     "studentId": "010",
     "studentName": "陈静怡",
     "delta": -0.2,
-    "reason": "9.21纪律差once"
+    "reason": "9.21纪律差once",
+    "id": "2026-09-26 22:22:39_010_-0.2"
   },
   {
     "timestamp": "2026-09-26 22:22:39",
     "studentId": "033",
     "studentName": "应扎吉",
     "delta": -0.2,
-    "reason": "9.21纪律差once"
+    "reason": "9.21纪律差once",
+    "id": "2026-09-26 22:22:39_033_-0.2"
   },
   {
     "timestamp": "2026-09-26 22:22:39",
     "studentId": "035",
     "studentName": "冯丰硕",
     "delta": -0.2,
-    "reason": "9.21纪律差once"
+    "reason": "9.21纪律差once",
+    "id": "2026-09-26 22:22:39_035_-0.2"
   }
 ]
