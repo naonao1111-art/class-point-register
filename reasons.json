@@ -281,5 +281,54 @@
     "studentName": "闫之诺",
     "delta": 0.1,
     "reason": "晚读认真"
+  },
+  {
+    "timestamp": "2026-09-26 22:13:46",
+    "studentId": "001",
+    "studentName": "沈乐妍",
+    "delta": -0.1,
+    "reason": "非病假不返校"
+  },
+  {
+    "timestamp": "2026-09-26 22:13:46",
+    "studentId": "006",
+    "studentName": "马伊韩",
+    "delta": -0.1,
+    "reason": "非病假不返校"
+  },
+  {
+    "timestamp": "2026-09-26 22:13:46",
+    "studentId": "014",
+    "studentName": "姚腾浩",
+    "delta": -0.1,
+    "reason": "非病假不返校"
+  },
+  {
+    "timestamp": "2026-09-26 22:13:46",
+    "studentId": "023",
+    "studentName": "牧周磊",
+    "delta": -0.1,
+    "reason": "非病假不返校"
+  },
+  {
+    "timestamp": "2026-09-26 22:13:46",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": -0.1,
+    "reason": "非病假不返校"
+  },
+  {
+    "timestamp": "2026-09-26 22:13:46",
+    "studentId": "035",
+    "studentName": "冯丰硕",
+    "delta": -0.1,
+    "reason": "非病假不返校"
+  },
+  {
+    "timestamp": "2026-09-26 22:13:46",
+    "studentId": "046",
+    "studentName": "刘昊",
+    "delta": -0.1,
+    "reason": "非病假不返校"
   }
 ]
