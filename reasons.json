@@ -366,5 +366,19 @@
     "delta": -0.2,
     "reason": "纪律差once",
     "id": "2026-09-27 23:10:41_035_-0.2"
+  },
+  {
+    "timestamp": "2026-09-28 18:28:02",
+    "studentId": "045",
+    "studentName": "范晟轩",
+    "delta": 0.2,
+    "reason": "924搬书"
+  },
+  {
+    "timestamp": "2026-09-28 18:28:02",
+    "studentId": "047",
+    "studentName": "曾子轩",
+    "delta": 0.2,
+    "reason": "924搬书"
   }
 ]
