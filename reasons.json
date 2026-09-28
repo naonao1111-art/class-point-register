@@ -380,5 +380,33 @@
     "studentName": "曾子轩",
     "delta": 0.2,
     "reason": "924搬书"
+  },
+  {
+    "timestamp": "2026-09-28 21:30:19",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": -0.2,
+    "reason": "纪律差once"
+  },
+  {
+    "timestamp": "2026-09-28 21:30:19",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": -0.2,
+    "reason": "纪律差once"
+  },
+  {
+    "timestamp": "2026-09-28 21:30:19",
+    "studentId": "033",
+    "studentName": "应扎吉",
+    "delta": -0.2,
+    "reason": "纪律差once"
+  },
+  {
+    "timestamp": "2026-09-28 21:30:19",
+    "studentId": "035",
+    "studentName": "冯丰硕",
+    "delta": -0.2,
+    "reason": "纪律差once"
   }
 ]
