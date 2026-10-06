@@ -408,5 +408,131 @@
     "studentName": "冯丰硕",
     "delta": -0.2,
     "reason": "纪律差once"
+  },
+  {
+    "timestamp": "2026-10-07 06:30:55",
+    "studentId": "001",
+    "studentName": "沈乐妍",
+    "delta": 0.1,
+    "reason": "课代表、班委每周加分"
+  },
+  {
+    "timestamp": "2026-10-07 06:30:55",
+    "studentId": "002",
+    "studentName": "胡凯琳",
+    "delta": 0.1,
+    "reason": "课代表、班委每周加分"
+  },
+  {
+    "timestamp": "2026-10-07 06:30:55",
+    "studentId": "008",
+    "studentName": "王李婧",
+    "delta": 0.1,
+    "reason": "课代表、班委每周加分"
+  },
+  {
+    "timestamp": "2026-10-07 06:30:55",
+    "studentId": "009",
+    "studentName": "陆玛俐",
+    "delta": 0.1,
+    "reason": "课代表、班委每周加分"
+  },
+  {
+    "timestamp": "2026-10-07 06:30:55",
+    "studentId": "010",
+    "studentName": "陈静怡",
+    "delta": 0.1,
+    "reason": "课代表、班委每周加分"
+  },
+  {
+    "timestamp": "2026-10-07 06:30:55",
+    "studentId": "017",
+    "studentName": "黄智恒",
+    "delta": 0.1,
+    "reason": "课代表、班委每周加分"
+  },
+  {
+    "timestamp": "2026-10-07 06:30:55",
+    "studentId": "019",
+    "studentName": "顾槿宸",
+    "delta": 0.1,
+    "reason": "课代表、班委每周加分"
+  },
+  {
+    "timestamp": "2026-10-07 06:30:55",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": 0.1,
+    "reason": "课代表、班委每周加分"
+  },
+  {
+    "timestamp": "2026-10-07 06:30:55",
+    "studentId": "022",
+    "studentName": "方晟睿",
+    "delta": 0.1,
+    "reason": "课代表、班委每周加分"
+  },
+  {
+    "timestamp": "2026-10-07 06:30:55",
+    "studentId": "023",
+    "studentName": "牧周磊",
+    "delta": 0.1,
+    "reason": "课代表、班委每周加分"
+  },
+  {
+    "timestamp": "2026-10-07 06:30:55",
+    "studentId": "026",
+    "studentName": "潘烨磊",
+    "delta": 0.1,
+    "reason": "课代表、班委每周加分"
+  },
+  {
+    "timestamp": "2026-10-07 06:30:55",
+    "studentId": "027",
+    "studentName": "吕峥程",
+    "delta": 0.1,
+    "reason": "课代表、班委每周加分"
+  },
+  {
+    "timestamp": "2026-10-07 06:30:55",
+    "studentId": "031",
+    "studentName": "刘博凯",
+    "delta": 0.1,
+    "reason": "课代表、班委每周加分"
+  },
+  {
+    "timestamp": "2026-10-07 06:30:55",
+    "studentId": "036",
+    "studentName": "姚竣豪",
+    "delta": 0.1,
+    "reason": "课代表、班委每周加分"
+  },
+  {
+    "timestamp": "2026-10-07 06:30:55",
+    "studentId": "039",
+    "studentName": "胡宵",
+    "delta": 0.1,
+    "reason": "课代表、班委每周加分"
+  },
+  {
+    "timestamp": "2026-10-07 06:30:55",
+    "studentId": "041",
+    "studentName": "童清扬",
+    "delta": 0.1,
+    "reason": "课代表、班委每周加分"
+  },
+  {
+    "timestamp": "2026-10-07 06:30:55",
+    "studentId": "042",
+    "studentName": "闫之诺",
+    "delta": 0.1,
+    "reason": "课代表、班委每周加分"
+  },
+  {
+    "timestamp": "2026-10-07 06:30:55",
+    "studentId": "047",
+    "studentName": "曾子轩",
+    "delta": 0.1,
+    "reason": "课代表、班委每周加分"
   }
 ]
