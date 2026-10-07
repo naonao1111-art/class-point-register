@@ -534,5 +534,19 @@
     "studentName": "曾子轩",
     "delta": 0.1,
     "reason": "课代表、班委每周加分"
+  },
+  {
+    "timestamp": "2026-10-07 22:26:08",
+    "studentId": "010",
+    "studentName": "陈静怡",
+    "delta": -0.2,
+    "reason": "纪律差once"
+  },
+  {
+    "timestamp": "2026-10-07 22:26:08",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": -0.2,
+    "reason": "纪律差once"
   }
 ]
