@@ -590,5 +590,19 @@
     "studentName": "朱晨曦",
     "delta": -0.2,
     "reason": "上课睡觉"
+  },
+  {
+    "timestamp": "2026-10-12 23:46:46",
+    "studentId": "002",
+    "studentName": "胡凯琳",
+    "delta": 0.2,
+    "reason": "开班会课（9.   ，10.12）"
+  },
+  {
+    "timestamp": "2026-10-12 23:46:46",
+    "studentId": "039",
+    "studentName": "胡宵",
+    "delta": 0.2,
+    "reason": "开班会课（9.   ，10.12）"
   }
 ]
