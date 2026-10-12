@@ -576,5 +576,12 @@
     "studentName": "陈静怡",
     "delta": -0.2,
     "reason": "纪律差once"
+  },
+  {
+    "timestamp": "2026-10-12 23:43:16",
+    "studentId": "010",
+    "studentName": "陈静怡",
+    "delta": -0.2,
+    "reason": "上课睡觉"
   }
 ]
