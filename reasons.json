@@ -604,5 +604,12 @@
     "studentName": "胡宵",
     "delta": 0.2,
     "reason": "开班会课（9.   ，10.12）"
+  },
+  {
+    "timestamp": "2026-10-14 23:35:52",
+    "studentId": "007",
+    "studentName": "金鑫璇",
+    "delta": -0.5,
+    "reason": "扣分0.5窗台脏"
   }
 ]
