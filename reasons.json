@@ -611,5 +611,33 @@
     "studentName": "金鑫璇",
     "delta": -0.5,
     "reason": "扣分0.5窗台脏"
+  },
+  {
+    "timestamp": "2026-10-14 23:36:53",
+    "studentId": "010",
+    "studentName": "陈静怡",
+    "delta": -0.2,
+    "reason": "10.13上课睡觉"
+  },
+  {
+    "timestamp": "2026-10-14 23:36:53",
+    "studentId": "017",
+    "studentName": "黄智恒",
+    "delta": -0.2,
+    "reason": "10.13上课睡觉"
+  },
+  {
+    "timestamp": "2026-10-14 23:36:53",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": -0.2,
+    "reason": "10.13上课睡觉"
+  },
+  {
+    "timestamp": "2026-10-14 23:36:53",
+    "studentId": "040",
+    "studentName": "朱熙元",
+    "delta": -0.2,
+    "reason": "10.13上课睡觉"
   }
 ]
