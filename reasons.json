@@ -744,5 +744,12 @@
     "studentName": "牧周磊",
     "delta": 0.5,
     "reason": "200\t\t跳高\t，0.5"
+  },
+  {
+    "timestamp": "2026-10-19 22:30:13",
+    "studentId": "025",
+    "studentName": "俞齐",
+    "delta": 0.5,
+    "reason": "跳高\t4，0.5"
   }
 ]
