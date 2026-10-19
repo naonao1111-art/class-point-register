@@ -660,5 +660,12 @@
     "studentName": "沈乐妍",
     "delta": 0.5,
     "reason": "800\t16，0.5\t20*50\t16，0.5"
+  },
+  {
+    "timestamp": "2026-10-19 22:26:46",
+    "studentId": "002",
+    "studentName": "胡凯琳",
+    "delta": 0.5,
+    "reason": "跳高\t14，0.5\t20*50  16，0.5  4*100"
   }
 ]
