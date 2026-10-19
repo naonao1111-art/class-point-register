@@ -842,5 +842,12 @@
     "studentName": "刘博凯",
     "delta": 0.2,
     "reason": "班会课：电磁波是空气中飞舞的小饼干"
+  },
+  {
+    "timestamp": "2026-10-19 22:37:27",
+    "studentId": "039",
+    "studentName": "胡宵",
+    "delta": 0.2,
+    "reason": "开班会课"
   }
 ]
