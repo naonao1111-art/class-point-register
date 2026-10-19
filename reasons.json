@@ -702,5 +702,12 @@
     "studentName": "马伊韩",
     "delta": 0.5,
     "reason": "仰卧起坐\t\t800\t15，0.5\t20*50\t16，0.5\t4*100"
+  },
+  {
+    "timestamp": "2026-10-19 22:28:37",
+    "studentId": "009",
+    "studentName": "陆玛俐",
+    "delta": 0.5,
+    "reason": "仰卧起坐\t\t200\t\t20*50\t16，0.5\t4*100"
   }
 ]
