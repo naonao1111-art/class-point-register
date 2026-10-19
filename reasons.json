@@ -779,5 +779,12 @@
     "studentName": "冯丰硕",
     "delta": 4,
     "reason": "三级跳远\t1、4\t跳远\t1，4\t20*50\t16，0.5\t4*100\t6，0.5"
+  },
+  {
+    "timestamp": "2026-10-19 22:31:32",
+    "studentId": "037",
+    "studentName": "陈昀泽",
+    "delta": 0.5,
+    "reason": "铅球\t\t\t\t20*50\t16，0.5"
   }
 ]
