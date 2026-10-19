@@ -758,5 +758,12 @@
     "studentName": "吕峥程",
     "delta": 0.5,
     "reason": "铅球\t\t引体向上\t16，0.5"
+  },
+  {
+    "timestamp": "2026-10-19 22:30:43",
+    "studentId": "031",
+    "studentName": "刘博凯",
+    "delta": 0.5,
+    "reason": "200\t\t\t\t20*50\t16，0.5"
   }
 ]
