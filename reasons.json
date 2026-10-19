@@ -765,5 +765,12 @@
     "studentName": "刘博凯",
     "delta": 0.5,
     "reason": "200\t\t\t\t20*50\t16，0.5"
+  },
+  {
+    "timestamp": "2026-10-19 22:30:57",
+    "studentId": "033",
+    "studentName": "应扎吉",
+    "delta": 0.5,
+    "reason": "三级跳远\t8、0.5\t跳远\t\t20*50\t16，0.5\t4*100\t6，0.5"
   }
 ]
