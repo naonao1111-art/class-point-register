@@ -807,5 +807,12 @@
     "studentName": "范晟轩",
     "delta": 0.5,
     "reason": "引体向上\t16，0.5"
+  },
+  {
+    "timestamp": "2026-10-19 22:32:14",
+    "studentId": "046",
+    "studentName": "刘昊",
+    "delta": 0.5,
+    "reason": "100\t\t\t\t20*50\t16，0.5\t4*100\t6，0.5"
   }
 ]
