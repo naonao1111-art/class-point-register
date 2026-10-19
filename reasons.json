@@ -716,5 +716,12 @@
     "studentName": "陈静怡",
     "delta": 0.5,
     "reason": "仰卧起坐\t\t跳高\t4，0.5\t20*50\t16，0.5\t铅球"
+  },
+  {
+    "timestamp": "2026-10-19 22:29:03",
+    "studentId": "014",
+    "studentName": "姚腾浩",
+    "delta": 0.5,
+    "reason": "400\t\t800\t\t20*50\t16，0.5"
   }
 ]
