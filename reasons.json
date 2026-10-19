@@ -730,5 +730,12 @@
     "studentName": "黄智恒",
     "delta": 0.5,
     "reason": "100\t\t引体向上\t16，0.5\t20*50\t16，0.5"
+  },
+  {
+    "timestamp": "2026-10-19 22:29:37",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": 0.6,
+    "reason": "1500\t，0.5（+0.1）"
   }
 ]
