@@ -737,5 +737,12 @@
     "studentName": "朱晨曦",
     "delta": 0.6,
     "reason": "1500\t，0.5（+0.1）"
+  },
+  {
+    "timestamp": "2026-10-19 22:29:58",
+    "studentId": "023",
+    "studentName": "牧周磊",
+    "delta": 0.5,
+    "reason": "200\t\t跳高\t，0.5"
   }
 ]
