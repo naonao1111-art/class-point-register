@@ -751,5 +751,12 @@
     "studentName": "俞齐",
     "delta": 0.5,
     "reason": "跳高\t4，0.5"
+  },
+  {
+    "timestamp": "2026-10-19 22:30:32",
+    "studentId": "027",
+    "studentName": "吕峥程",
+    "delta": 0.5,
+    "reason": "铅球\t\t引体向上\t16，0.5"
   }
 ]
