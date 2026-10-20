@@ -926,5 +926,19 @@
     "delta": 0.2,
     "reason": "搬书",
     "id": "2026-10-19 22:38:03_028_0.2"
+  },
+  {
+    "timestamp": "2026-10-20 23:19:28",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": -0.5,
+    "reason": "上课睡觉被老师批评"
+  },
+  {
+    "timestamp": "2026-10-20 23:19:28",
+    "studentId": "024",
+    "studentName": "沈天辰",
+    "delta": -0.5,
+    "reason": "上课睡觉被老师批评"
   }
 ]
