@@ -41,7 +41,7 @@
 <div class="container" id="mainPanel" style="display:none;">
     <a href="admin.html" class="back-link">← 返回管理后台</a>
     <h1>积分变化记录管理</h1>
-    <p>撤销记录均需要管理员密码。修改即时保存，<strong>无需刷新页面</strong>；关闭页面后再打开即为最新数据。</p>
+    <p>可直接修改记录的「原因」和「分数」；修改分数会自动同步学生积分。撤销记录均需要管理员密码。修改即时保存，<strong>无需刷新页面</strong>；关闭页面后再打开即为最新数据。</p>
     <div id="statusBar" class="status-bar"></div>
 
     <div class="filter-group">
@@ -75,11 +75,13 @@
     const REPO_NAME = "class-point-register";
     const DATA_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data.json`;
     const REASONS_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/reasons.json`;
+    const EDIT_TRACES_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/edit_traces.json`;
     // 密码哈希统一从仓库 config_encoded.json 的 admin_password_hash 读取，不在页面中硬编码
 
     let allReasons = [];
     let currentStudents = [];
     let filteredReasons = [];
+    let currentEditTraces = [];
     let CONFIG = { github_token: "" };
 
     // ========== 工具函数 ==========
@@ -144,6 +146,39 @@
         if (!resp.ok) throw new Error("保存失败");
     }
 
+    // ========== 修改痕迹（记录在 edit_traces.json，仅管理后台展示，公开展示页面不读取）==========
+    function getBeijingNow() {
+        const now = new Date();
+        const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+        return new Date(utc + 8 * 3600000);
+    }
+    function formatBeijingTime(d) {
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        const h = String(d.getHours()).padStart(2, '0');
+        const min = String(d.getMinutes()).padStart(2, '0');
+        const s = String(d.getSeconds()).padStart(2, '0');
+        return `${y}-${m}-${day} ${h}:${min}:${s}`;
+    }
+    async function loadTraces() {
+        const res = await fetchJSON(EDIT_TRACES_URL);
+        currentEditTraces = (res && res.traces) ? res.traces : [];
+    }
+    async function saveTraces() {
+        await saveJSON(EDIT_TRACES_URL, { traces: currentEditTraces }, "记录修改痕迹");
+    }
+    function addTrace(action, studentIds, detail) {
+        currentEditTraces.push({
+            timestamp: formatBeijingTime(getBeijingNow()),
+            action: action,
+            studentIds: studentIds || [],
+            detail: detail || ""
+        });
+        // 最多保留 500 条，防止文件无限膨胀
+        if (currentEditTraces.length > 500) currentEditTraces = currentEditTraces.slice(-500);
+    }
+
     // ========== 全局状态提示条（修改时提示“正在修改”，避免用户误以为没反应）==========
     function showStatus(text, type) {
         const bar = document.getElementById("statusBar");
@@ -205,7 +240,14 @@
             row.insertCell(0).innerText = g.timestamp;
             row.insertCell(1).innerText = g.ids.join('、');
             row.insertCell(2).innerText = g.names.join('、');
-            row.insertCell(3).innerText = (g.delta>0?"+":"") + g.delta.toFixed(2);
+            const deltaCell = row.insertCell(3);
+            const inputDelta = document.createElement("input");
+            inputDelta.type = "number";
+            inputDelta.step = "any";
+            inputDelta.value = g.delta;
+            inputDelta.style.width = "80px";
+            inputDelta.className = "edit-input";
+            deltaCell.appendChild(inputDelta);
             const reasonCell = row.insertCell(4);
             const inputReason = document.createElement("input");
             inputReason.type = "text";
@@ -215,9 +257,9 @@
             reasonCell.appendChild(inputReason);
             const btnCell = row.insertCell(5);
             const saveBtn = document.createElement("button");
-            saveBtn.innerText = "保存原因";
+            saveBtn.innerText = "保存修改";
             saveBtn.className = "save-btn";
-            saveBtn.onclick = () => saveGroupReason(g, inputReason.value, saveBtn);
+            saveBtn.onclick = () => saveGroupChanges(g, inputReason.value, inputDelta.value, saveBtn);
             btnCell.appendChild(saveBtn);
             const chk = document.createElement("input");
             chk.type = "checkbox";
@@ -228,24 +270,66 @@
         });
     }
 
-    async function saveGroupReason(group, newReason, btn) {
+    async function saveGroupChanges(group, newReason, newDeltaStr, btn) {
         if (!newReason || !newReason.trim()) {
             showStatus("原因不能为空", "err");
             return;
         }
-        const oldReasons = group.records.map(r => r.reason);
+        const newDelta = parseFloat(newDeltaStr);
+        if (isNaN(newDelta) || newDelta === 0) {
+            showStatus("请输入有效的分数变化（非0）", "err");
+            return;
+        }
+        const oldReason = group.records[0].reason;
+        const oldDelta = group.records[0].delta;
+        const reasonChanged = newReason.trim() !== oldReason;
+        const deltaChanged = newDelta !== oldDelta;
+        if (!reasonChanged && !deltaChanged) {
+            showStatus("没有需要保存的修改", "err");
+            return;
+        }
+
+        // 备份，保存失败时恢复
+        const backupStudents = JSON.parse(JSON.stringify(currentStudents));
+        const backupReasons = JSON.parse(JSON.stringify(allReasons));
+        const backupTraces = JSON.parse(JSON.stringify(currentEditTraces));
+
+        // 应用修改：原因 + 分数
         for (let r of group.records) {
             r.reason = newReason.trim();
+            if (deltaChanged) {
+                const student = currentStudents.find(s => s.id === r.studentId);
+                if (student) {
+                    student.score = parseFloat((student.score - oldDelta + newDelta).toFixed(2));
+                }
+                r.delta = newDelta;
+            }
         }
-        showStatus("正在修改…请稍候，不要重复操作", "busy");
+
+        // 记录修改痕迹
+        const ids = group.records.map(r => r.studentId);
+        const changeParts = [];
+        if (reasonChanged) changeParts.push(`原因："${oldReason}" → "${newReason.trim()}"`);
+        if (deltaChanged) changeParts.push(`分数：${(oldDelta>0?"+":"")+oldDelta} → ${(newDelta>0?"+":"")+newDelta}`);
+        addTrace("编辑记录", ids, changeParts.join("；") + `（共${group.records.length}条记录）`);
+
+        showStatus("正在保存修改…请稍候，不要重复操作", "busy");
         if (btn) btn.disabled = true;
         try {
-            await saveJSON(REASONS_URL, allReasons, "编辑原因（批量）");
+            if (deltaChanged) {
+                await saveJSON(DATA_URL, { students: currentStudents }, "修改记录分数调整");
+            }
+            await saveJSON(REASONS_URL, allReasons, "编辑原因/分数");
+            await saveTraces();
             showStatus("已保存，无需刷新页面（关闭页面后其他页面打开即为最新数据）", "ok");
+            renderTable();
         } catch(err) {
             // 保存失败：回滚内存修改，避免页面与仓库不一致
-            group.records.forEach((r, i) => { r.reason = oldReasons[i]; });
-            showStatus("保存失败：" + err.message + "，请重试", "err");
+            currentStudents = backupStudents;
+            allReasons = backupReasons;
+            currentEditTraces = backupTraces;
+            renderTable();
+            showStatus("保存失败：" + err.message + "，已恢复原状，请重试", "err");
         } finally {
             if (btn) btn.disabled = false;
         }
@@ -284,10 +368,13 @@
         // 先备份，保存失败时恢复
         const backupStudents = JSON.parse(JSON.stringify(currentStudents));
         const backupReasons = JSON.parse(JSON.stringify(allReasons));
+        const backupTraces = JSON.parse(JSON.stringify(currentEditTraces));
 
+        const revokedRecords = [];
         for (let id of allIds) {
             const record = allReasons.find(r => r.id === id);
             if (!record) continue;
+            revokedRecords.push(record);
             const student = currentStudents.find(s => s.id === record.studentId);
             if (student) {
                 student.score -= record.delta;
@@ -297,17 +384,24 @@
         allReasons = allReasons.filter(r => !allIds.includes(r.id));
         filteredReasons = [...allReasons];
 
+        // 记录修改痕迹
+        const revokedIds = revokedRecords.map(r => r.studentId);
+        const revokedDeltas = [...new Set(revokedRecords.map(r => r.delta))].map(d => (d>0?"+":"")+d).join('、');
+        addTrace("撤销记录", revokedIds, `撤销 ${revokedRecords.length} 条记录（分数变化：${revokedDeltas}），已恢复学生积分`);
+
         showStatus(`正在撤销 ${allIds.length} 条记录…请稍候，不要重复操作`, "busy");
         if (revokeBtn) revokeBtn.disabled = true;
         try {
             await saveJSON(DATA_URL, { students: currentStudents }, "撤销操作恢复分数");
             await saveJSON(REASONS_URL, allReasons, "撤销操作删除记录");
+            await saveTraces();
             showStatus(`已撤销 ${allIds.length} 条记录，数据已保存，无需刷新页面`, "ok");
             renderTable();
         } catch(err) {
             // 恢复内存数据，保持与仓库一致
             currentStudents = backupStudents;
             allReasons = backupReasons;
+            currentEditTraces = backupTraces;
             filteredReasons = [...allReasons];
             renderTable();
             showStatus("撤销失败：" + err.message + "，已恢复原状，请重试", "err");
@@ -324,6 +418,7 @@
         if (!find) { showStatus("请输入要查找的文本", "err"); return; }
         if (!confirm(`确定要将所有原因中的 "${find}" 替换为 "${replace}" 吗？`)) return;
         const backupReasons = JSON.parse(JSON.stringify(allReasons));
+        const backupTraces = JSON.parse(JSON.stringify(currentEditTraces));
         let count = 0;
         for (let r of allReasons) {
             if (r.reason.includes(find)) {
@@ -335,15 +430,19 @@
             document.getElementById("replaceMsg").innerText = "未找到匹配项";
             return;
         }
+        // 记录修改痕迹
+        addTrace("批量替换", [], `原因中包含 "${find}" 的 ${count} 条记录，全部替换为 "${replace}"`);
         showStatus(`正在替换 ${count} 条记录…请稍候，不要重复操作`, "busy");
         if (replaceBtn) replaceBtn.disabled = true;
         try {
             await saveJSON(REASONS_URL, allReasons, "批量替换原因关键词");
+            await saveTraces();
             document.getElementById("replaceMsg").innerText = `成功替换 ${count} 条记录`;
             showStatus(`已替换 ${count} 条记录，数据已保存，无需刷新页面`, "ok");
             renderTable();
         } catch(err) {
             allReasons = backupReasons;
+            currentEditTraces = backupTraces;
             filteredReasons = [...allReasons];
             document.getElementById("replaceMsg").innerText = "";
             renderTable();
@@ -372,6 +471,7 @@
         }
         try {
             await loadData();
+            await loadTraces();
             document.getElementById("loginPanel").style.display = "none";
             document.getElementById("mainPanel").style.display = "block";
             renderTable();

@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>班委履职监督</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; background: #f5f7fa; }
+        .container { max-width: 800px; margin: 0 auto; background: white; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        h1 { color: #2c3e50; }
+        .notice { background: #fff3e0; border-left: 5px solid #ff9800; padding: 12px; margin-bottom: 20px; border-radius: 6px; color: #e65100; }
+        .committee-list { display: flex; flex-direction: column; gap: 20px; margin-top: 20px; }
+        .committee-card { border: 1px solid #ddd; border-radius: 10px; padding: 15px; background: #fafafa; }
+        .committee-title { font-size: 1.2em; font-weight: bold; margin-bottom: 10px; color: #2c3e50; }
+        .rating-options { display: flex; gap: 20px; margin: 10px 0; flex-wrap: wrap; }
+        .rating-options label { display: flex; align-items: center; gap: 5px; cursor: pointer; }
+        .rated-info { color: #666; font-size: 14px; margin-top: 8px; font-style: italic; }
+        .already-submitted { background: #e0e0e0; padding: 20px; text-align: center; border-radius: 10px; color: #555; }
+        .error { color: #f44336; font-size: 14px; margin-top: 5px; }
+        .success { color: #4CAF50; }
+        .login-area { margin-bottom: 20px; background: #f0f2f5; padding: 15px; border-radius: 10px; }
+        .login-area input { padding: 8px; font-size: 16px; border: 1px solid #ccc; border-radius: 6px; width: 200px; }
+        .login-area button { padding: 6px 12px; background: #2196F3; color: white; border: none; border-radius: 6px; cursor: pointer; }
+        .back-link { display: inline-block; margin-bottom: 20px; color: #2196F3; text-decoration: none; }
+        .back-link:hover { text-decoration: underline; }
+        .submit-area { margin-top: 30px; text-align: center; }
+        .submit-btn { background: #4CAF50; color: white; border: none; padding: 10px 20px; font-size: 16px; border-radius: 30px; cursor: pointer; }
+        .submit-btn:disabled { background: #9e9e9e; cursor: not-allowed; }
+        .stats { margin-top: 30px; border-top: 1px solid #ccc; padding-top: 15px; }
+        .stats-container { display: flex; flex-wrap: wrap; gap: 12px; }
+        .stats-card { background: #f0f0f0; padding: 8px 12px; border-radius: 20px; }
+        .abstain { color: #9e9e9e; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <a href="indexl.html" class="back-link">← 返回积分公示板</a>
+    <h1>📋 班委履职监督</h1>
+
+    <div id="loginSection" class="login-area">
+        <label>学号：</label>
+        <input type="text" id="studentId" placeholder="输入学号（例如 2 或 002）" style="width: 180px;">
+        <button id="loginBtn">确认身份</button>
+        <div id="loginError" class="error" style="margin-top:8px;"></div>
+    </div>
+
+    <div id="evaluationSection" style="display:none;">
+        <div class="notice">
+            ⚠️ 请一次性完成对所有班委的评价，未评价的班委将视为弃权。<br>
+            ✅ 提交后不可修改，每人每周仅有一次评价机会。<br>
+            📌 若选择“弃权”，则该班委不计入任何统计。
+        </div>
+        <p>你好，<strong><span id="displayStudentId"></span></strong> 同学：</p>
+        <div id="committeeList" class="committee-list"></div>
+        <div class="submit-area">
+            <button id="submitAllBtn" class="submit-btn">提交我的评价（未选视为弃权）</button>
+        </div>
+        <div id="msgArea" style="margin-top: 20px;"></div>
+    </div>
+
+    <div id="alreadySubmittedSection" style="display:none;" class="already-submitted">
+        <p>您已完成本周班委评价，不可再次提交。</p>
+        <p>感谢您的参与！</p>
+    </div>
+
+    <div class="stats">
+        <h3>当前班委好评率</h3>
+        <div id="statsContainer" class="stats-container">加载中...</div>
+    </div>
+</div>
+
+<script>
+    // ===== 配置与工具 =====
+    const REPO_OWNER = "naonao1111-art";
+    const REPO_NAME = "class-point-register";
+    const DATA_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/data.json`;
+    const CLASS_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/class_committee.json`;
+    const RATINGS_URL = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/committee_ratings.json`;
+
+    const TARGET_POSITIONS = ["班长", "副班长/纪律委员", "团支书", "卫生委员/宣传委员", "学习委员", "体育委员"];
+    let committeeInfo = [];
+    let allRatings = {};          // 完整数据 { "2026-W25": { studentId: {pos: rating} }, "legacy": {...} }
+    let currentStudent = null;
+    let studentIdMap = new Set();
+    let pendingRatings = {};      // 本次暂存 { position: "verygood"/null }
+    let isSubmitting = false;
+    let currentWeek = "";         // 当前周标识
+
+    // ===== 辅助函数 =====
+    function base64DecodeToUtf8(base64Str) {
+        const binaryStr = atob(base64Str);
+        const bytes = new Uint8Array(binaryStr.length);
+        for (let i = 0; i < binaryStr.length; i++) bytes[i] = binaryStr.charCodeAt(i);
+        return new TextDecoder('utf-8').decode(bytes);
+    }
+    function utf8ToBase64(str) {
+        const encoder = new TextEncoder();
+        const data = encoder.encode(str);
+        let binary = '';
+        for (let i = 0; i < data.length; i++) binary += String.fromCharCode(data[i]);
+        return btoa(binary);
+    }
+
+    function getWeekNumber(d) {
+        d = new Date(d);
+        d.setHours(0, 0, 0, 0);
+        const day = d.getDay() || 7;
+        const diff = day - 1;
+        const monday = new Date(d);
+        monday.setDate(d.getDate() - diff);
+        const startOfYear = new Date(monday.getFullYear(), 0, 1);
+        const days = Math.floor((monday - startOfYear) / (24 * 60 * 60 * 1000));
+        const weekNumber = Math.ceil((days + 1) / 7);
+        return monday.getFullYear() + "-W" + String(weekNumber).padStart(2, '0');
+    }
+
+    // Token 处理
+    let CONFIG = { github_token: "" };
+    function decodeToken(obfuscated) {
+        if (!obfuscated) return "";
+        const reversed = obfuscated.split('').reverse().join('');
+        const shifted = atob(reversed);
+        return shifted.split('').map(c => String.fromCharCode(c.charCodeAt(0) - 1)).join('');
+    }
+    async function loadConfig() {
+        try {
+            const resp = await fetch("https://naonao1111-art.github.io/class-point-register/config_encoded.json?t=" + Date.now(), { cache: "no-store" });
+            if (resp.ok) {
+                const config = await resp.json();
+                CONFIG.github_token = decodeToken(config.github_token_obfuscated || "");
+            }
+        } catch(e) { console.error(e); }
+    }
+
+    // ===== 加载数据 =====
+    async function loadStudentList() {
+        try {
+            const resp = await fetch(DATA_URL);
+            if (!resp.ok) throw new Error("无法获取学生数据");
+            const data = await resp.json();
+            const content = base64DecodeToUtf8(data.content);
+            const students = JSON.parse(content).students || [];
+            studentIdMap.clear();
+            students.forEach(s => studentIdMap.add(s.id));
+        } catch(e) { console.error("加载学生列表失败", e); }
+    }
+
+    async function loadCommitteeMembers() {
+        try {
+            const resp = await fetch(CLASS_URL);
+            if (resp.ok) {
+                const data = await resp.json();
+                const content = base64DecodeToUtf8(data.content);
+                const members = JSON.parse(content).members || [];
+                const posMap = {};
+                members.forEach(m => { posMap[m.position] = m.name; });
+                committeeInfo = TARGET_POSITIONS.map(pos => ({
+                    position: pos,
+                    name: posMap[pos] || "未设置"
+                }));
+            } else {
+                committeeInfo = TARGET_POSITIONS.map(pos => ({ position: pos, name: "未设置" }));
+            }
+        } catch(e) {
+            console.error(e);
+            committeeInfo = TARGET_POSITIONS.map(pos => ({ position: pos, name: "未设置" }));
+        }
+    }
+
+    async function loadRatings() {
+        try {
+            const token = CONFIG.github_token;
+            const headers = token ? { Authorization: `token ${token}` } : {};
+            const resp = await fetch(RATINGS_URL, { headers });
+            if (resp.status === 404) {
+                allRatings = {};
+                return;
+            }
+            if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+            const data = await resp.json();
+            const content = base64DecodeToUtf8(data.content);
+            const parsed = JSON.parse(content).ratings || {};
+
+            // 迁移旧数据（键为学号且非周格式）
+            const newRatings = {};
+            let hasLegacy = false;
+            for (let key in parsed) {
+                // 判断是否为周格式（如 2026-W25）
+                if (/^\d{4}-W\d{2}$/.test(key)) {
+                    newRatings[key] = parsed[key];
+                } else {
+                    // 旧数据：学号作为键，放入 legacy
+                    if (!newRatings.legacy) newRatings.legacy = {};
+                    Object.assign(newRatings.legacy, { [key]: parsed[key] });
+                    hasLegacy = true;
+                }
+            }
+            allRatings = newRatings;
+        } catch(e) {
+            console.warn("加载评价数据失败", e);
+            allRatings = {};
+        }
+    }
+
+    async function saveAllRatingsToFile() {
+        const token = CONFIG.github_token;
+        if (!token) throw new Error("无Token");
+        let sha = null;
+        try {
+            const resp = await fetch(RATINGS_URL, { headers: { Authorization: `token ${token}` } });
+            if (resp.ok) {
+                const data = await resp.json();
+                sha = data.sha;
+            }
+        } catch(e) {}
+        const payload = { ratings: allRatings };
+        const jsonStr = JSON.stringify(payload, null, 2);
+        const contentBase64 = utf8ToBase64(jsonStr);
+        const putResp = await fetch(RATINGS_URL, {
+            method: "PUT",
+            headers: { Authorization: `token ${token}`, "Content-Type": "application/json" },
+            body: JSON.stringify({ message: "更新评价", content: contentBase64, sha: sha || undefined })
+        });
+        if (!putResp.ok) throw new Error("保存失败");
+    }
+
+    // ===== 提交评价 =====
+    async function saveAllRatings() {
+        if (isSubmitting) {
+            document.getElementById("msgArea").innerHTML = '<span class="error">提交中，请勿重复点击。</span>';
+            return;
+        }
+        if (!currentStudent) return;
+
+        // 检查本周是否已提交
+        if (allRatings[currentWeek] && allRatings[currentWeek][currentStudent]) {
+            document.getElementById("msgArea").innerHTML = '<span class="error">您已提交过本周评价，不可再次提交。</span>';
+            showAlreadySubmitted();
+            return;
+        }
+
+        // 收集已选评价（非弃权）
+        const selectedRatings = {};
+        for (let [pos, value] of Object.entries(pendingRatings)) {
+            if (value !== null && value !== "abstain") {
+                selectedRatings[pos] = value;
+            }
+        }
+
+        // 确认提交
+        const positionsWithAbstain = committeeInfo.filter(c => pendingRatings[c.position] === null).map(c => c.position);
+        let confirmMsg = "即将提交评价。\n";
+        if (Object.keys(selectedRatings).length > 0) {
+            confirmMsg += `已评价：${Object.keys(selectedRatings).join(", ")}\n`;
+        }
+        if (positionsWithAbstain.length > 0) {
+            confirmMsg += `弃权（不计入统计）：${positionsWithAbstain.join(", ")}\n`;
+        }
+        if (Object.keys(selectedRatings).length === 0 && positionsWithAbstain.length === 0) {
+            confirmMsg += "您未对任何班委做出评价，提交后将视为全部弃权。\n";
+        }
+        confirmMsg += "提交后不可修改，确定提交吗？";
+        if (!confirm(confirmMsg)) return;
+
+        isSubmitting = true;
+        const submitBtn = document.getElementById("submitAllBtn");
+        if (submitBtn) submitBtn.disabled = true;
+        document.getElementById("msgArea").innerHTML = '<span>正在提交，请稍候...</span>';
+
+        try {
+            // 确保当前周数据存在
+            if (!allRatings[currentWeek]) allRatings[currentWeek] = {};
+            // 写入当前学生的评价（只写入非弃权项）
+            allRatings[currentWeek][currentStudent] = selectedRatings;
+
+            await saveAllRatingsToFile();
+            pendingRatings = {};
+
+            document.getElementById("msgArea").innerHTML = '<span class="success">评价已提交！感谢参与。</span>';
+            showAlreadySubmitted();
+            renderStats();
+        } catch(err) {
+            document.getElementById("msgArea").innerHTML = `<span class="error">提交失败：${err.message}，请重试。</span>`;
+            if (submitBtn) submitBtn.disabled = false;
+        } finally {
+            isSubmitting = false;
+        }
+    }
+
+    function showAlreadySubmitted() {
+        document.getElementById("evaluationSection").style.display = "none";
+        document.getElementById("alreadySubmittedSection").style.display = "block";
+    }
+
+    // ===== 渲染界面 =====
+    function renderEvaluationInterface() {
+        const container = document.getElementById("committeeList");
+        if (!container || !currentStudent) return;
+
+        // 检查本周是否已提交
+        if (allRatings[currentWeek] && allRatings[currentWeek][currentStudent]) {
+            showAlreadySubmitted();
+            return;
+        }
+
+        let html = '';
+        committeeInfo.forEach(c => {
+            const selectedValue = pendingRatings[c.position] || null;
+            html += `<div class="committee-card">
+                        <div class="committee-title">${c.position}（${c.name}）</div>
+                        <div class="rating-options">
+                            <label><input type="radio" name="rating_${c.position.replace(/[\/\s]/g, '_')}" value="verygood" ${selectedValue === "verygood" ? "checked" : ""}> 很好⭐⭐</label>
+                            <label><input type="radio" name="rating_${c.position.replace(/[\/\s]/g, '_')}" value="good" ${selectedValue === "good" ? "checked" : ""}> 还好⭐</label>
+                            <label><input type="radio" name="rating_${c.position.replace(/[\/\s]/g, '_')}" value="justsoso" ${selectedValue === "justsoso" ? "checked" : ""}> 也就那样</label>
+                            <label><input type="radio" name="rating_${c.position.replace(/[\/\s]/g, '_')}" value="littlebad" ${selectedValue === "littlebad" ? "checked" : ""}> 咦~</label>
+                            <label><input type="radio" name="rating_${c.position.replace(/[\/\s]/g, '_')}" value="bad" ${selectedValue === "bad" ? "checked" : ""}> 咦咦咦~~~</label>
+                            <label><input type="radio" name="rating_${c.position.replace(/[\/\s]/g, '_')}" value="abstain" ${selectedValue === null ? "checked" : ""}> ⚪ 弃权</label>
+                        </div>
+                     </div>`;
+        });
+        container.innerHTML = html;
+
+        // 绑定 change 事件
+        committeeInfo.forEach(c => {
+            const radioName = `rating_${c.position.replace(/[\/\s]/g, '_')}`;
+            const radios = document.querySelectorAll(`input[name="${radioName}"]`);
+            radios.forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    if (e.target.checked) {
+                        const val = e.target.value;
+                        if (val === "abstain") {
+                            pendingRatings[c.position] = null;
+                        } else {
+                            pendingRatings[c.position] = val;
+                        }
+                    }
+                });
+            });
+        });
+    }
+
+    // 统计显示（当前周）
+    async function renderStats() {
+        const container = document.getElementById("statsContainer");
+        if (!container) return;
+        // 只显示本周数据
+        const weekRatings = allRatings[currentWeek] || {};
+        const stats = {};
+        committeeInfo.forEach(c => {
+            stats[c.position] = { verygood: 0, good: 0, justsoso: 0, littlebad: 0, bad: 0, total: 0 };
+        });
+        for (let sid in weekRatings) {
+            const ratings = weekRatings[sid];
+            for (let pos in ratings) {
+                if (stats[pos]) {
+                    stats[pos].total++;
+                    const val = ratings[pos];
+                    if (val === "verygood") stats[pos].verygood++;
+                    else if (val === "good") stats[pos].good++;
+                    else if (val === "justsoso") stats[pos].justsoso++;
+                    else if (val === "littlebad") stats[pos].littlebad++;
+                    else if (val === "bad") stats[pos].bad++;
+                }
+            }
+        }
+        let html = '';
+        committeeInfo.forEach(c => {
+            const total = stats[c.position].total;
+            const verygood = stats[c.position].verygood;
+            const good = stats[c.position].good;
+            const justsoso = stats[c.position].justsoso;
+            const littlebad = stats[c.position].littlebad;
+            const bad = stats[c.position].bad;
+            const weightedSum = verygood * 1 + good * 0.5 + justsoso * 0 + littlebad * (-0.5) + bad * (-1);
+            const avgScore = total === 0 ? 0 : (weightedSum / total);
+            const rate = (avgScore * 100).toFixed(1);
+            html += `<div class="stats-card">${c.position} (${c.name}): ${rate}% (${weightedSum}/${total})</div>`;
+        });
+        container.innerHTML = html || '<span>暂无本周评价数据</span>';
+    }
+
+    // ===== 登录 =====
+    function normalizeStudentId(input) {
+        let id = input.trim();
+        if (/^\d+$/.test(id) && id.length < 3) id = id.padStart(3, '0');
+        return id;
+    }
+
+    document.getElementById("loginBtn").onclick = async () => {
+        let rawId = document.getElementById("studentId").value;
+        const normalizedId = normalizeStudentId(rawId);
+        if (!normalizedId) {
+            document.getElementById("loginError").innerText = "请输入学号";
+            return;
+        }
+        await loadStudentList();
+        if (!studentIdMap.has(normalizedId)) {
+            document.getElementById("loginError").innerText = `学号 ${normalizedId} 不存在，请检查。`;
+            return;
+        }
+        currentStudent = normalizedId;
+        currentWeek = getWeekNumber(new Date());
+        await loadRatings();
+
+        // 检查本周是否已提交
+        const hasSubmitted = allRatings[currentWeek] && allRatings[currentWeek][currentStudent];
+        if (hasSubmitted) {
+            document.getElementById("loginSection").style.display = "none";
+            document.getElementById("evaluationSection").style.display = "none";
+            document.getElementById("alreadySubmittedSection").style.display = "block";
+            document.getElementById("displayStudentId").innerText = currentStudent;
+            renderStats();
+            return;
+        }
+
+        document.getElementById("displayStudentId").innerText = currentStudent;
+        document.getElementById("loginSection").style.display = "none";
+        document.getElementById("evaluationSection").style.display = "block";
+        document.getElementById("alreadySubmittedSection").style.display = "none";
+        pendingRatings = {};
+        renderEvaluationInterface();
+        renderStats();
+        const submitBtn = document.getElementById("submitAllBtn");
+        if (submitBtn) submitBtn.disabled = false;
+        isSubmitting = false;
+        document.getElementById("msgArea").innerHTML = "";
+    };
+
+    document.getElementById("submitAllBtn").addEventListener("click", saveAllRatings);
+
+    async function init() {
+        await loadConfig();
+        await loadCommitteeMembers();
+        await loadStudentList();
+        currentWeek = getWeekNumber(new Date());
+        await loadRatings();
+        renderStats();
+        if (committeeInfo.length === 0) {
+            document.getElementById("committeeList").innerHTML = '<div class="error">暂无班委信息，请联系管理员在“班委管理”中添加。</div>';
+        }
+    }
+    init();
+</script>
+    <script src="auto_inc.js"></script>
+    <script>
+        if (typeof checkAndRunAutoIncrement === 'function') {
+            checkAndRunAutoIncrement();
+        }
+    </script>
+</body>
+</html>

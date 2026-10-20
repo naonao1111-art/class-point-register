@@ -18,6 +18,7 @@
             threshold: -50,    // 低于此分进入低分补分
             perDay: 2,         // 每天补分分值
             maxDays: 7,        // 最多补分天数
+            clearAfterDays: 7, // 补分周期完成后，再保留的天数；达到后自动清除记录，便于学生二次到达低分线时重新补分
             T1: -30, T2: -38, T3: -45,
             upRatio1: 1.1, upRatio2: 1.2, upRatio3: 1.35,
             downRatio1: 1.12, downRatio2: 1.25, downRatio3: 1.5
@@ -78,6 +79,16 @@
         return d.getDay(); // 0=周日
     }
 
+    // 在 YYYY-MM-DD（北京时间）基础上加 days 天
+    function addDays(dateStr, days) {
+        const d = new Date(dateStr + "T00:00:00+08:00");
+        d.setDate(d.getDate() + days);
+        const y = d.getFullYear();
+        const m = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${y}-${m}-${day}`;
+    }
+
     function getWeekNumber(d) {
         d = new Date(d);
         d.setHours(0,0,0,0);
@@ -115,6 +126,7 @@
                 if (typeof lp.threshold === 'number') rulesConfig.lowScoreProtect.threshold = lp.threshold;
                 if (typeof lp.perDay === 'number') rulesConfig.lowScoreProtect.perDay = lp.perDay;
                 if (typeof lp.maxDays === 'number') rulesConfig.lowScoreProtect.maxDays = lp.maxDays;
+                if (typeof lp.clearAfterDays === 'number') rulesConfig.lowScoreProtect.clearAfterDays = lp.clearAfterDays;
                 if (typeof lp.T1 === 'number') rulesConfig.lowScoreProtect.T1 = lp.T1;
                 if (typeof lp.T2 === 'number') rulesConfig.lowScoreProtect.T2 = lp.T2;
                 if (typeof lp.T3 === 'number') rulesConfig.lowScoreProtect.T3 = lp.T3;
@@ -241,13 +253,45 @@
             const updates = [];
 
             const lp = rulesConfig.lowScoreProtect;
+            let trackerChanged = false;
+
+            // ---- 4.5 自动清理：补分周期完成后，再保留 clearAfterDays 天后自动清除记录 ----
+            // 否则记录一直存在，学生二次跌破低分线时不会再次自动补分
+            const clearAfterDays = (typeof lp.clearAfterDays === 'number' && lp.clearAfterDays >= 0) ? lp.clearAfterDays : 7;
+            for (let sid in tracker.lowScoreStudents) {
+                const info = tracker.lowScoreStudents[sid];
+                if (!info || !info.startDate) continue;
+                const done = info.daysAdded || 0;
+                if (done >= lp.maxDays) {
+                    // 以最后一次补分日期为基准，再保留 clearAfterDays 天
+                    const lastActive = info.lastAddDate || addDays(info.startDate, lp.maxDays - 1);
+                    const clearDate = addDays(lastActive, clearAfterDays);
+                    if (todayDate >= clearDate) {
+                        delete tracker.lowScoreStudents[sid];
+                        trackerChanged = true;
+                        console.log(`[补分] ${sid} 低分补分记录已自动清除（周期完成后再保留${clearAfterDays}天）`);
+                    }
+                }
+            }
 
             // ---- 5. 低分持续补分（每天最多补一次，每次 +perDay，最多 maxDays 天）----
             // 修复：停用期间不再累计天数；每次执行只补一天，防止一次补足多天导致分数暴涨
             for (let student of students) {
                 if (student.score < lp.threshold) {
                     let info = tracker.lowScoreStudents[student.id];
-                    if (!info) continue;
+                    if (!info) {
+                        // 二次到达（或记录被自动清除后仍低于低分线）：自动重新开启一轮补分
+                        // lastAddDate 设为今天，避免当天立即补分，从明天开始补
+                        info = {
+                            startDate: todayDate,
+                            daysAdded: 0,
+                            enabled: true,
+                            lastAddDate: todayDate
+                        };
+                        tracker.lowScoreStudents[student.id] = info;
+                        trackerChanged = true;
+                        console.log(`[补分] ${student.id} ${student.name} 重新触发低分补分（新周期，明天开始补分）`);
+                    }
                     // 检查是否单独禁用
                     if (info.enabled === false) continue;
                     // 检查开始日期是否已到
@@ -304,24 +348,28 @@
                 }
             }
 
-            // ---- 7. 保存更新 ----
-            if (updates.length > 0) {
+            // ---- 7. 保存更新（有分数调整或有补分记录变化时都保存）----
+            if (updates.length > 0 || trackerChanged) {
                 try {
                     // 先保存积分与 tracker（防止重复补分），再保存原因记录
-                    await saveJSON(DATA_URL, { students: students }, "自动补分更新积分");
-                    await saveJSON(AUTO_TRACK_URL, tracker, "更新补分追踪");
-                    const timestamp = formatBeijingTime(beijingNow);
-                    for (let u of updates) {
-                        reasons.push({
-                            timestamp: timestamp,
-                            studentId: u.studentId,
-                            studentName: u.studentName,
-                            delta: u.delta,
-                            reason: u.reason
-                        });
+                    if (updates.length > 0) {
+                        await saveJSON(DATA_URL, { students: students }, "自动补分更新积分");
                     }
-                    await saveJSON(REASONS_URL, reasons, "自动补分记录原因");
-                    console.log(`自动补分完成，共 ${updates.length} 名学生获得调整`);
+                    await saveJSON(AUTO_TRACK_URL, tracker, "更新补分追踪");
+                    if (updates.length > 0) {
+                        const timestamp = formatBeijingTime(beijingNow);
+                        for (let u of updates) {
+                            reasons.push({
+                                timestamp: timestamp,
+                                studentId: u.studentId,
+                                studentName: u.studentName,
+                                delta: u.delta,
+                                reason: u.reason
+                            });
+                        }
+                        await saveJSON(REASONS_URL, reasons, "自动补分记录原因");
+                    }
+                    console.log(`自动补分完成，共 ${updates.length} 名学生获得调整${trackerChanged ? '，补分记录已更新' : ''}`);
                 } catch(err) {
                     console.error("保存补分数据失败", err);
                     return; // 保存失败：不标记今日已执行，下次打开页面会重试

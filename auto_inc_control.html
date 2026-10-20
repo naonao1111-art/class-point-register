@@ -75,12 +75,14 @@
         <h3>低分保护规则编辑</h3>
         <div class="desc">
             低分补分：低于「触发分」进入补分，每天 +「每日补分」，最多补「最大天数」天；停用期间不累计。<br>
+            补分周期完成后再保留「保留天数」天，达到后自动清除该生补分记录，学生二次跌破低分线时会自动开启新一轮补分。<br>
             积分保护倍率：低于 T1/T2/T3 时加分放大（upRatio）、减分缩小（downRatio）。
         </div>
         <table class="rule-table">
             <tr><td>触发分（低于此分进入低分补分）</td><td><input type="number" id="cfgThreshold" step="1" value="-50"></td></tr>
             <tr><td>每日补分</td><td><input type="number" id="cfgPerDay" step="0.5" value="2"></td></tr>
             <tr><td>最大补分天数</td><td><input type="number" id="cfgMaxDays" step="1" min="1" max="30" value="7"></td></tr>
+            <tr><td>周期结束后保留天数（达到后自动清除补分记录，二次跌破低分线可重新补分）</td><td><input type="number" id="cfgClearAfterDays" step="1" min="0" max="60" value="7"></td></tr>
             <tr><td>T1 档位（低于该分触发）</td><td><input type="number" id="cfgT1" step="1" value="-30"></td></tr>
             <tr><td>T2 档位</td><td><input type="number" id="cfgT2" step="1" value="-38"></td></tr>
             <tr><td>T3 档位</td><td><input type="number" id="cfgT3" step="1" value="-45"></td></tr>
@@ -159,7 +161,7 @@
     // 规则配置默认值
     let rulesConfig = {
         lowScoreProtect: {
-            threshold: -50, perDay: 2, maxDays: 7,
+            threshold: -50, perDay: 2, maxDays: 7, clearAfterDays: 7,
             T1: -30, T2: -38, T3: -45,
             upRatio1: 1.1, upRatio2: 1.2, upRatio3: 1.35,
             downRatio1: 1.12, downRatio2: 1.25, downRatio3: 1.5
@@ -250,7 +252,7 @@
                 const cfg = await resp.json();
                 const lp = cfg.lowScoreProtect || {};
                 const vb = cfg.voteBonus || {};
-                for (let k of ['threshold','perDay','maxDays','T1','T2','T3','upRatio1','upRatio2','upRatio3','downRatio1','downRatio2','downRatio3']) {
+                for (let k of ['threshold','perDay','maxDays','clearAfterDays','T1','T2','T3','upRatio1','upRatio2','upRatio3','downRatio1','downRatio2','downRatio3']) {
                     if (typeof lp[k] === 'number') rulesConfig.lowScoreProtect[k] = lp[k];
                 }
                 if (typeof vb.enabled === 'boolean') rulesConfig.voteBonus.enabled = vb.enabled;
@@ -268,6 +270,7 @@
         document.getElementById("cfgThreshold").value = lp.threshold;
         document.getElementById("cfgPerDay").value = lp.perDay;
         document.getElementById("cfgMaxDays").value = lp.maxDays;
+        document.getElementById("cfgClearAfterDays").value = lp.clearAfterDays;
         document.getElementById("cfgT1").value = lp.T1;
         document.getElementById("cfgT2").value = lp.T2;
         document.getElementById("cfgT3").value = lp.T3;
@@ -293,6 +296,7 @@
                 threshold: g("cfgThreshold"),
                 perDay: g("cfgPerDay"),
                 maxDays: Math.max(1, Math.round(g("cfgMaxDays"))),
+                clearAfterDays: Math.max(0, Math.round(g("cfgClearAfterDays"))),
                 T1: g("cfgT1"),
                 T2: g("cfgT2"),
                 T3: g("cfgT3"),
