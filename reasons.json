@@ -949,5 +949,26 @@
     "studentName": "朱熙元",
     "delta": -0.2,
     "reason": "上课睡觉"
+  },
+  {
+    "timestamp": "2026-10-28 23:47:43",
+    "studentId": "014",
+    "studentName": "姚腾浩",
+    "delta": -0.5,
+    "reason": "扣分0.5"
+  },
+  {
+    "timestamp": "2026-10-28 23:47:43",
+    "studentId": "018",
+    "studentName": "苏义涵",
+    "delta": -0.5,
+    "reason": "扣分0.5"
+  },
+  {
+    "timestamp": "2026-10-28 23:47:43",
+    "studentId": "026",
+    "studentName": "潘烨磊",
+    "delta": -0.5,
+    "reason": "扣分0.5"
   }
 ]
