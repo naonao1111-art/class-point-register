@@ -970,5 +970,12 @@
     "studentName": "潘烨磊",
     "delta": -0.5,
     "reason": "扣分0.5"
+  },
+  {
+    "timestamp": "2026-10-28 23:47:55",
+    "studentId": "039",
+    "studentName": "胡宵",
+    "delta": -0.5,
+    "reason": "扣分0.5"
   }
 ]
