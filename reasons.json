@@ -990,5 +990,19 @@
     "delta": 0.1,
     "reason": "班委每周加分",
     "id": "2026-10-28 23:48:14_020_0.1"
+  },
+  {
+    "timestamp": "2026-10-28 23:49:35",
+    "studentId": "040",
+    "studentName": "朱熙元",
+    "delta": -0.2,
+    "reason": "上课睡觉"
+  },
+  {
+    "timestamp": "2026-10-28 23:49:35",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": -0.2,
+    "reason": "上课睡觉"
   }
 ]
