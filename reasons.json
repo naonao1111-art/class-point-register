@@ -977,5 +977,12 @@
     "studentName": "胡宵",
     "delta": -0.5,
     "reason": "扣分0.5"
+  },
+  {
+    "timestamp": "2026-10-28 23:48:14",
+    "studentId": "020",
+    "studentName": "姚奇胜",
+    "delta": 0.1,
+    "reason": "班委每周加分"
   }
 ]
