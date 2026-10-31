@@ -15,7 +15,7 @@
     "downRatio3": 1.5
   },
   "voteBonus": {
-    "enabled": true,
+    "enabled": false,
     "bonus": 0.5,
     "weights": {
       "verygood": 1,
