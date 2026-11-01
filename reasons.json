@@ -1004,5 +1004,19 @@
     "studentName": "朱晨曦",
     "delta": -0.2,
     "reason": "上课睡觉"
+  },
+  {
+    "timestamp": "2026-11-01 21:50:49",
+    "studentId": "017",
+    "studentName": "黄智恒",
+    "delta": -0.2,
+    "reason": "上课睡觉"
+  },
+  {
+    "timestamp": "2026-11-01 21:50:49",
+    "studentId": "021",
+    "studentName": "朱晨曦",
+    "delta": -0.2,
+    "reason": "上课睡觉"
   }
 ]
