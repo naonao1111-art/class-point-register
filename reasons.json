@@ -1091,5 +1091,12 @@
     "studentName": "潘烨磊",
     "delta": -2,
     "reason": "扣分2 寝室讲话"
+  },
+  {
+    "timestamp": "2026-11-03 21:56:53",
+    "studentId": "024",
+    "studentName": "沈天辰",
+    "delta": -0.2,
+    "reason": "第六节课睡觉"
   }
 ]
