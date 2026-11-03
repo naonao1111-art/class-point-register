@@ -1039,5 +1039,19 @@
     "studentName": "潘烨磊",
     "delta": -0.5,
     "reason": "扣分0.5 黑板槽、投影仪脏，一个垃圾桶垃圾袋没套，并且其中有垃圾"
+  },
+  {
+    "timestamp": "2026-11-03 21:53:29",
+    "studentId": "029",
+    "studentName": "濮天昊",
+    "delta": -0.5,
+    "reason": "扣分0.5均分 簸箕有饮料瓶"
+  },
+  {
+    "timestamp": "2026-11-03 21:53:29",
+    "studentId": "040",
+    "studentName": "朱熙元",
+    "delta": -0.5,
+    "reason": "扣分0.5均分 簸箕有饮料瓶"
   }
 ]
