@@ -1077,5 +1077,19 @@
     "studentName": "郑智程",
     "delta": -0.5,
     "reason": "扣分0.5 地上放书"
+  },
+  {
+    "timestamp": "2026-11-03 21:56:32",
+    "studentId": "014",
+    "studentName": "姚腾浩",
+    "delta": -2,
+    "reason": "扣分2 寝室讲话"
+  },
+  {
+    "timestamp": "2026-11-03 21:56:32",
+    "studentId": "026",
+    "studentName": "潘烨磊",
+    "delta": -2,
+    "reason": "扣分2 寝室讲话"
   }
 ]
