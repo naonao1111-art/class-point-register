@@ -1133,5 +1133,12 @@
     "studentName": "陈静怡",
     "delta": -0.5,
     "reason": "扣分0.5 窗台脏"
+  },
+  {
+    "timestamp": "2026-11-17 23:25:14",
+    "studentId": "031",
+    "studentName": "刘博凯",
+    "delta": -0.2,
+    "reason": "上课睡觉"
   }
 ]
