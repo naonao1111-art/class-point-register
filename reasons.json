@@ -1126,5 +1126,12 @@
     "studentName": "应扎吉",
     "delta": -0.2,
     "reason": "11.13午睡纪律差once"
+  },
+  {
+    "timestamp": "2026-11-17 23:24:54",
+    "studentId": "010",
+    "studentName": "陈静怡",
+    "delta": -0.5,
+    "reason": "扣分0.5 窗台脏"
   }
 ]
